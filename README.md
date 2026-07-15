@@ -7,7 +7,7 @@
 Storefront · Inventory · Order operations · CRM, POS and analytics — one system for one lighting store.
 
 [![Status](https://img.shields.io/badge/status-specification%20%26%20scaffold-orange)](./docs/15-roadmap.md)
-[![Docs](https://img.shields.io/badge/spec-25k%20lines-blue)](./docs/)
+[![Docs](https://img.shields.io/badge/spec-26k%20lines-blue)](./docs/)
 [![NestJS](https://img.shields.io/badge/NestJS-11-e0234e?logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![React](https://img.shields.io/badge/React-19-61dafb?logo=react&logoColor=black)](https://react.dev/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-3178c6?logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
