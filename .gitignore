@@ -1,1 +1,66 @@
+# --- Sirlar --------------------------------------------------------------
+# ⚠️  Loyiha egasining oldingi loyihalarida (chess, donate_service, expressCargo)
+#     DB parollari, JWT kalitlari va hatto server IP manzili GitHub'ga commit
+#     qilingan edi. Bu takrorlanmasin. docs/11-security.md §9
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+secrets/
+
+# --- Bog'liqliklar -------------------------------------------------------
 node_modules/
+.pnpm-store/
+
+# --- Build ---------------------------------------------------------------
+dist/
+build/
+.next/
+out/
+*.tsbuildinfo
+
+# --- Turborepo -----------------------------------------------------------
+.turbo/
+
+# --- Test ----------------------------------------------------------------
+coverage/
+.nyc_output/
+test-results/
+playwright-report/
+blob-report/
+
+# --- Loglar --------------------------------------------------------------
+*.log
+npm-debug.log*
+pnpm-debug.log*
+logs/
+
+# --- IDE -----------------------------------------------------------------
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# --- OS ------------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Vaqtinchalik --------------------------------------------------------
+tmp/
+temp/
+.cache/
+
+# --- Prisma --------------------------------------------------------------
+# Migration fayllari COMMIT QILINADI — ular tarixning bir qismi.
+prisma/generated/
+
+# --- Boshqa package manager'lar ------------------------------------------
+# Bu monorepo pnpm ishlatadi. npm/yarn lockfile'lari chalkashlik keltiradi.
+package-lock.json
+yarn.lock
+
+# --- Local ---------------------------------------------------------------
+docker-compose.override.yml

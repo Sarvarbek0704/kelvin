@@ -1,0 +1,1774 @@
+// ============================================================================
+//  KELVIN — Ma'lumotlar modeli
+//  Yoritish texnikasi do'koni. Spetsifikatsiya: docs/03-data-model.md
+//
+//  KONVENSIYALAR:
+//   - Prisma model: PascalCase, BIRLIK   → DB jadval: snake_case, KO'PLIK
+//   - PK: UUID v7 (vaqt bo'yicha tartiblanadi → index fragmentatsiyasi yo'q)
+//     ⚠️ @default(uuid(7)) Prisma >= 5.14 talab qiladi
+//   - Pul: BigInt, TIYINDA. Float HECH QACHON. + alohida currency ustuni
+//   - Vaqt: DateTime @db.Timestamptz(3), UTC
+//   - Soft delete: deleted_at (faqat muhim entity'larda)
+//
+//  ⚠️ Bu BITTA do'kon uchun (single-tenant). Multi-tenant EMAS.
+// ============================================================================
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["postgresqlExtensions", "relationJoins"]
+}
+
+datasource db {
+  provider   = "postgresql"
+  url        = env("DATABASE_URL")
+  extensions = [pgcrypto, pg_trgm, btree_gin]
+}
+
+// ============================================================================
+//  ENUM'lar
+// ============================================================================
+
+enum UserStatus {
+  PENDING_VERIFICATION
+  ACTIVE
+  SUSPENDED
+  BANNED
+}
+
+/// docs/01-product-spec.md §4 — RBAC matritsasi
+enum Role {
+  OWNER
+  ADMIN
+  CONTENT_MANAGER
+  SALES
+  WAREHOUSE
+  COURIER
+  INSTALLER
+  ACCOUNTANT
+  CUSTOMER
+}
+
+/// Yoritgichga xos atribut tiplari — docs/05-catalog-and-search.md §2
+enum AttributeType {
+  /// Aniq qiymatlar ro'yxati (rang harorati: 2700/3000/4000/5000/6500)
+  ENUM
+  /// Son + diapazon filtri (lyumen, vatt)
+  NUMBER
+  /// Ha/yo'q (dimmable, bulbs_included)
+  BOOLEAN
+  /// Erkin matn
+  TEXT
+  /// Ierarxik — IP65 IP44 talabini ham qanoatlantiradi
+  ORDINAL
+}
+
+enum ProductStatus {
+  DRAFT
+  ACTIVE
+  ARCHIVED
+  OUT_OF_PRODUCTION
+}
+
+/// docs/07-order-and-checkout.md §2
+enum OrderStatus {
+  DRAFT
+  PENDING_PAYMENT
+  PAYMENT_FAILED
+  PAID
+  CONFIRMED
+  PICKING
+  PACKED
+  SHIPPED
+  DELIVERED
+  COMPLETED
+  CANCELLED
+  RETURNED
+  PARTIALLY_RETURNED
+}
+
+enum OrderChannel {
+  ONLINE
+  POS
+  PHONE
+  TELEGRAM
+}
+
+/// docs/06-inventory-and-reservations.md §3
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CONSUMED
+  RELEASED
+  EXPIRED
+}
+
+/// Har harakat immutable jurnalga yoziladi. `quantity` ustunini
+/// to'g'ridan-to'g'ri o'zgartirish TAQIQLANADI — docs/06 §1
+enum StockMovementType {
+  PURCHASE_RECEIPT
+  SALE
+  RETURN
+  TRANSFER_IN
+  TRANSFER_OUT
+  ADJUSTMENT
+  DAMAGE
+  INVENTORY_COUNT
+}
+
+enum PaymentStatus {
+  CREATED
+  PENDING
+  PAID
+  FAILED
+  EXPIRED
+  CANCELLED
+  REFUND_REQUESTED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentProvider {
+  CLICK
+  PAYME
+  UZUM
+  CASH
+  BANK_TRANSFER
+  INSTALLMENT_PROVIDER
+}
+
+/// Rassrochka — O'zbekistonda qimmat tovar shu bilan sotiladi.
+/// ⚠️ Yuridik bloker: o'z rassrochkasi litsenziya talab qiladimi?
+/// docs/08-payments-and-installments.md §3
+enum InstallmentStatus {
+  PENDING
+  PAID
+  OVERDUE
+  DEFAULTED
+  CANCELLED
+}
+
+enum LedgerDirection {
+  DEBIT
+  CREDIT
+}
+
+enum ShipmentStatus {
+  PENDING
+  ASSIGNED
+  IN_TRANSIT
+  DELIVERED
+  FAILED
+  RETURNED
+}
+
+enum InstallationStatus {
+  REQUESTED
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum LeadStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL
+  WON
+  LOST
+}
+
+enum PosShiftStatus {
+  OPEN
+  CLOSED
+}
+
+enum ReviewStatus {
+  PENDING_MODERATION
+  APPROVED
+  REJECTED
+}
+
+enum OutboxStatus {
+  PENDING
+  PROCESSING
+  PUBLISHED
+  FAILED
+}
+
+// ============================================================================
+//  IDENTITY
+// ============================================================================
+
+model User {
+  id           String     @id @default(uuid(7)) @db.Uuid
+  email        String?    @unique
+  /// O'zbekistonda telefon asosiy identifikator
+  phone        String?    @unique
+  /// Argon2id. bcrypt EMAS — docs/11-security.md §2
+  passwordHash String?    @map("password_hash")
+  status       UserStatus @default(PENDING_VERIFICATION)
+
+  emailVerified Boolean @default(false) @map("email_verified")
+  phoneVerified Boolean @default(false) @map("phone_verified")
+
+  totpSecret  String?  @map("totp_secret")
+  totpEnabled Boolean  @default(false) @map("totp_enabled")
+
+  /// uz-Latn | uz-Cyrl | ru
+  locale String @default("uz-Latn")
+
+  lastLoginAt DateTime? @map("last_login_at") @db.Timestamptz(3)
+  lastLoginIp String?   @map("last_login_ip")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  roles         UserRole[]
+  refreshTokens RefreshToken[]
+  customer      Customer?
+  auditLogs     AuditLog[]
+  posShifts     PosShift[]
+
+  @@index([status])
+  @@map("users")
+}
+
+/// Rol resursga bog'lanishi mumkin: kuryer faqat o'ziga tayinlangan
+/// jo'natmani ko'radi. Faqat rolni tekshirish YETARLI EMAS.
+/// docs/11-security.md §3
+model UserRole {
+  id     String @id @default(uuid(7)) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+  role   Role
+
+  /// NULL = global. Aks holda: WAREHOUSE + scopeType=WAREHOUSE + scopeId=<id>
+  scopeType String? @map("scope_type")
+  scopeId   String? @map("scope_id") @db.Uuid
+
+  grantedBy String?   @map("granted_by") @db.Uuid
+  expiresAt DateTime? @map("expires_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, role, scopeType, scopeId])
+  @@index([userId])
+  @@map("user_roles")
+}
+
+/// Refresh rotation + reuse detection. Ishlatilgan token qayta kelsa →
+/// BUTUN oila bekor qilinadi. docs/11-security.md §2
+model RefreshToken {
+  id        String @id @default(uuid(7)) @db.Uuid
+  userId    String @map("user_id") @db.Uuid
+  /// SHA-256. Plaintext HECH QACHON saqlanmaydi.
+  tokenHash String @unique @map("token_hash")
+  familyId  String @map("family_id") @db.Uuid
+
+  usedAt    DateTime? @map("used_at") @db.Timestamptz(3)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz(3)
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz(3)
+
+  userAgent String? @map("user_agent")
+  ipAddress String? @map("ip_address")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([familyId])
+  @@index([expiresAt])
+  @@map("refresh_tokens")
+}
+
+// ============================================================================
+//  CATALOG — docs/05-catalog-and-search.md
+// ============================================================================
+
+/// Kategoriya daraxti. Materialized path — o'qish tez, yozish kam.
+/// Yoritgich kategoriyalari (Figma footer'idan): Люстры, Споты, Светильники,
+/// Трековые светильники, Бра, Уличные светильники, Торшеры, Технические,
+/// Комплектующие, Светодиодные ленты, Настольные лампы
+model Category {
+  id       String  @id @default(uuid(7)) @db.Uuid
+  parentId String? @map("parent_id") @db.Uuid
+
+  slug String @unique
+  /// Ko'p tilli: { "uz-Latn": "Qandillar", "uz-Cyrl": "...", "ru": "Люстры" }
+  name Json
+  description Json?
+
+  /// Materialized path: "/lustry/potolochnye/". Ajdodlarni bitta so'rovda topish.
+  path  String
+  depth Int    @default(0)
+
+  imageUrl String? @map("image_url")
+  sortOrder Int    @default(0) @map("sort_order")
+  isActive  Boolean @default(true) @map("is_active")
+
+  /// SEO
+  metaTitle       Json? @map("meta_title")
+  metaDescription Json? @map("meta_description")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  parent   Category?  @relation("CategoryTree", fields: [parentId], references: [id], onDelete: Restrict)
+  children Category[] @relation("CategoryTree")
+  products Product[]
+
+  @@index([parentId])
+  @@index([path])
+  @@index([slug])
+  @@map("categories")
+}
+
+/// Atribut ta'rifi. Yoritgichga xos: lyumen, rang harorati, IP, tsokol...
+/// docs/05-catalog-and-search.md §2
+model Attribute {
+  id   String        @id @default(uuid(7)) @db.Uuid
+  code String        @unique
+  type AttributeType
+
+  /// Ko'p tilli nom
+  name Json
+  /// Birlik: "lm", "K", "W", "Ra", "°"
+  unit String?
+
+  /// Filtrda ko'rinadimi
+  isFilterable Boolean @default(true) @map("is_filterable")
+  /// Variant hosil qiladimi (rang → ha; lyumen → yo'q)
+  isVariantAxis Boolean @default(false) @map("is_variant_axis")
+  /// Taqqoslash jadvalida
+  isComparable Boolean @default(true) @map("is_comparable")
+
+  sortOrder Int @default(0) @map("sort_order")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  values AttributeValue[]
+
+  @@index([code])
+  @@map("attributes")
+}
+
+/// ENUM va ORDINAL atributlar uchun ruxsat etilgan qiymatlar.
+/// ORDINAL uchun `rank` muhim: IP65 (rank 5) IP44 (rank 3) talabini qoplaydi.
+model AttributeValue {
+  id          String @id @default(uuid(7)) @db.Uuid
+  attributeId String @map("attribute_id") @db.Uuid
+
+  code  String
+  /// Ko'p tilli: { "ru": "Тёплый белый", "uz-Latn": "Issiq oq" }
+  label Json
+
+  /// ORDINAL uchun tartib. IP20=1, IP44=3, IP54=4, IP65=5, IP67=6
+  rank Int?
+  /// Rang uchun HEX (rang harorati vizualizatsiyasi: 2700K → #FFB46B)
+  hexColor String? @map("hex_color")
+
+  sortOrder Int @default(0) @map("sort_order")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  attribute Attribute @relation(fields: [attributeId], references: [id], onDelete: Cascade)
+
+  @@unique([attributeId, code])
+  @@index([attributeId])
+  @@map("attribute_values")
+}
+
+/// Mahsulot modeli (SKU EMAS). Masalan: "Qandil Aurora".
+/// Sotiladigan birlik — ProductVariant.
+model Product {
+  id         String @id @default(uuid(7)) @db.Uuid
+  categoryId String @map("category_id") @db.Uuid
+
+  slug String @unique
+  name Json
+  description Json?
+
+  brand        String?
+  manufacturer String?
+  countryOfOrigin String? @map("country_of_origin")
+
+  status ProductStatus @default(DRAFT)
+
+  /// Mo'rt (shisha qandil) — qadoqlash va yetkazib berish uchun.
+  /// docs/09-delivery-and-operations.md §3
+  isFragile Boolean @default(false) @map("is_fragile")
+  /// O'rnatish xizmati taklif qilinadimi (elektrik kerak)
+  requiresInstallation Boolean @default(false) @map("requires_installation")
+
+  metaTitle       Json? @map("meta_title")
+  metaDescription Json? @map("meta_description")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  category Category         @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  variants ProductVariant[]
+  media    Media[]
+  reviews  Review[]
+  questions Question[]
+
+  @@index([categoryId])
+  @@index([status])
+  @@index([slug])
+  @@map("products")
+}
+
+/// Sotiladigan birlik (SKU).
+///
+/// ⚠️ VARIANT MATRITSASI PORTLASHI: 1 qandil × 4 rang × 3 o'lcham × 2 lampa
+/// soni = 24 SKU. Faqat MAVJUD kombinatsiyalar saqlanadi, hammasi emas.
+/// docs/05-catalog-and-search.md §1
+model ProductVariant {
+  id        String @id @default(uuid(7)) @db.Uuid
+  productId String @map("product_id") @db.Uuid
+
+  sku     String  @unique
+  barcode String? @unique
+
+  /// Variant o'qi qiymatlari: { "color": "chrome", "size": "d600", "lamp_count": "6" }
+  /// isVariantAxis=true bo'lgan atributlardan.
+  axisValues Json @map("axis_values")
+
+  /// ══ YORITGICH ATRIBUTLARI ══
+  /// Tez-tez filtrlanadigan atributlar ustun sifatida (tez so'rov).
+  /// Qolganlari `attributes` JSONB da (moslashuvchan).
+  /// Bu gibrid yondashuv — sof EAV sekin, sof JSONB filtrsiz.
+  /// docs/05-catalog-and-search.md §1
+  luminousFlux     Int?     @map("luminous_flux")      // lm
+  colorTemperature Int?     @map("color_temperature")  // K — brend nomi shundan
+  cri              Int?                                 // Ra
+  ipRating         String?  @map("ip_rating")          // IP20..IP67
+  socketType       String?  @map("socket_type")        // E27, E14, GU10...
+  power            Decimal? @db.Decimal(8, 2)          // W
+  voltage          Int?                                 // 220, 12, 24
+  dimmable         Boolean  @default(false)
+  beamAngle        Int?     @map("beam_angle")         // °
+  bulbsIncluded    Boolean  @default(false) @map("bulbs_included")
+  lightSource      String?  @map("light_source")       // LED, halogen...
+  mountType        String?  @map("mount_type")
+
+  /// Qolgan atributlar. GIN index bilan filtrlanadi.
+  attributes Json @default("{}")
+
+  /// Fizik
+  weightGrams Int? @map("weight_grams")
+  lengthMm    Int? @map("length_mm")
+  widthMm     Int? @map("width_mm")
+  heightMm    Int? @map("height_mm")
+
+  /// Tannarx — foyda hisobi uchun. ⚠️ TIYINDA.
+  /// FIFO yoki o'rtacha — docs/10-crm-pos-analytics.md §4
+  costPriceAmount BigInt? @map("cost_price_amount")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  media        Media[]
+  prices       Price[]
+  stockItems   StockItem[]
+  reservations StockReservation[]
+  movements    StockMovement[]
+  cartItems    CartItem[]
+  orderItems   OrderItem[]
+  poItems      PurchaseOrderItem[]
+
+  compatibleWith CompatibilityRule[] @relation("SourceVariant")
+  compatibleFrom CompatibilityRule[] @relation("TargetVariant")
+
+  @@index([productId])
+  @@index([sku])
+  @@index([colorTemperature])
+  @@index([ipRating])
+  @@index([socketType])
+  @@index([attributes], type: Gin)
+  @@map("product_variants")
+}
+
+/// Trek tizimi mosligi: trek + konnektor + spot bir-biriga mos kelishi kerak.
+/// "Bu spot bu trekka mos keladimi?" — compatibility graph.
+/// docs/05-catalog-and-search.md §6
+model CompatibilityRule {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  sourceVariantId String @map("source_variant_id") @db.Uuid
+  targetVariantId String @map("target_variant_id") @db.Uuid
+
+  /// COMPATIBLE | REQUIRES | INCOMPATIBLE
+  kind String
+  note Json?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  sourceVariant ProductVariant @relation("SourceVariant", fields: [sourceVariantId], references: [id], onDelete: Cascade)
+  targetVariant ProductVariant @relation("TargetVariant", fields: [targetVariantId], references: [id], onDelete: Cascade)
+
+  @@unique([sourceVariantId, targetVariantId, kind])
+  @@index([sourceVariantId])
+  @@index([targetVariantId])
+  @@map("compatibility_rules")
+}
+
+model Media {
+  id        String  @id @default(uuid(7)) @db.Uuid
+  productId String? @map("product_id") @db.Uuid
+  variantId String? @map("variant_id") @db.Uuid
+
+  /// IMAGE | VIDEO | VIEW_360 | DOCUMENT (datasheet)
+  kind String
+  url  String
+  /// Responsive variantlar: { "webp_400": "...", "webp_800": "..." }
+  derivatives Json?
+
+  alt       Json?
+  sortOrder Int   @default(0) @map("sort_order")
+  isPrimary Boolean @default(false) @map("is_primary")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  product Product?        @relation(fields: [productId], references: [id], onDelete: Cascade)
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@index([productId])
+  @@index([variantId])
+  @@map("media")
+}
+
+// ============================================================================
+//  PRICING — Pul: BigInt, TIYINDA
+// ============================================================================
+
+model PriceList {
+  id   String @id @default(uuid(7)) @db.Uuid
+  code String @unique
+  name Json
+
+  /// Ustuvorlik: bir necha ro'yxat mos kelsa, yuqorisi g'olib
+  priority Int @default(0)
+
+  validFrom DateTime? @map("valid_from") @db.Timestamptz(3)
+  validTo   DateTime? @map("valid_to") @db.Timestamptz(3)
+
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  prices Price[]
+
+  @@map("price_lists")
+}
+
+model Price {
+  id          String @id @default(uuid(7)) @db.Uuid
+  priceListId String @map("price_list_id") @db.Uuid
+  variantId   String @map("variant_id") @db.Uuid
+
+  /// ⚠️ TIYINDA. Float HECH QACHON. docs/adr/0003-money-as-bigint-tiyin.md
+  amount   BigInt
+  currency String @default("UZS")
+
+  /// Chizib tashlangan narx (aksiya ko'rsatish uchun)
+  compareAtAmount BigInt? @map("compare_at_amount")
+
+  /// Ulgurji: shu miqdordan boshlab
+  minQuantity Int @default(1) @map("min_quantity")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  priceList PriceList      @relation(fields: [priceListId], references: [id], onDelete: Cascade)
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+
+  @@unique([priceListId, variantId, minQuantity])
+  @@index([variantId])
+  @@map("prices")
+}
+
+/// Chegirma/aksiya. ⚠️ Qo'llash tartibi DETERMINISTIK bo'lishi shart:
+/// bir xil savat → bir xil narx. docs/07-order-and-checkout.md §7
+model Discount {
+  id   String @id @default(uuid(7)) @db.Uuid
+  code String? @unique
+  name Json
+
+  /// PERCENTAGE | FIXED_AMOUNT | FREE_SHIPPING | BUY_X_GET_Y
+  kind String
+
+  /// PERCENTAGE uchun basis point (250 = 2.5%). FIXED uchun tiyin.
+  value BigInt
+
+  /// Qo'llash shartlari: { "minSubtotal": 5000000, "categoryIds": [...] }
+  conditions Json @default("{}")
+
+  /// Baholash tartibi — determinizm uchun KRITIK
+  priority Int @default(0)
+  /// Boshqa chegirma bilan birga qo'llanadimi
+  isStackable Boolean @default(false) @map("is_stackable")
+
+  usageLimit      Int? @map("usage_limit")
+  usageCount      Int  @default(0) @map("usage_count")
+  perCustomerLimit Int? @map("per_customer_limit")
+
+  validFrom DateTime? @map("valid_from") @db.Timestamptz(3)
+  validTo   DateTime? @map("valid_to") @db.Timestamptz(3)
+  isActive  Boolean   @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([code])
+  @@index([isActive, priority])
+  @@map("discounts")
+}
+
+// ============================================================================
+//  CUSTOMER / CRM
+// ============================================================================
+
+model Customer {
+  id     String  @id @default(uuid(7)) @db.Uuid
+  userId String? @unique @map("user_id") @db.Uuid
+
+  firstName String? @map("first_name")
+  lastName  String? @map("last_name")
+  /// Mehmon buyurtmasi telefon bo'yicha bog'lanadi
+  phone     String
+  email     String?
+
+  /// B2B: dizayner, qurilish brigadasi
+  isBusiness  Boolean @default(false) @map("is_business")
+  companyName String? @map("company_name")
+  taxId       String? @map("tax_id")
+
+  /// RFM — docs/10-crm-pos-analytics.md §1
+  totalOrders      Int     @default(0) @map("total_orders")
+  totalSpentAmount BigInt  @default(0) @map("total_spent_amount")
+  lastOrderAt      DateTime? @map("last_order_at") @db.Timestamptz(3)
+  rfmSegment       String? @map("rfm_segment")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  user      User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  addresses Address[]
+  orders    Order[]
+  carts     Cart[]
+  leads     Lead[]
+  reviews   Review[]
+  questions Question[]
+
+  @@index([phone])
+  @@index([rfmSegment])
+  @@map("customers")
+}
+
+model Address {
+  id         String @id @default(uuid(7)) @db.Uuid
+  customerId String @map("customer_id") @db.Uuid
+
+  /// Toshkent shahri / viloyat
+  region   String
+  district String?
+  city     String
+  street   String
+  building String?
+  apartment String?
+  /// Kvartira qavati — qandil ko'tarish uchun muhim (lift bormi?)
+  floor    Int?
+  hasElevator Boolean? @map("has_elevator")
+
+  postalCode String? @map("postal_code")
+  note       String?
+
+  latitude  Decimal? @db.Decimal(9, 6)
+  longitude Decimal? @db.Decimal(9, 6)
+
+  isDefault Boolean @default(false) @map("is_default")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  customer  Customer   @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  shipments Shipment[]
+
+  @@index([customerId])
+  @@map("addresses")
+}
+
+model Lead {
+  id         String  @id @default(uuid(7)) @db.Uuid
+  customerId String? @map("customer_id") @db.Uuid
+
+  name  String?
+  phone String
+  /// WEBSITE_FORM | PHONE | TELEGRAM | WALK_IN | INSTAGRAM
+  source String
+  status LeadStatus @default(NEW)
+
+  note       String?
+  assignedTo String? @map("assigned_to") @db.Uuid
+
+  /// Taxminiy summa — TIYINDA
+  estimatedAmount BigInt? @map("estimated_amount")
+
+  lostReason String? @map("lost_reason")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  customer Customer? @relation(fields: [customerId], references: [id], onDelete: SetNull)
+
+  @@index([status])
+  @@index([assignedTo])
+  @@index([phone])
+  @@map("leads")
+}
+
+// ============================================================================
+//  CART / ORDER — docs/07-order-and-checkout.md
+// ============================================================================
+
+model Cart {
+  id         String  @id @default(uuid(7)) @db.Uuid
+  customerId String? @map("customer_id") @db.Uuid
+  /// Mehmon savati — cookie'dagi anonim ID
+  sessionId  String? @map("session_id")
+
+  /// Savat tashlab ketilgan deb hisoblanadi
+  expiresAt DateTime? @map("expires_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  customer Customer?  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  items    CartItem[]
+
+  @@index([customerId])
+  @@index([sessionId])
+  @@map("carts")
+}
+
+model CartItem {
+  id        String @id @default(uuid(7)) @db.Uuid
+  cartId    String @map("cart_id") @db.Uuid
+  variantId String @map("variant_id") @db.Uuid
+
+  quantity Int
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  cart    Cart           @relation(fields: [cartId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@unique([cartId, variantId])
+  @@index([cartId])
+  @@map("cart_items")
+}
+
+model Order {
+  id     String @id @default(uuid(7)) @db.Uuid
+  number String @unique // "KLV-2026-000001"
+
+  customerId String       @map("customer_id") @db.Uuid
+  status     OrderStatus  @default(DRAFT)
+  channel    OrderChannel @default(ONLINE)
+
+  /// POS sotuvi bo'lsa — kim sotdi (komissiya uchun)
+  salesUserId String? @map("sales_user_id") @db.Uuid
+
+  /// ══ PUL — hammasi TIYINDA, snapshot ══
+  subtotalAmount BigInt @map("subtotal_amount")
+  discountAmount BigInt @default(0) @map("discount_amount")
+  deliveryAmount BigInt @default(0) @map("delivery_amount")
+  installationAmount BigInt @default(0) @map("installation_amount")
+  taxAmount      BigInt @default(0) @map("tax_amount")
+  totalAmount    BigInt @map("total_amount")
+  currency       String @default("UZS")
+
+  /// Qo'llangan chegirmalar — audit va tushuntirish uchun
+  appliedDiscounts Json @default("[]") @map("applied_discounts")
+
+  customerNote String? @map("customer_note")
+  internalNote String? @map("internal_note")
+
+  placedAt    DateTime? @map("placed_at") @db.Timestamptz(3)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+  cancelledAt DateTime? @map("cancelled_at") @db.Timestamptz(3)
+  cancelReason String?  @map("cancel_reason")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Restrict)
+
+  items         OrderItem[]
+  statusHistory OrderStatusHistory[]
+  payments      Payment[]
+  reservations  StockReservation[]
+  shipments     Shipment[]
+  installations InstallationJob[]
+  installmentPlan InstallmentPlan?
+
+  @@index([customerId])
+  @@index([status, createdAt])
+  @@index([number])
+  @@index([channel, createdAt])
+  @@map("orders")
+}
+
+/// ⚠️ SNAPSHOT. Narx, nom, atribut — hammasi buyurtma paytida NUSXALANADI.
+/// Product/Price dan o'qilmaydi.
+///
+/// Sabab: mahsulot narxi ertaga o'zgarsa yoki mahsulot o'chirilsa, eski
+/// buyurtma buzilmasligi kerak. Bu ko'p loyihada qilinadigan xato.
+/// docs/07-order-and-checkout.md §5
+model OrderItem {
+  id        String @id @default(uuid(7)) @db.Uuid
+  orderId   String @map("order_id") @db.Uuid
+  variantId String @map("variant_id") @db.Uuid
+
+  /// ══ SNAPSHOT ══
+  sku          String
+  productName  Json   @map("product_name")
+  variantAxis  Json   @map("variant_axis")
+  /// Yoritgich atributlari snapshot'i (chekда ko'rsatish uchun)
+  attributesSnapshot Json? @map("attributes_snapshot")
+
+  quantity      Int
+  unitAmount    BigInt @map("unit_amount")
+  discountAmount BigInt @default(0) @map("discount_amount")
+  totalAmount   BigInt @map("total_amount")
+  currency      String @default("UZS")
+
+  /// Tannarx snapshot'i — foyda hisobi
+  costAmount BigInt? @map("cost_amount")
+
+  returnedQuantity Int @default(0) @map("returned_quantity")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  order   Order          @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  variant ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@index([orderId])
+  @@index([variantId])
+  @@map("order_items")
+}
+
+/// Holat o'zgarishi jurnali. IMMUTABLE.
+model OrderStatusHistory {
+  id      String @id @default(uuid(7)) @db.Uuid
+  orderId String @map("order_id") @db.Uuid
+
+  fromStatus OrderStatus?
+  toStatus   OrderStatus
+
+  actorUserId String? @map("actor_user_id") @db.Uuid
+  reason      String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId, createdAt])
+  @@map("order_status_history")
+}
+
+// ============================================================================
+//  INVENTORY — docs/06-inventory-and-reservations.md
+//  ⚠️ Bu loyihaning ENG NOZIK qismi: oversell / race condition
+// ============================================================================
+
+model Warehouse {
+  id   String @id @default(uuid(7)) @db.Uuid
+  code String @unique
+  name Json
+
+  /// MAIN | SHOWROOM | TRANSIT
+  kind String @default("MAIN")
+
+  address String?
+  /// Mijozga ko'rinadigan qoldiqqa hisoblanadimi
+  isSellable Boolean @default(true) @map("is_sellable")
+  isActive   Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  stockItems     StockItem[]
+  movements      StockMovement[]
+  reservations   StockReservation[]
+  purchaseOrders PurchaseOrder[]
+
+  @@map("warehouses")
+}
+
+/// Variant × ombor → qoldiq.
+///
+/// ⚠️ `onHand` va `reserved` FAQAT atomik UPDATE bilan o'zgaradi:
+///    UPDATE stock_items SET reserved = reserved + $1
+///    WHERE id = $2 AND (on_hand - reserved) >= $1
+///    RETURNING *
+///
+///    Qator qaytmasa → yetarli qoldiq yo'q. Bu oversell'ning oldini oladi
+///    hech qanday qulfsiz. docs/06-inventory-and-reservations.md §2
+///
+/// `version` — optimistic lock uchun zaxira.
+model StockItem {
+  id          String @id @default(uuid(7)) @db.Uuid
+  variantId   String @map("variant_id") @db.Uuid
+  warehouseId String @map("warehouse_id") @db.Uuid
+
+  /// Jismonan omborda
+  onHand   Int @default(0) @map("on_hand")
+  /// Band qilingan (savat/buyurtma)
+  reserved Int @default(0)
+  /// available = onHand - reserved (hisoblanadi, saqlanmaydi)
+
+  /// Qayta buyurtma chegarasi
+  reorderPoint    Int? @map("reorder_point")
+  reorderQuantity Int? @map("reorder_quantity")
+
+  version Int @default(0)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Cascade)
+  warehouse Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+
+  @@unique([variantId, warehouseId])
+  @@index([warehouseId])
+  @@map("stock_items")
+}
+
+/// Har harakat — IMMUTABLE jurnal. `onHand` ni to'g'ridan-to'g'ri
+/// o'zgartirish TAQIQLANADI; har o'zgarish shu yerda iz qoldiradi.
+///
+/// Invariant: SUM(movements.quantity) == stock_items.on_hand
+/// Bu property test bilan tekshiriladi.
+model StockMovement {
+  id          String @id @default(uuid(7)) @db.Uuid
+  variantId   String @map("variant_id") @db.Uuid
+  warehouseId String @map("warehouse_id") @db.Uuid
+
+  type StockMovementType
+  /// Musbat = kirim, manfiy = chiqim
+  quantity Int
+
+  /// Manba: order_id, purchase_order_id, inventory_count_id...
+  referenceType String? @map("reference_type")
+  referenceId   String? @map("reference_id") @db.Uuid
+
+  actorUserId String? @map("actor_user_id") @db.Uuid
+  note        String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  warehouse Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+
+  @@index([variantId, createdAt])
+  @@index([warehouseId, createdAt])
+  @@index([referenceType, referenceId])
+  @@map("stock_movements")
+}
+
+/// Rezerv. TTL bilan — checkout tashlab ketilsa avtomatik bo'shaydi.
+/// docs/06-inventory-and-reservations.md §3
+model StockReservation {
+  id          String @id @default(uuid(7)) @db.Uuid
+  variantId   String @map("variant_id") @db.Uuid
+  warehouseId String @map("warehouse_id") @db.Uuid
+  orderId     String? @map("order_id") @db.Uuid
+  cartId      String? @map("cart_id") @db.Uuid
+
+  quantity Int
+  status   ReservationStatus @default(PENDING)
+
+  /// Muddati tugagach bo'shatiladi
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(3)
+  releasedAt DateTime? @map("released_at") @db.Timestamptz(3)
+  consumedAt DateTime? @map("consumed_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  variant   ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+  warehouse Warehouse      @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  order     Order?         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([status, expiresAt])
+  @@index([orderId])
+  @@index([variantId])
+  @@map("stock_reservations")
+}
+
+// ============================================================================
+//  PROCUREMENT
+// ============================================================================
+
+model Supplier {
+  id   String @id @default(uuid(7)) @db.Uuid
+  name String
+  code String @unique
+
+  contactPerson String? @map("contact_person")
+  phone         String?
+  email         String?
+  address       String?
+  countryCode   String? @map("country_code")
+
+  /// To'lov shartlari (kun)
+  paymentTermDays Int? @map("payment_term_days")
+  /// O'rtacha yetkazib berish muddati (kun)
+  leadTimeDays    Int? @map("lead_time_days")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  deletedAt DateTime? @map("deleted_at") @db.Timestamptz(3)
+
+  purchaseOrders PurchaseOrder[]
+
+  @@map("suppliers")
+}
+
+model PurchaseOrder {
+  id     String @id @default(uuid(7)) @db.Uuid
+  number String @unique // "PO-2026-000001"
+
+  supplierId  String @map("supplier_id") @db.Uuid
+  warehouseId String @map("warehouse_id") @db.Uuid
+
+  /// DRAFT | ORDERED | PARTIALLY_RECEIVED | RECEIVED | CANCELLED
+  status String @default("DRAFT")
+
+  /// TIYINDA
+  totalAmount BigInt @map("total_amount")
+  currency    String @default("UZS")
+
+  orderedAt    DateTime? @map("ordered_at") @db.Timestamptz(3)
+  expectedAt   DateTime? @map("expected_at") @db.Timestamptz(3)
+  receivedAt   DateTime? @map("received_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  supplier  Supplier  @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+  warehouse Warehouse @relation(fields: [warehouseId], references: [id], onDelete: Restrict)
+  items     PurchaseOrderItem[]
+
+  @@index([supplierId])
+  @@index([status])
+  @@map("purchase_orders")
+}
+
+model PurchaseOrderItem {
+  id              String @id @default(uuid(7)) @db.Uuid
+  purchaseOrderId String @map("purchase_order_id") @db.Uuid
+  variantId       String @map("variant_id") @db.Uuid
+
+  quantityOrdered  Int @map("quantity_ordered")
+  quantityReceived Int @default(0) @map("quantity_received")
+
+  /// TIYINDA — bu tannarx manbai
+  unitCostAmount BigInt @map("unit_cost_amount")
+  currency       String @default("UZS")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  purchaseOrder PurchaseOrder  @relation(fields: [purchaseOrderId], references: [id], onDelete: Cascade)
+  variant       ProductVariant @relation(fields: [variantId], references: [id], onDelete: Restrict)
+
+  @@index([purchaseOrderId])
+  @@map("purchase_order_items")
+}
+
+// ============================================================================
+//  PAYMENT — docs/08-payments-and-installments.md
+//  ⚠️ Pul: BigInt TIYINDA. Float HECH QACHON.
+// ============================================================================
+
+model Payment {
+  id      String @id @default(uuid(7)) @db.Uuid
+  orderId String @map("order_id") @db.Uuid
+
+  provider PaymentProvider
+  status   PaymentStatus   @default(CREATED)
+
+  amount   BigInt
+  currency String @default("UZS")
+
+  providerTransactionId String? @map("provider_transaction_id")
+  /// Provayderdan kelgan xom javob — nizoda dalil
+  providerPayload       Json?   @map("provider_payload")
+
+  /// Webhook ikki marta kelsa himoya. docs/08 §4
+  idempotencyKey String @unique @map("idempotency_key")
+
+  failureReason String?   @map("failure_reason")
+  paidAt        DateTime? @map("paid_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Restrict)
+
+  refunds       Refund[]
+  ledgerEntries LedgerEntry[]
+
+  @@unique([provider, providerTransactionId])
+  @@index([orderId])
+  @@index([status])
+  @@map("payments")
+}
+
+model Refund {
+  id        String @id @default(uuid(7)) @db.Uuid
+  paymentId String @map("payment_id") @db.Uuid
+
+  amount   BigInt
+  currency String @default("UZS")
+
+  reason String
+  status PaymentStatus @default(CREATED)
+
+  providerRefundId String? @map("provider_refund_id")
+  idempotencyKey   String  @unique @map("idempotency_key")
+
+  refundedAt DateTime? @map("refunded_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Restrict)
+
+  @@index([paymentId])
+  @@map("refunds")
+}
+
+/// RASSROCHKA — O'zbekistonda qimmat tovar shu bilan sotiladi.
+///
+/// ⚠️ YURIDIK BLOKER: do'konning O'Z rassrochkasi kredit berish hisoblanadimi
+///    va litsenziya talab qiladimi? Yurist tasdig'i kerak.
+///    docs/08-payments-and-installments.md §3
+model InstallmentPlan {
+  id      String @id @unique @default(uuid(7)) @db.Uuid
+  orderId String @unique @map("order_id") @db.Uuid
+
+  /// OWN (do'kon o'zi) | PROVIDER (Uzum Nasiya, Alif...)
+  kind     String
+  provider String?
+
+  /// TIYINDA
+  principalAmount BigInt @map("principal_amount")
+  /// Boshlang'ich badal
+  downPaymentAmount BigInt @default(0) @map("down_payment_amount")
+  /// Umumiy to'lanadigan (foiz bilan)
+  totalPayableAmount BigInt @map("total_payable_amount")
+  currency String @default("UZS")
+
+  /// Basis point (1200 = 12%)
+  interestRateBp Int @default(0) @map("interest_rate_bp")
+  termMonths     Int @map("term_months")
+
+  status InstallmentStatus @default(PENDING)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  order    Order                 @relation(fields: [orderId], references: [id], onDelete: Restrict)
+  schedule InstallmentSchedule[]
+
+  @@map("installment_plans")
+}
+
+/// To'lov grafigi.
+///
+/// ⚠️ PUL MATEMATIKASI: 5 000 000 so'mni 3 oyga bo'lsak — 1 666 666.67.
+///    Tiyin yo'qolmasligi kerak: SUM(schedule.amount) == totalPayableAmount.
+///    `Money.allocate()` ishlatiladi. Property test bilan tekshiriladi.
+model InstallmentSchedule {
+  id     String @id @default(uuid(7)) @db.Uuid
+  planId String @map("plan_id") @db.Uuid
+
+  installmentNumber Int      @map("installment_number")
+  dueDate           DateTime @map("due_date") @db.Date
+
+  amount     BigInt
+  paidAmount BigInt @default(0) @map("paid_amount")
+  /// Kechikish penyasi
+  penaltyAmount BigInt @default(0) @map("penalty_amount")
+  currency   String @default("UZS")
+
+  status InstallmentStatus @default(PENDING)
+  paidAt DateTime?         @map("paid_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  plan InstallmentPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@unique([planId, installmentNumber])
+  @@index([status, dueDate])
+  @@map("installment_schedules")
+}
+
+/// Double-entry ledger. Oddiy `balance` ustuni YETARLI EMAS.
+/// Invariant: SUM(debit) == SUM(credit) har `transactionId` uchun.
+/// APPEND-ONLY: xato bo'lsa teskari yozuv, o'chirish emas.
+/// docs/08-payments-and-installments.md §7
+model LedgerEntry {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  /// Bitta tranzaksiyaning yozuvlari bir xil transactionId ga ega
+  transactionId String @map("transaction_id") @db.Uuid
+
+  paymentId String? @map("payment_id") @db.Uuid
+
+  /// "cash.click" | "cash.register" | "revenue.product" |
+  /// "liability.installment_receivable" | "expense.refund"
+  account   String
+  direction LedgerDirection
+  amount    BigInt
+  currency  String @default("UZS")
+
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  payment Payment? @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+
+  @@index([transactionId])
+  @@index([account, createdAt])
+  @@map("ledger_entries")
+}
+
+// ============================================================================
+//  DELIVERY — docs/09-delivery-and-operations.md
+// ============================================================================
+
+model DeliveryZone {
+  id   String @id @default(uuid(7)) @db.Uuid
+  name Json
+
+  /// Tuman/viloyat ro'yxati. PostGIS poligon — keyingi bosqich (ochiq savol).
+  districts String[]
+
+  /// TIYINDA
+  priceAmount BigInt @map("price_amount")
+  /// Shu summadan yuqori — bepul
+  freeThresholdAmount BigInt? @map("free_threshold_amount")
+  currency    String @default("UZS")
+
+  /// Yetkazib berish muddati (kun)
+  etaDaysMin Int @default(1) @map("eta_days_min")
+  etaDaysMax Int @default(3) @map("eta_days_max")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  slots DeliverySlot[]
+
+  @@map("delivery_zones")
+}
+
+/// Vaqt oralig'i. ⚠️ Slot band qilishda ham RACE CONDITION bor —
+/// stock rezervi bilan bir xil muammo. docs/09 §2
+model DeliverySlot {
+  id     String @id @default(uuid(7)) @db.Uuid
+  zoneId String @map("zone_id") @db.Uuid
+
+  date      DateTime @db.Date
+  startTime String   @map("start_time") // "09:00"
+  endTime   String   @map("end_time")   // "12:00"
+
+  capacity Int
+  booked   Int @default(0)
+
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  zone      DeliveryZone @relation(fields: [zoneId], references: [id], onDelete: Cascade)
+  shipments Shipment[]
+
+  @@unique([zoneId, date, startTime])
+  @@index([date, isActive])
+  @@map("delivery_slots")
+}
+
+model Courier {
+  id     String @id @default(uuid(7)) @db.Uuid
+  userId String @unique @map("user_id") @db.Uuid
+
+  fullName String @map("full_name")
+  phone    String
+
+  vehicleType   String? @map("vehicle_type")
+  vehicleNumber String? @map("vehicle_number")
+
+  isActive Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  shipments Shipment[]
+
+  @@map("couriers")
+}
+
+model Shipment {
+  id      String @id @default(uuid(7)) @db.Uuid
+  orderId String @map("order_id") @db.Uuid
+
+  addressId String  @map("address_id") @db.Uuid
+  slotId    String? @map("slot_id") @db.Uuid
+  courierId String? @map("courier_id") @db.Uuid
+
+  status ShipmentStatus @default(PENDING)
+
+  trackingNumber String? @map("trackingnumber")
+
+  /// Mo'rt tovar — qadoqlash belgisi. docs/09 §3
+  isFragile Boolean @default(false) @map("is_fragile")
+
+  shippedAt   DateTime? @map("shipped_at") @db.Timestamptz(3)
+  deliveredAt DateTime? @map("delivered_at") @db.Timestamptz(3)
+  failureReason String? @map("failure_reason")
+  /// Yetkazishda sinib qolsa — dalil
+  proofPhotoUrl String? @map("proof_photo_url")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  order   Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  address Address       @relation(fields: [addressId], references: [id], onDelete: Restrict)
+  slot    DeliverySlot? @relation(fields: [slotId], references: [id], onDelete: SetNull)
+  courier Courier?      @relation(fields: [courierId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+  @@index([courierId, status])
+  @@index([status])
+  @@map("shipments")
+}
+
+/// Qandil o'rnatish — elektrik kerak. Upsell.
+model InstallationJob {
+  id      String @id @default(uuid(7)) @db.Uuid
+  orderId String @map("order_id") @db.Uuid
+
+  installerUserId String? @map("installer_user_id") @db.Uuid
+  status          InstallationStatus @default(REQUESTED)
+
+  scheduledAt DateTime? @map("scheduled_at") @db.Timestamptz(3)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+
+  /// TIYINDA. Murakkablikka bog'liq (baland shift, ko'p shoxli qandil)
+  priceAmount BigInt @map("price_amount")
+  currency    String @default("UZS")
+
+  note String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([installerUserId, status])
+  @@map("installation_jobs")
+}
+
+// ============================================================================
+//  POS — offline kassa. docs/10-crm-pos-analytics.md §2
+//  ⚠️ Onlayn va offline sotuv BIR XIL Order va ledger'ga tushadi.
+// ============================================================================
+
+model PosShift {
+  id     String @id @default(uuid(7)) @db.Uuid
+  userId String @map("user_id") @db.Uuid
+
+  status PosShiftStatus @default(OPEN)
+
+  /// TIYINDA
+  openingCashAmount BigInt  @map("opening_cash_amount")
+  closingCashAmount BigInt? @map("closing_cash_amount")
+  /// Hisoblangan vs haqiqiy farq
+  cashDifferenceAmount BigInt? @map("cash_difference_amount")
+  currency String @default("UZS")
+
+  openedAt DateTime  @default(now()) @map("opened_at") @db.Timestamptz(3)
+  closedAt DateTime? @map("closed_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  user User @relation(fields: [userId], references: [id], onDelete: Restrict)
+
+  @@index([userId, status])
+  @@map("pos_shifts")
+}
+
+// ============================================================================
+//  CONTENT / REVIEW
+// ============================================================================
+
+model Review {
+  id         String @id @default(uuid(7)) @db.Uuid
+  productId  String @map("product_id") @db.Uuid
+  customerId String @map("customer_id") @db.Uuid
+
+  rating Int
+  title  String?
+  body   String
+
+  /// Faqat sotib olgan mijoz sharh qoldira oladimi
+  isVerifiedPurchase Boolean @default(false) @map("is_verified_purchase")
+
+  status ReviewStatus @default(PENDING_MODERATION)
+  moderatedBy String?  @map("moderated_by") @db.Uuid
+
+  photoUrls String[] @map("photo_urls")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, customerId])
+  @@index([productId, status])
+  @@map("reviews")
+}
+
+model Question {
+  id         String @id @default(uuid(7)) @db.Uuid
+  productId  String @map("product_id") @db.Uuid
+  customerId String @map("customer_id") @db.Uuid
+
+  body   String
+  status ReviewStatus @default(PENDING_MODERATION)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  product  Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  customer Customer @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  answers  Answer[]
+
+  @@index([productId, status])
+  @@map("questions")
+}
+
+model Answer {
+  id         String @id @default(uuid(7)) @db.Uuid
+  questionId String @map("question_id") @db.Uuid
+
+  body        String
+  authorUserId String @map("author_user_id") @db.Uuid
+  /// Do'kon rasmiy javobimi
+  isOfficial  Boolean @default(false) @map("is_official")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  question Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@index([questionId])
+  @@map("answers")
+}
+
+model BlogPost {
+  id   String @id @default(uuid(7)) @db.Uuid
+  slug String @unique
+
+  title   Json
+  excerpt Json?
+  body    Json
+
+  coverUrl String? @map("cover_url")
+
+  metaTitle       Json? @map("meta_title")
+  metaDescription Json? @map("meta_description")
+
+  isPublished Boolean   @default(false) @map("is_published")
+  publishedAt DateTime? @map("published_at") @db.Timestamptz(3)
+  authorUserId String?  @map("author_user_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([isPublished, publishedAt])
+  @@map("blog_posts")
+}
+
+/// Statik sahifalar: О компании, Возврат, Гарантии, Доставка и оплата
+model Page {
+  id   String @id @default(uuid(7)) @db.Uuid
+  slug String @unique
+
+  title Json
+  body  Json
+
+  metaTitle       Json? @map("meta_title")
+  metaDescription Json? @map("meta_description")
+
+  isPublished Boolean @default(true) @map("is_published")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("pages")
+}
+
+// ============================================================================
+//  ADMIN / INFRA
+// ============================================================================
+
+/// IMMUTABLE, append-only. DB trigger + REVOKE bilan majburlanadi.
+///
+/// Nima yoziladi: narx o'zgarishi, chegirma, qoldiq tuzatish, buyurtma
+/// bekor qilish, rol berish, refund, POS smena.
+/// Nega: ICHKI o'g'irlik (sotuvchi o'ziga chegirma qiladi) va nizolar.
+/// docs/11-security.md §11
+model AuditLog {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  actorUserId String? @map("actor_user_id") @db.Uuid
+
+  action       String
+  resourceType String  @map("resource_type")
+  resourceId   String? @map("resource_id") @db.Uuid
+
+  before Json?
+  after  Json?
+
+  ipAddress String? @map("ip_address")
+  userAgent String? @map("user_agent")
+  traceId   String? @map("trace_id")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  actor User? @relation(fields: [actorUserId], references: [id], onDelete: SetNull)
+
+  @@index([actorUserId, createdAt])
+  @@index([resourceType, resourceId])
+  @@index([action, createdAt])
+  @@map("audit_logs")
+}
+
+model Notification {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  /// SMS | TELEGRAM | EMAIL | PUSH
+  channel   String
+  recipient String
+
+  /// i18n kaliti — matn emas
+  templateKey String @map("template_key")
+  payload     Json
+
+  sentAt        DateTime? @map("sent_at") @db.Timestamptz(3)
+  failedAt      DateTime? @map("failed_at") @db.Timestamptz(3)
+  failureReason String?   @map("failure_reason")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([channel, sentAt])
+  @@map("notifications")
+}
+
+/// Transactional outbox — dual write problem yechimi.
+/// Kritik event'lar (to'lov, buyurtma, qoldiq) DB tranzaksiyasi ICHIDA
+/// shu jadvalga yoziladi. Alohida worker publish qiladi.
+/// Kafolat: at-least-once → HAR handler idempotent bo'lishi SHART.
+model OutboxEvent {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  eventType     String @map("event_type")
+  aggregateType String @map("aggregate_type")
+  aggregateId   String @map("aggregate_id") @db.Uuid
+  payload       Json
+
+  status    OutboxStatus @default(PENDING)
+  attempts  Int          @default(0)
+  lastError String?      @map("last_error")
+
+  availableAt DateTime  @default(now()) @map("available_at") @db.Timestamptz(3)
+  publishedAt DateTime? @map("published_at") @db.Timestamptz(3)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([status, availableAt])
+  @@index([aggregateType, aggregateId])
+  @@map("outbox_events")
+}
+
+model FeatureFlag {
+  id  String @id @default(uuid(7)) @db.Uuid
+  key String @unique
+
+  isEnabled         Boolean @default(false) @map("is_enabled")
+  rolloutPercentage Int     @default(0) @map("rollout_percentage")
+
+  description String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("feature_flags")
+}
+
+/// API idempotentlik. `Idempotency-Key` header'i bo'yicha birinchi javob
+/// saqlanadi; takroriy so'rov shu javobni oladi va operatsiya QAYTA
+/// BAJARILMAYDI.
+///
+/// MAJBURIY: to'lov, buyurtma yaratish, rezerv, stock harakati.
+/// docs/04-api-spec.md §7
+model IdempotencyRecord {
+  id  String @id @default(uuid(7)) @db.Uuid
+  key String @unique
+
+  /// Qaysi endpoint uchun — bir xil kalit boshqa endpoint'da ishlatilmasin
+  endpoint String
+  /// So'rov body'sining hash'i. Bir xil kalit, boshqa body → 422 konflikt.
+  requestHash String @map("request_hash")
+
+  /// Birinchi javob — takroriy so'rovga aynan shu qaytariladi
+  responseStatus Int?  @map("response_status")
+  responseBody   Json? @map("response_body")
+
+  /// IN_PROGRESS | COMPLETED | FAILED
+  status String @default("IN_PROGRESS")
+
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(3)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([expiresAt])
+  @@map("idempotency_records")
+}
+
+/// Saga holati — buyurtma oqimi to'lov ↔ rezerv ↔ yetkazib berishga tegadi.
+/// Distributed tranzaksiya YO'Q → orchestration saga + kompensatsiya.
+///
+/// ⚠️ "To'lov o'tdi, lekin tovar qolmadi" holati AVTOMATIK refund qilinmaydi
+///    → `manual_review`. Sabab: docs/07-order-and-checkout.md §3
+model SagaState {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  /// ORDER_CHECKOUT | ORDER_CANCEL | ORDER_RETURN
+  sagaType    String @map("saga_type")
+  aggregateId String @map("aggregate_id") @db.Uuid
+
+  /// RUNNING | COMPLETED | COMPENSATING | COMPENSATED | MANUAL_REVIEW
+  status      String @default("RUNNING")
+  currentStep String @map("current_step")
+
+  /// Bajarilgan qadamlar — kompensatsiya teskari tartibda yuradi
+  completedSteps Json @default("[]") @map("completed_steps")
+  /// Qadamlar orasidagi kontekst
+  context Json @default("{}")
+
+  lastError String? @map("last_error")
+  attempts  Int     @default(0)
+
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  completedAt DateTime? @map("completed_at") @db.Timestamptz(3)
+
+  @@unique([sagaType, aggregateId])
+  @@index([status])
+  @@map("saga_states")
+}
+
+/// Inventarizatsiya qatori — qo'lda hisoblash natijasi.
+/// Farq (surplus/shortage) → tuzatish harakati (StockMovement.ADJUSTMENT).
+/// Kim tasdiqlaydi — audit. docs/06-inventory-and-reservations.md §5
+model InventoryLine {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  warehouseId String @map("warehouse_id") @db.Uuid
+  variantId   String @map("variant_id") @db.Uuid
+
+  /// Tizim bo'yicha kutilgan
+  expectedQuantity Int @map("expected_quantity")
+  /// Qo'lda hisoblangan
+  countedQuantity  Int @map("counted_quantity")
+  /// counted - expected. Manfiy = kamomad (ehtimol o'g'irlik → audit)
+  differenceQuantity Int @map("difference_quantity")
+
+  countedBy   String    @map("counted_by") @db.Uuid
+  approvedBy  String?   @map("approved_by") @db.Uuid
+  approvedAt  DateTime? @map("approved_at") @db.Timestamptz(3)
+
+  note String?
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([warehouseId, createdAt])
+  @@index([variantId])
+  @@map("inventory_lines")
+}
+
+/// Ta'minotchiga da'vo — mo'rt tovar (shisha qandil) singan holda keldi.
+/// docs/06-inventory-and-reservations.md §7
+model SupplierClaim {
+  id String @id @default(uuid(7)) @db.Uuid
+
+  supplierId      String  @map("supplier_id") @db.Uuid
+  purchaseOrderId String? @map("purchase_order_id") @db.Uuid
+  variantId       String  @map("variant_id") @db.Uuid
+
+  quantity Int
+  /// DAMAGED | MISSING | WRONG_ITEM | QUALITY
+  reason   String
+
+  /// TIYINDA — da'vo summasi
+  claimAmount BigInt @map("claim_amount")
+  currency    String @default("UZS")
+
+  /// Dalil — singan tovar fotosi
+  photoUrls String[] @map("photo_urls")
+
+  /// OPEN | SUBMITTED | ACCEPTED | REJECTED | SETTLED
+  status String @default("OPEN")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([supplierId, status])
+  @@index([purchaseOrderId])
+  @@map("supplier_claims")
+}

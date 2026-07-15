@@ -1,0 +1,31 @@
+<!--
+  Kelvin — footer logotipi.
+
+  logo.svg bilan bir xil. Asl dizaynda footer logotipi ham #454545 rangda
+  edi, shuning uchun rang sxemasi saqlanadi.
+
+  ⚠️  Agar footer foni to'q rangga o'zgarsa, #454545 ni oq rangga
+      almashtirish kerak. docs/13-frontend-spec.md
+-->
+<svg width="207" height="35" viewBox="0 0 207 35" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kelvin">
+  <title>Kelvin</title>
+
+  <defs>
+    <linearGradient id="kelvinScaleFoot" x1="5.7" y1="17.5" x2="21.7" y2="17.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFB46B"/>
+      <stop offset="0.5" stop-color="#FFF1DC"/>
+      <stop offset="1" stop-color="#BFDBFF"/>
+    </linearGradient>
+  </defs>
+
+  <rect x="0" y="4" width="27.4412" height="27" rx="3.92017" fill="#454545"/>
+  <circle cx="13.7206" cy="17.5" r="8" fill="url(#kelvinScaleFoot)"/>
+  <path d="M5.72 17.5H21.72" stroke="#454545" stroke-width="1.1" stroke-linecap="round" opacity="0.35"/>
+
+  <text x="38.5" y="27.4"
+        font-family="'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif"
+        font-size="27.5"
+        font-weight="700"
+        letter-spacing="1.6"
+        fill="#454545">KELVIN</text>
+</svg>

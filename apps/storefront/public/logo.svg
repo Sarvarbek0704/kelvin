@@ -1,0 +1,43 @@
+<!--
+  Kelvin — logotip.
+
+  G'oya: belgi brend nomining ma'nosini ko'rsatadi. Kelvin — rang harorati
+  birligi, shuning uchun disk 2700K (issiq) dan 6500K (sovuq) gacha
+  gradient — ya'ni Kelvin shkalasining o'zi.
+
+  Rang sxemasi asl dizayndan olingan: #454545 + oq.
+  O'lcham 207x35 — asl logotip bilan bir xil, layout buzilmasligi uchun.
+
+  ⚠️  Bu ISHCHI VARIANT. Wordmark <text> element sifatida — ya'ni foydalanuvchi
+      tizimidagi shriftga bog'liq. Yakuniy versiyada dizayner uni path'ga
+      aylantirishi kerak (outline). docs/13-frontend-spec.md
+-->
+<svg width="207" height="35" viewBox="0 0 207 35" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Kelvin">
+  <title>Kelvin</title>
+
+  <defs>
+    <!-- Kelvin shkalasi: 2700K issiq → 4000K neytral → 6500K sovuq -->
+    <linearGradient id="kelvinScale" x1="5.7" y1="17.5" x2="21.7" y2="17.5" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFB46B"/>
+      <stop offset="0.5" stop-color="#FFF1DC"/>
+      <stop offset="1" stop-color="#BFDBFF"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Belgi konteyneri -->
+  <rect x="0" y="4" width="27.4412" height="27" rx="3.92017" fill="#454545"/>
+
+  <!-- Rang harorati diski -->
+  <circle cx="13.7206" cy="17.5" r="8" fill="url(#kelvinScale)"/>
+
+  <!-- Shkala o'qi -->
+  <path d="M5.72 17.5H21.72" stroke="#454545" stroke-width="1.1" stroke-linecap="round" opacity="0.35"/>
+
+  <!-- Wordmark -->
+  <text x="38.5" y="27.4"
+        font-family="'Inter', 'Segoe UI', system-ui, -apple-system, 'Helvetica Neue', Arial, sans-serif"
+        font-size="27.5"
+        font-weight="700"
+        letter-spacing="1.6"
+        fill="#454545">KELVIN</text>
+</svg>
