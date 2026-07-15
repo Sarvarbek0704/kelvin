@@ -8,12 +8,14 @@
 Kelvin'da ikki frontend bor:
 
 **`apps/storefront`** — mijoz uchun onlayn do'kon.
+
 - Dizayn **mavjud va tayyor**: loyiha egasining ustozi bergan Figma
 - **~8 700 qator styled-components** allaqachon yozilgan
 - 12 sahifa, ~20 SVG ikonka, responsive layout
 - Dizayn **o'zgarmaydi** (faqat brend nomi va logotip Kelvin'ga o'zgardi)
 
 **`apps/admin`** — do'kon xodimlari uchun.
+
 - Dizayn **yo'q**
 - Kerak: jadval (server-side pagination/sort/filter), forma, fayl yuklash, dashboard
 - Foydalanuvchi: sotuvchi, ombor xodimi, buxgalter — kuniga soatlab ishlaydi
@@ -24,16 +26,17 @@ Tabiiy savol: bitta UI stack ishlatilsinmi?
 
 **Yo'q. Ikki xil stack:**
 
-| App | Stack | Sabab |
-|---|---|---|
-| `storefront` | styled-components 6 | **Allaqachon yozilgan.** O'zgartirish = 8 700 qatorni qayta yozish |
-| `admin` | shadcn/ui + Tailwind 4 | Dizayn yo'q. Tayyor komponent kerak |
+| App          | Stack                  | Sabab                                                              |
+| ------------ | ---------------------- | ------------------------------------------------------------------ |
+| `storefront` | styled-components 6    | **Allaqachon yozilgan.** O'zgartirish = 8 700 qatorni qayta yozish |
+| `admin`      | shadcn/ui + Tailwind 4 | Dizayn yo'q. Tayyor komponent kerak                                |
 
 ## Sabablar
 
 ### Nega storefront'ni Tailwind'ga ko'chirmaymiz
 
 8 700 qator styled-components'ni Tailwind'ga ko'chirish:
+
 - Bir necha hafta ish
 - Piksel-darajadagi regressiya xavfi (dizayn Figma'ga aniq mos kelishi kerak)
 - **Nol funksional foyda** — mijoz farqni ko'rmaydi
@@ -61,12 +64,14 @@ shadcn/ui bilan: `npx shadcn add table` va jadval tayyor — accessible, klaviat
 ## Oqibatlar
 
 **Ijobiy:**
+
 - Storefront tegilmaydi — regressiya xavfi nol
 - Admin tez quriladi
 - Har app o'z ehtiyojiga mos vositani ishlatadi
 - `packages/contracts` (API tiplari) baribir umumiy — muhim qism baham ko'riladi
 
 **Salbiy:**
+
 - **Ikki xil CSS paradigmasi bitta repoda.** Yangi dasturchi ikkalasini bilishi kerak
 - Bundle: har app o'z CSS runtime'ini olib yuradi (lekin ular alohida build — bir-biriga ta'sir qilmaydi)
 - Umumiy komponent (masalan `<Button>`) **baham ko'rilmaydi** — har app'da o'zinikisi. Bu takrorlanish, lekin ataylab: storefront tugmasi Figma'ga bo'ysunadi, admin tugmasi funksiyaga
@@ -76,10 +81,10 @@ shadcn/ui bilan: `npx shadcn add table` va jadval tayyor — accessible, klaviat
 
 ## Qachon qayta ko'riladi
 
-| Signal | Chora |
-|---|---|
-| Storefront dizayni butunlay qayta ishlanadi | Unda stack tanlovi qaytadan ochiladi |
-| Jamoa 5+ frontend dasturchi | Izchillik narxi oshadi — qayta baholash |
+| Signal                                                       | Chora                                                                         |
+| ------------------------------------------------------------ | ----------------------------------------------------------------------------- |
+| Storefront dizayni butunlay qayta ishlanadi                  | Unda stack tanlovi qaytadan ochiladi                                          |
+| Jamoa 5+ frontend dasturchi                                  | Izchillik narxi oshadi — qayta baholash                                       |
 | Storefront'da murakkab widget kerak (date picker, data grid) | Radix'ni styled-components bilan ishlatish mumkin — bu chegara buzilishi emas |
 
 ## Havolalar

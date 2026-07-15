@@ -58,16 +58,16 @@ Alohida worker `outbox_events` ni poll qiladi va publish qiladi.
 
 **Bu ro'yxat qat'iy.** Hamma event outbox'ga o'tkazilsa — keraksiz murakkablik va DB yuklamasi.
 
-| Event | Outbox? | Sabab |
-|---|---|---|
-| `PaymentCompleted` | **Ha** | Pul |
-| `RefundIssued` | **Ha** | Pul |
-| `OrderPlaced` | **Ha** | Rezervni consume qiladi — real tovar |
-| `StockAdjusted` | **Ha** | Real tovar |
-| `InstallmentOverdue` | **Ha** | Mijoz huquqi, penya |
-| `ProductUpdated` | Yo'q | Search reindex — yo'qolsa keyingi safar tuzatiladi |
-| `ReviewPosted` | Yo'q | Moderatsiya baribir qo'lda |
-| `CartUpdated` | Yo'q | Efemer |
+| Event                | Outbox? | Sabab                                              |
+| -------------------- | ------- | -------------------------------------------------- |
+| `PaymentCompleted`   | **Ha**  | Pul                                                |
+| `RefundIssued`       | **Ha**  | Pul                                                |
+| `OrderPlaced`        | **Ha**  | Rezervni consume qiladi — real tovar               |
+| `StockAdjusted`      | **Ha**  | Real tovar                                         |
+| `InstallmentOverdue` | **Ha**  | Mijoz huquqi, penya                                |
+| `ProductUpdated`     | Yo'q    | Search reindex — yo'qolsa keyingi safar tuzatiladi |
+| `ReviewPosted`       | Yo'q    | Moderatsiya baribir qo'lda                         |
+| `CartUpdated`        | Yo'q    | Efemer                                             |
 
 **Mezon:** event yo'qolsa **pul, real tovar yoki mijoz huquqi** zarar ko'radimi? Ha bo'lsa — outbox.
 
@@ -101,6 +101,7 @@ async onPaymentCompleted(e) {
 ```
 
 Ikki texnika:
+
 1. **Shartli update** — `WHERE status = 'CONFIRMED'`. Ikkinchi marta 0 qator → hech narsa qilinmaydi
 2. **Ishlangan event'lar jurnali** — `eventId` bo'yicha tekshirish
 
@@ -117,6 +118,7 @@ Kelajakda: `aggregateId` bo'yicha partitioning + `SELECT ... FOR UPDATE SKIP LOC
 ## Oqibatlar
 
 **Ijobiy:**
+
 - Dual write problem hal qilingan
 - Event yo'qolmaydi — DB'da turadi
 - Retry tabiiy
@@ -124,6 +126,7 @@ Kelajakda: `aggregateId` bo'yicha partitioning + `SELECT ... FOR UPDATE SKIP LOC
 - Failed event'lar ko'rinadi va alert qilinadi
 
 **Salbiy:**
+
 - **Kechikish** — poll oralig'i (~500ms). Real-time emas
 - Qo'shimcha jadval, worker, monitoring
 - **Har handler idempotent bo'lishi shart** — doimiy intizom
@@ -132,12 +135,12 @@ Kelajakda: `aggregateId` bo'yicha partitioning + `SELECT ... FOR UPDATE SKIP LOC
 
 ## Alternativalar
 
-| Variant | Nega rad etildi |
-|---|---|
-| **Oddiy `EventEmitter2`** | Dual write problem. **Kritik bo'lmagan event'lar uchun ishlatiladi** |
-| **CDC** (Debezium + Kafka) | To'g'ri, lekin Kafka + Debezium infrastrukturasi. Bitta do'kon uchun bu absurd |
-| **`LISTEN`/`NOTIFY`** | Poll'siz, tez. Lekin **kafolatsiz** — tinglovchi yo'q bo'lsa xabar yo'qoladi. Aynan hal qilmoqchi bo'lgan muammomiz |
-| **Hamma event outbox'da** | Keraksiz yuklama va kechikish |
+| Variant                    | Nega rad etildi                                                                                                     |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| **Oddiy `EventEmitter2`**  | Dual write problem. **Kritik bo'lmagan event'lar uchun ishlatiladi**                                                |
+| **CDC** (Debezium + Kafka) | To'g'ri, lekin Kafka + Debezium infrastrukturasi. Bitta do'kon uchun bu absurd                                      |
+| **`LISTEN`/`NOTIFY`**      | Poll'siz, tez. Lekin **kafolatsiz** — tinglovchi yo'q bo'lsa xabar yo'qoladi. Aynan hal qilmoqchi bo'lgan muammomiz |
+| **Hamma event outbox'da**  | Keraksiz yuklama va kechikish                                                                                       |
 
 ## Havolalar
 

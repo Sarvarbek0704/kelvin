@@ -58,7 +58,13 @@ enum AttributeType {
   BOOLEAN
   /// Erkin matn
   TEXT
-  /// Ierarxik — IP65 IP44 talabini ham qanoatlantiradi
+  /// Tartiblangan — kattaroq qiymat kichigini qamraydi.
+  ///
+  /// ⚠️ IP DARAJASI BU EMAS. IP suv shkalasi TO'LIQ TARTIBLANGAN EMAS:
+  ///    IPx7 (botirish) IPx5 (suv oqimi) ni QAMRAMAYDI — turli sinovlar.
+  ///    Shuning uchun sanoatda IP65/IP67 qo'sh belgilash ishlatiladi.
+  ///    IP uchun `ProductVariant.ipSatisfies` materializatsiyasi ishlatiladi.
+  ///    docs/05-catalog-and-search.md §3
   ORDINAL
 }
 
@@ -369,7 +375,10 @@ model AttributeValue {
   /// Ko'p tilli: { "ru": "Тёплый белый", "uz-Latn": "Issiq oq" }
   label Json
 
-  /// ORDINAL uchun tartib. IP20=1, IP44=3, IP54=4, IP65=5, IP67=6
+  /// ORDINAL atributlar uchun tartib (kattaroq = kichigini qamraydi).
+  ///
+  /// ⚠️ IP DARAJASI UCHUN ISHLATILMAYDI. IP — qisman tartib, sof raqamli
+  ///    taqqoslash noto'g'ri javob beradi. `ProductVariant.ipSatisfies` ga qarang.
   rank Int?
   /// Rang uchun HEX (rang harorati vizualizatsiyasi: 2700K → #FFB46B)
   hexColor String? @map("hex_color")
@@ -451,7 +460,21 @@ model ProductVariant {
   luminousFlux     Int?     @map("luminous_flux")      // lm
   colorTemperature Int?     @map("color_temperature")  // K — brend nomi shundan
   cri              Int?                                 // Ra
-  ipRating         String?  @map("ip_rating")          // IP20..IP67
+  ipRating         String?  @map("ip_rating")          // IP20..IP68
+
+  /// IP filtri uchun MATERIALIZATSIYA — bu variant qaysi IP talablarini
+  /// qanoatlantiradi: ["IP20", "IP44", "IP54", "IP65"]
+  ///
+  /// ⚠️ Nega kerak: IP suv shkalasi QISMAN tartib. IPx7 (botirish) IPx5
+  ///    (suv oqimi) ni QAMRAMAYDI — turli sinovlar. Shuning uchun
+  ///    `WHERE ip_rating >= 'IP44'` yoki raqamli `rank >= N` NOTO'G'RI
+  ///    javob beradi. PostgreSQL GIN ham, Meilisearch ham qisman tartibni
+  ///    bilmaydi → oldindan hisoblab, oddiy `contains` filtriga aylantiramiz.
+  ///
+  ///    Bu maydon `ipRating` dan avtomatik hisoblanadi (yozishda).
+  ///    docs/03-data-model.md §3.3, docs/05-catalog-and-search.md §3
+  ipSatisfies String[] @map("ip_satisfies")
+
   socketType       String?  @map("socket_type")        // E27, E14, GU10...
   power            Decimal? @db.Decimal(8, 2)          // W
   voltage          Int?                                 // 220, 12, 24
@@ -497,8 +520,9 @@ model ProductVariant {
   @@index([productId])
   @@index([sku])
   @@index([colorTemperature])
-  @@index([ipRating])
   @@index([socketType])
+  /// IP filtri massiv ichidan qidiradi → GIN kerak, B-tree emas
+  @@index([ipSatisfies], type: Gin)
   @@index([attributes], type: Gin)
   @@map("product_variants")
 }
@@ -1252,8 +1276,18 @@ model LedgerEntry {
 
   paymentId String? @map("payment_id") @db.Uuid
 
-  /// "cash.click" | "cash.register" | "revenue.product" |
-  /// "liability.installment_receivable" | "expense.refund"
+  /// Hisob kodi. To'liq reestr: docs/08-payments-and-installments.md §6.3
+  ///
+  ///   cash.click / cash.payme / cash.register     — pul qayerda
+  ///   asset.receivable.provider                   — provayder ushlab turgan
+  ///   asset.receivable.installment                — rassrochka qarzi
+  ///   revenue.product / revenue.delivery          — daromad
+  ///   expense.refund                              — xarajat
+  ///
+  /// ⚠️ Qarz — AKTIV, majburiyat emas. Dastlab bu yerda
+  ///    `liability.installment_receivable` yozilgan edi — buxgalteriya
+  ///    jihatdan xato. Mijoz bizga qarzdor → bu bizning aktivimiz.
+  ///    Yakuniy reestr buxgalter tasdig'ini kutmoqda (Q-07).
   account   String
   direction LedgerDirection
   amount    BigInt

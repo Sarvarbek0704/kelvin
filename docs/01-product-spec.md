@@ -5,6 +5,7 @@
 > **Kanon:** `KELVIN_CANON.md`. Ziddiyat bo'lsa — kanon g'olib.
 
 **Bog'liq hujjatlar:**
+
 - [`docs/02-architecture.md`](./02-architecture.md) — tizim arxitekturasi, modul chegaralari
 - [`docs/04-api-spec.md`](./04-api-spec.md) — API konvensiyalari va endpoint'lar
 - [`docs/05-catalog-and-search.md`](./05-catalog-and-search.md) — katalog modeli, faceted search
@@ -23,6 +24,7 @@ rejalashtirilgan ish. Quyida "bor" deb yozilgan yagona narsa — 12 ta sahifanin
 vizual qobig'i.
 
 **Nima aniq emas** (raqam to'qib chiqarilmaydi):
+
 - Do'konning real aylanmasi, mijozlar soni, SKU soni — NOMA'LUM.
 - Click/Payme/rassrochka provayderlarining API detallari — rasmiy hujjat kerak.
 - 1C integratsiyasi talab qilinadimi — tasdiqlanmagan.
@@ -49,6 +51,7 @@ vannaxonaga IP44 li chiroq, koridorga LED lenta. Texnik atamalarni bilmaydi.
 Telefon orqali qidiradi. Rus yoki o'zbek tilida.
 
 **Og'rig'i.**
+
 - "2700K bilan 4000K farqi nima?" — bilmaydi, lekin noto'g'ri tanlasa xona sovuq ko'rinadi.
 - "Bu chiroq vannaxonaga bo'ladimi?" — IP reytingini tushunmaydi, lekin xato qilsa xavfli.
 - "20 m² zalga qancha yorug'lik kerak?" — tasavvuri yo'q, sotuvchining so'ziga ishonadi.
@@ -57,6 +60,7 @@ Telefon orqali qidiradi. Rus yoki o'zbek tilida.
 - O'rnatishni kim qiladi? Elektrik alohida topilishi kerak.
 
 **Kelvin nima beradi.**
+
 - Rang haroratini **vizual** ko'rsatish (2700K/4000K/6500K — bir xil xonaning uch varianti).
 - Filtrni **savol tilida** berish: "Qayerga?" (vannaxona → IP44+ avtomatik).
 - **Xona kalkulyatori**: m² + xona turi → tavsiya etilgan lyumen diapazoni.
@@ -67,6 +71,7 @@ Telefon orqali qidiradi. Rus yoki o'zbek tilida.
 - Click/Payme/Uzum + **rassrochka** — O'zbekistonda bu ko'pincha asosiy to'lov usuli.
 
 **Muvaffaqiyat mezoni.**
+
 - Buyurtmani sotuvchiga qo'ng'iroq qilmasdan yakunlay oldi.
 - Qaytarish sababi "kutganimdek emas / rang boshqa" bo'lgan holatlar ulushi pasaydi.
   ⚠️ Bazaviy qiymat NOMA'LUM — tizim ishga tushgach 3 oy o'lchanadi, keyin target qo'yiladi.
@@ -80,6 +85,7 @@ tanlaydi. **Texnik parametr birinchi o'rinda**: CRI, rang harorati bir xilligi, 
 dimmable. Sotuvchidan ko'ra ko'proq biladi. Vaqti qimmat.
 
 **Og'rig'i.**
+
 - Katalogda CRI yozilmagan — har mahsulot uchun ta'minotchining PDF datasheet'ini qidirishi kerak.
 - "Bu 40 ta spot bir partiyadan bo'ladimi?" — rang harorati partiyadan partiyaga farq qiladi.
 - Loyiha uchun tanlangan 60 ta pozitsiyani ro'yxat qilib saqlash joyi yo'q — Excel'da yuritadi.
@@ -89,6 +95,7 @@ dimmable. Sotuvchidan ko'ra ko'proq biladi. Vaqti qimmat.
 - Qoldiq real bormi? "Bor" deyishadi, keyin "ta'minotchidan 3 haftada keladi" chiqadi.
 
 **Kelvin nima beradi.**
+
 - **To'liq texnik atributlar** har mahsulotda (kanon §4 dagi 15+ atribut) va ularning
   hammasi **filtrlanadi va taqqoslanadi**.
 - **Taqqoslash jadvali** — 4 tagacha mahsulot yonma-yon, atribut bo'yicha.
@@ -103,6 +110,7 @@ dimmable. Sotuvchidan ko'ra ko'proq biladi. Vaqti qimmat.
 - Lead sifatida CRM ga tushadi — katta loyiha bo'lsa menejer bog'lanadi.
 
 **Muvaffaqiyat mezoni.**
+
 - Loyiha ro'yxatini Excel'siz yig'a oldi va bir tugma bilan so'rovga aylantirdi.
 - Texnik xato (noto'g'ri IP, yetmagan transformator) tizim tomonidan checkout'gacha ushlandi.
 - Takroriy xarid: bir dizayner ikkinchi loyihasi bilan qaytdi.
@@ -116,6 +124,7 @@ Brend muhim emas — parametr va narx muhim. Ko'pincha telefondan, ba'zan zalga 
 Naqd pul yoki o'tkazma. Hisob-faktura kerak bo'lishi mumkin.
 
 **Og'rig'i.**
+
 - 50 ta bir xil spot kerak — bittalab savatga qo'shish azob.
 - "Hozir bormi?" — javob 5 daqiqada kerak, ertaga emas.
 - Kecha 12 000 edi, bugun 13 500 — narx o'zgarishi haqida ogohlantirilmaydi.
@@ -123,6 +132,7 @@ Naqd pul yoki o'tkazma. Hisob-faktura kerak bo'lishi mumkin.
 - Ortiqcha qolgan 7 ta spotni qaytarish — "chekingiz yo'q" deyishadi.
 
 **Kelvin nima beradi.**
+
 - **SKU / shtrix-kod bo'yicha tez qidiruv** va bevosita miqdor kiritish.
 - **Real-time qoldiq** ombor kesimida, "bor/yo'q" emas — aniq son (yoki
   `>10` ko'rinishida, agar aniq son biznes uchun sezgir bo'lsa — §11-OS7).
@@ -132,6 +142,7 @@ Naqd pul yoki o'tkazma. Hisob-faktura kerak bo'lishi mumkin.
 - Har buyurtma tizimda — qaytarish uchun qog'oz chek shart emas.
 
 **Muvaffaqiyat mezoni.**
+
 - 50 pozitsiyali buyurtma 3 daqiqada rasmiylashtirildi.
 - "Bormi?" savoli uchun qo'ng'iroq soni pasaydi (o'lchov: `search` → `order` konversiyasi
   bu segmentda). ⚠️ Bazaviy qiymat yo'q.
@@ -144,6 +155,7 @@ Naqd pul yoki o'tkazma. Hisob-faktura kerak bo'lishi mumkin.
 Kuniga o'nlab mijoz. Komissiya oladi → sotuv unga tegishli bo'lishi muhim.
 
 **Og'rig'i.**
+
 - Mijoz "shu qandil boshqa rangda bormi?" deydi — omborga qo'ng'iroq qiladi, kutadi.
 - Narx va chegirmani kalkulyatorda hisoblaydi — xato qiladi.
 - Chek yozish qo'lda — navbat yig'iladi.
@@ -152,6 +164,7 @@ Kuniga o'nlab mijoz. Komissiya oladi → sotuv unga tegishli bo'lishi muhim.
 - Mijoz "keyin kelaman" deydi va yo'qoladi — kuzatuv yo'q.
 
 **Kelvin nima beradi.**
+
 - **POS** (`pos` moduli): smena ochish/yopish, naqd/karta, chek chiqarish.
   Onlayn va offline **bitta `Order`** modeliga tushadi → qoldiq bitta.
 - Zaldan turib **real qoldiq** va variantlar (rang/o'lcham) ko'rinadi.
@@ -160,6 +173,7 @@ Kuniga o'nlab mijoz. Komissiya oladi → sotuv unga tegishli bo'lishi muhim.
 - **Komissiya hisobi**: har `Order` da `salesUserId` → oy oxirida hisobot.
 
 **Muvaffaqiyat mezoni.**
+
 - Zal savdosi qog'ozsiz, chek POS'dan chiqadi.
 - Sotuvchi o'z sotuvini va komissiyasini istalgan vaqtda ko'radi.
 - Zaldagi qoldiq bilan tizimdagi qoldiq farqi inventarizatsiyada minimal.
@@ -173,6 +187,7 @@ Kuniga o'nlab mijoz. Komissiya oladi → sotuv unga tegishli bo'lishi muhim.
 inventarizatsiya qiladi. Qo'lida skaner yoki telefon. Kompyuter oldida kam o'tiradi.
 
 **Og'rig'i.**
+
 - Ta'minotchi 200 ta quti keltirdi — hujjatga qarab qo'lda sanaydi, xato qiladi.
 - Buyurtmani yig'ishda "qaysi javonda?" — eslab qoladi yoki qidiradi.
 - Qandil sindi — kim aybdor, qachon sindi, hisobdan qanday chiqariladi?
@@ -180,6 +195,7 @@ inventarizatsiya qiladi. Qo'lida skaner yoki telefon. Kompyuter oldida kam o'tir
 - Ikki ombor bor — qaysi birida bor, bilmaydi.
 
 **Kelvin nima beradi.**
+
 - **Shtrix-kod** bilan kirim (`PurchaseOrder` → `StockMovement` `IN`).
 - **Picking list**: buyurtma bo'yicha ro'yxat, ombor/javon joylashuvi bilan.
 - Har harakat `StockMovement` sifatida yozib boriladi — **kim, qachon, nima, nechta, nega**.
@@ -190,6 +206,7 @@ inventarizatsiya qiladi. Qo'lida skaner yoki telefon. Kompyuter oldida kam o'tir
 - **Rezerv ko'rinadi**: 3 ta bor, 2 tasi rezervda → yig'ishga 1 ta.
 
 **Muvaffaqiyat mezoni.**
+
 - Kirim skaner bilan, qo'lda kiritish istisno holat.
 - Inventarizatsiya farqi har safar sababi bilan tushuntiriladi (`ADJUSTMENT` sababsiz yo'q).
 - Picking'da "topilmadi" holatlari kamayadi.
@@ -202,6 +219,7 @@ inventarizatsiya qiladi. Qo'lida skaner yoki telefon. Kompyuter oldida kam o'tir
 Ba'zan naqd pul oladi (COD). Ba'zan mijoz uyda bo'lmaydi.
 
 **Og'rig'i.**
+
 - Marshrut qog'ozda yoki menejer telefon qilib aytadi.
 - Manzil "Chilonzor, 5-kvartal, oldida do'kon bor" — koordinata yo'q.
 - Mijoz javob bermaydi — nima qilish kerak, qayerga yozish kerak?
@@ -209,6 +227,7 @@ Ba'zan naqd pul oladi (COD). Ba'zan mijoz uyda bo'lmaydi.
 - Naqd oldi — kimga topshiradi, qanday hisoblanadi?
 
 **Kelvin nima beradi.**
+
 - **Kuryer PWA** (mobil brauzer, alohida app emas — §11-OS8): kunlik marshrut,
   har to'xtash uchun manzil + koordinata + telefon.
 - Holat o'zgartirish bir tugmada: `PICKED_UP` → `IN_TRANSIT` → `DELIVERED` / `FAILED`.
@@ -220,6 +239,7 @@ Ba'zan naqd pul oladi (COD). Ba'zan mijoz uyda bo'lmaydi.
   NP-qiyin, boshida avtomatlashtirilmaydi).
 
 **Muvaffaqiyat mezoni.**
+
 - Har yetkazish holati va vaqti tizimda — "qayerda?" savoliga javob mijozning o'zida.
 - Sinish nizolari fotoli dalil bilan hal bo'ladi.
 
@@ -231,12 +251,14 @@ Ba'zan naqd pul oladi (COD). Ba'zan mijoz uyda bo'lmaydi.
 Buyurtma bo'yicha manzilga boradi. Ish uchun haq oladi.
 
 **Og'rig'i.**
+
 - "Ertaga soat 10 da bo'l" — qayerda, nima, qancha vaqt oladi, bilmaydi.
 - Yetib boradi — qandil hali yetkazilmagan yoki mijoz uyda yo'q.
 - Shift beton, perforator kerak edi — bilmagan, qaytib ketadi.
 - Qo'shimcha ish chiqdi (eski chiroqni olish) — pulini kim to'laydi?
 
 **Kelvin nima beradi.**
+
 - **`InstallationJob`** — alohida entity, `Order` ga bog'langan, o'z slot'i bilan.
 - **Bog'liqlik qoidasi**: o'rnatish sloti faqat `Shipment` `DELIVERED` bo'lgandan keyin
   aktivlashadi. Tizim ikkalasini bir kunga qo'ymaydi (yoki qo'ysa — ketma-ketlik bilan).
@@ -246,6 +268,7 @@ Buyurtma bo'yicha manzilga boradi. Ish uchun haq oladi.
 - Yakunlash: foto + mijoz tasdig'i → `InstallationJob` `COMPLETED` → haq hisoblanadi.
 
 **Muvaffaqiyat mezoni.**
+
 - Bekor safar (tovar yetmagan / mijoz yo'q) holatlari kamayadi.
 - Har o'rnatish yozib boriladi, haq avtomatik hisoblanadi.
 
@@ -257,6 +280,7 @@ Buyurtma bo'yicha manzilga boradi. Ish uchun haq oladi.
 Rasm, tavsif, atribut, narx kiritadi. Kuniga o'nlab SKU.
 
 **Og'rig'i.**
+
 - **Variant portlashi**: 1 qandil × 4 rang × 3 o'lcham × 2 lampa soni = 24 SKU
   (kanon §9.1). Har birini qo'lda kiritish — bir kun ketadi.
 - Ta'minotchining Excel'i har safar boshqa formatda.
@@ -266,6 +290,7 @@ Rasm, tavsif, atribut, narx kiritadi. Kuniga o'nlab SKU.
 - Qaysi mahsulotda tavsif yo'q — bilmaydi.
 
 **Kelvin nima beradi.**
+
 - **Variant generatori**: atribut o'qlarini tanlaydi (rang × o'lcham) → matritsa
   avtomatik yaratiladi, narx bazadan meros, faqat farqlar qo'lda tuzatiladi (kanon §9.4).
 - **Atribut lug'ati**: `Attribute` + `AttributeValue` — erkin matn EMAS, ro'yxatdan.
@@ -277,6 +302,7 @@ Rasm, tavsif, atribut, narx kiritadi. Kuniga o'nlab SKU.
 - **i18n redaktori**: uz-latn / uz-cyrl / ru yonma-yon.
 
 **Muvaffaqiyat mezoni.**
+
 - 24 SKU li variant matritsasi 10 daqiqadan kam vaqtda yaratiladi.
 - Nashr qilingan mahsulotlarda majburiy atributlar 100% to'liq (tizim ruxsat bermaydi).
 - Filtr atribut qiymatining yozilishi tufayli buzilmaydi.
@@ -289,6 +315,7 @@ Rasm, tavsif, atribut, narx kiritadi. Kuniga o'nlab SKU.
 Savoli: nima sotilyapti, pul qayerda, kim ishlayapti, nima o'g'irlanyapti.
 
 **Og'rig'i.**
+
 - Oy oxirida hisobot 1C dan yoki buxgalterdan 3 kunda keladi.
 - Qaysi mahsulot omborda o'lik yotibdi — bilmaydi.
 - Qaysi sotuvchi qancha sotdi — daftardan sanaladi.
@@ -296,6 +323,7 @@ Savoli: nima sotilyapti, pul qayerda, kim ishlayapti, nima o'g'irlanyapti.
 - Kim narxni o'zgartirdi? Kim chegirma berdi? — iz yo'q.
 
 **Kelvin nima beradi.**
+
 - **Dashboard**: bugungi sotuv, buyurtmalar, kutilayotgan to'lovlar, past qoldiq.
 - **ABC tahlil** — qaysi SKU aylanmaning asosini beradi, qaysi biri o'lik zaxira.
 - **Sotuvchi bo'yicha hisobot** + komissiya.
@@ -304,6 +332,7 @@ Savoli: nima sotilyapti, pul qayerda, kim ishlayapti, nima o'g'irlanyapti.
 - **`LedgerEntry`** — pul harakati double-entry mantiqida, `BigInt` tiyinda (kanon §8).
 
 **Muvaffaqiyat mezoni.**
+
 - Asosiy savollarga javob **kutmasdan** olinadi.
 - Har pul va qoldiq harakatining muallifi bor.
 - ⚠️ "Aylanma X% oshadi" tipidagi va'da bu hujjatda **berilmaydi** — bazaviy raqam
@@ -313,17 +342,17 @@ Savoli: nima sotilyapti, pul qayerda, kim ishlayapti, nima o'g'irlanyapti.
 
 ### Personalar va modullar bog'lanishi
 
-| Persona | Asosiy modullar |
-|---|---|
-| P1 Oila | `catalog`, `search`, `cart`, `order`, `payment`, `delivery`, `review` |
-| P2 Dizayner | `catalog`, `search`, `pricing`, `inventory`, `crm` |
-| P3 Brigada | `search`, `cart`, `order`, `pricing`, `inventory`, `delivery` |
-| P4 Sotuvchi | `pos`, `crm`, `inventory`, `pricing`, `order` |
-| P5 Ombor | `inventory`, `procurement`, `delivery` |
-| P6 Kuryer | `delivery`, `order`, `payment` (COD) |
-| P7 Elektrik | `delivery` (`InstallationJob`), `order` |
-| P8 Kontent | `catalog`, `content`, `pricing`, `admin` |
-| P9 Ega | `analytics`, `admin`, `payment`, `inventory` |
+| Persona     | Asosiy modullar                                                       |
+| ----------- | --------------------------------------------------------------------- |
+| P1 Oila     | `catalog`, `search`, `cart`, `order`, `payment`, `delivery`, `review` |
+| P2 Dizayner | `catalog`, `search`, `pricing`, `inventory`, `crm`                    |
+| P3 Brigada  | `search`, `cart`, `order`, `pricing`, `inventory`, `delivery`         |
+| P4 Sotuvchi | `pos`, `crm`, `inventory`, `pricing`, `order`                         |
+| P5 Ombor    | `inventory`, `procurement`, `delivery`                                |
+| P6 Kuryer   | `delivery`, `order`, `payment` (COD)                                  |
+| P7 Elektrik | `delivery` (`InstallationJob`), `order`                               |
+| P8 Kontent  | `catalog`, `content`, `pricing`, `admin`                              |
+| P9 Ega      | `analytics`, `admin`, `payment`, `inventory`                          |
 
 ---
 
@@ -959,6 +988,7 @@ flowchart TD
 ```
 
 **Nozik joylar:**
+
 - **Rezerv to'lovdan OLDIN** (K qadam). Aks holda mijoz to'laydi, keyin tovar yo'qligi
   ma'lum bo'ladi. Rezerv TTL to'lov oynasidan uzun (§11-OS2).
 - Rezerv **baribir** yetmasligi mumkin (TTL tugab qolsa) → saga kompensatsiyasi
@@ -1001,6 +1031,7 @@ flowchart TD
 ```
 
 **Nozik joylar:**
+
 - POS `Order` — onlayn bilan **bir xil model**. Ikki xil model ikki xil qoldiq
   demakdir, bu esa xatoning manbai.
 - POS'da **rezerv yo'q**: tovar mijozning qo'lida, darhol `OUT`.
@@ -1051,6 +1082,7 @@ flowchart TD
 ```
 
 **Nozik joylar:**
+
 - Qoldiq **hech qachon to'g'ridan-to'g'ri o'zgartirilmaydi**. Har o'zgarish —
   `StockMovement` (`IN` / `OUT` / `TRANSFER` / `ADJUSTMENT`), sababi bilan.
   `StockItem.onHand` — bu harakatlar natijasi.
@@ -1062,18 +1094,18 @@ flowchart TD
 
 ### 4.1 Rollar
 
-| Rol | Kim | Qamrov |
-|---|---|---|
-| `OWNER` | Do'kon egasi / direktor | Hamma narsa. Rol berish. Moliya. |
-| `ADMIN` | Boshqaruvchi | `OWNER` dan tashqari deyarli hamma narsa |
-| `CONTENT_MANAGER` | Kontent menejer (P8) | Katalog, kontent, media |
-| `SALES` | Zal sotuvchisi (P4) | POS, CRM, o'z sotuvi |
-| `WAREHOUSE` | Ombor xodimi (P5) | Qoldiq, kirim, picking, inventarizatsiya |
-| `COURIER` | Kuryer (P6) | Faqat o'z marshruti |
-| `INSTALLER` | O'rnatuvchi (P7) | Faqat o'z ishlari |
-| `ACCOUNTANT` | Buxgalter | Moliya — **faqat o'qish** |
-| `CUSTOMER` | Ro'yxatdan o'tgan xaridor | Faqat o'z ma'lumoti |
-| `GUEST` | Anonim tashrifchi | Ommaviy o'qish + mehmon savati |
+| Rol               | Kim                       | Qamrov                                   |
+| ----------------- | ------------------------- | ---------------------------------------- |
+| `OWNER`           | Do'kon egasi / direktor   | Hamma narsa. Rol berish. Moliya.         |
+| `ADMIN`           | Boshqaruvchi              | `OWNER` dan tashqari deyarli hamma narsa |
+| `CONTENT_MANAGER` | Kontent menejer (P8)      | Katalog, kontent, media                  |
+| `SALES`           | Zal sotuvchisi (P4)       | POS, CRM, o'z sotuvi                     |
+| `WAREHOUSE`       | Ombor xodimi (P5)         | Qoldiq, kirim, picking, inventarizatsiya |
+| `COURIER`         | Kuryer (P6)               | Faqat o'z marshruti                      |
+| `INSTALLER`       | O'rnatuvchi (P7)          | Faqat o'z ishlari                        |
+| `ACCOUNTANT`      | Buxgalter                 | Moliya — **faqat o'qish**                |
+| `CUSTOMER`        | Ro'yxatdan o'tgan xaridor | Faqat o'z ma'lumoti                      |
+| `GUEST`           | Anonim tashrifchi         | Ommaviy o'qish + mehmon savati           |
 
 **Prinsip:** rol — **lavozim**, ruxsat — **amal**. Rol ruxsatlar to'plamini beradi.
 Tekshiruv har doim **ruxsat** darajasida, rol darajasida emas. Bu kelajakda rolni
@@ -1084,51 +1116,51 @@ o'zgartirishni arzon qiladi.
 Belgilar: **C** = create, **R** = read (barchasi), **U** = update, **D** = delete,
 **Ro** = read own (faqat o'ziniki), **Uo** = update own, **—** = ruxsat yo'q.
 
-| Resurs | OWNER | ADMIN | CONTENT_MGR | SALES | WAREHOUSE | COURIER | INSTALLER | ACCOUNTANT | CUSTOMER | GUEST |
-|---|---|---|---|---|---|---|---|---|---|---|
-| `product` (nashr etilgan) | CRUD | CRUD | CRUD | R | R | — | R | R | R | R |
-| `product` (draft) | CRUD | CRUD | CRUD | — | — | — | — | — | — | — |
-| `product:publish` | ✓ | ✓ | ✓ | — | — | — | — | — | — | — |
-| `category` | CRUD | CRUD | CRUD | R | R | — | — | R | R | R |
-| `attribute` (lug'at) | CRUD | CRUD | CU | R | R | — | — | — | R | R |
-| `media` | CRUD | CRUD | CRUD | R | R | — | — | — | R | R |
-| `price` | CRUD | CRUD | R | R | — | — | — | R | R | R |
-| `discount` / `promotion` | CRUD | CRUD | — | R | — | — | — | R | R | R |
-| `discount:manual` (chekda) | ✓ cheksiz | ✓ cheksiz | — | ✓ limitli | — | — | — | — | — | — |
-| `cart` | — | — | — | C R U (mijoz uchun) | — | — | — | — | CRUD own | CRUD own |
-| `order` | CRUD | CRUD | — | C R U | R (picking) | Ro | Ro | R | Ro | — |
-| `order:cancel` | ✓ | ✓ | — | ✓ | — | — | — | — | ✓ own (shartli) | — |
-| `order:status` | ✓ | ✓ | — | ✓ qisman | ✓ qisman | ✓ qisman | ✓ qisman | — | — | — |
-| `payment` | R | R | — | R (o'z chekida) | — | R (COD) | — | R | Ro | — |
-| `payment:refund` | ✓ | ✓ | — | — | — | — | — | — | — | — |
-| `installment` | CRUD | CRUD | — | C R | — | — | — | R | Ro | — |
-| `ledger` | R | R | — | — | — | — | — | R | — | — |
-| `stock` | R | R | — | R | R | — | — | R | — | — |
-| `stock:movement` | CR | CR | — | — | CR | — | — | R | — | — |
-| `stock:adjustment` | ✓ | ✓ | — | — | ✓ (limitli, OS10) | — | — | — | — | — |
-| `reservation` | R | R | — | R | R | — | — | — | — | — |
-| `warehouse` | CRUD | CRUD | — | R | R | — | — | R | — | — |
-| `supplier` | CRUD | CRUD | — | — | R | — | — | R | — | — |
-| `purchase-order` | CRUD | CRUD | — | — | R U (kirim) | — | — | R | — | — |
-| `shipment` | CRUD | CRUD | — | R | CRU | Ro Uo | — | — | Ro | — |
-| `delivery-zone` / `slot` | CRUD | CRUD | — | R | R | R | R | — | R | R |
-| `courier` | CRUD | CRUD | — | R | R | Ro | — | — | — | — |
-| `installation-job` | CRUD | CRUD | — | CR | — | — | Ro Uo | — | Ro | — |
-| `customer` | CRUD | CRUD | — | CRU | — | Ro (yetkazish uchun) | Ro (ish uchun) | R | Ro Uo | — |
-| `lead` | CRUD | CRUD | — | CRU own | — | — | — | — | — | — |
-| `segment` | CRUD | CRUD | — | R | — | — | — | R | — | — |
-| `pos:shift` | CRUD | CRUD | — | C Ro Uo | — | — | — | R | — | — |
-| `pos:transaction` | R | R | — | C Ro | — | — | — | R | — | — |
-| `review` | CRUD | CRUD | RU (moderatsiya) | R | — | — | — | — | C Ro Uo D own | R |
-| `review:moderate` | ✓ | ✓ | ✓ | — | — | — | — | — | — | — |
-| `question` / `answer` | CRUD | CRUD | CRUD | CR (javob) | — | — | — | — | C own | R |
-| `blog-post` / `page` / `banner` | CRUD | CRUD | CRUD | R | — | — | — | — | R | R |
-| `report` | R | R | — | Ro (o'z sotuvi) | R (ombor) | — | — | R | — | — |
-| `user` (xodim) | CRUD | CRU | — | — | — | — | — | — | — | — |
-| `user:role` | ✓ | ✓ (`OWNER` dan tashqari) | — | — | — | — | — | — | — | — |
-| `audit-log` | R | R | — | — | — | — | — | R | — | — |
-| `feature-flag` | CRUD | RU | — | — | — | — | — | — | — | — |
-| `settings` | CRUD | RU | — | — | — | — | — | — | — | — |
+| Resurs                          | OWNER     | ADMIN                    | CONTENT_MGR      | SALES               | WAREHOUSE         | COURIER              | INSTALLER      | ACCOUNTANT | CUSTOMER        | GUEST    |
+| ------------------------------- | --------- | ------------------------ | ---------------- | ------------------- | ----------------- | -------------------- | -------------- | ---------- | --------------- | -------- |
+| `product` (nashr etilgan)       | CRUD      | CRUD                     | CRUD             | R                   | R                 | —                    | R              | R          | R               | R        |
+| `product` (draft)               | CRUD      | CRUD                     | CRUD             | —                   | —                 | —                    | —              | —          | —               | —        |
+| `product:publish`               | ✓         | ✓                        | ✓                | —                   | —                 | —                    | —              | —          | —               | —        |
+| `category`                      | CRUD      | CRUD                     | CRUD             | R                   | R                 | —                    | —              | R          | R               | R        |
+| `attribute` (lug'at)            | CRUD      | CRUD                     | CU               | R                   | R                 | —                    | —              | —          | R               | R        |
+| `media`                         | CRUD      | CRUD                     | CRUD             | R                   | R                 | —                    | —              | —          | R               | R        |
+| `price`                         | CRUD      | CRUD                     | R                | R                   | —                 | —                    | —              | R          | R               | R        |
+| `discount` / `promotion`        | CRUD      | CRUD                     | —                | R                   | —                 | —                    | —              | R          | R               | R        |
+| `discount:manual` (chekda)      | ✓ cheksiz | ✓ cheksiz                | —                | ✓ limitli           | —                 | —                    | —              | —          | —               | —        |
+| `cart`                          | —         | —                        | —                | C R U (mijoz uchun) | —                 | —                    | —              | —          | CRUD own        | CRUD own |
+| `order`                         | CRUD      | CRUD                     | —                | C R U               | R (picking)       | Ro                   | Ro             | R          | Ro              | —        |
+| `order:cancel`                  | ✓         | ✓                        | —                | ✓                   | —                 | —                    | —              | —          | ✓ own (shartli) | —        |
+| `order:status`                  | ✓         | ✓                        | —                | ✓ qisman            | ✓ qisman          | ✓ qisman             | ✓ qisman       | —          | —               | —        |
+| `payment`                       | R         | R                        | —                | R (o'z chekida)     | —                 | R (COD)              | —              | R          | Ro              | —        |
+| `payment:refund`                | ✓         | ✓                        | —                | —                   | —                 | —                    | —              | —          | —               | —        |
+| `installment`                   | CRUD      | CRUD                     | —                | C R                 | —                 | —                    | —              | R          | Ro              | —        |
+| `ledger`                        | R         | R                        | —                | —                   | —                 | —                    | —              | R          | —               | —        |
+| `stock`                         | R         | R                        | —                | R                   | R                 | —                    | —              | R          | —               | —        |
+| `stock:movement`                | CR        | CR                       | —                | —                   | CR                | —                    | —              | R          | —               | —        |
+| `stock:adjustment`              | ✓         | ✓                        | —                | —                   | ✓ (limitli, OS10) | —                    | —              | —          | —               | —        |
+| `reservation`                   | R         | R                        | —                | R                   | R                 | —                    | —              | —          | —               | —        |
+| `warehouse`                     | CRUD      | CRUD                     | —                | R                   | R                 | —                    | —              | R          | —               | —        |
+| `supplier`                      | CRUD      | CRUD                     | —                | —                   | R                 | —                    | —              | R          | —               | —        |
+| `purchase-order`                | CRUD      | CRUD                     | —                | —                   | R U (kirim)       | —                    | —              | R          | —               | —        |
+| `shipment`                      | CRUD      | CRUD                     | —                | R                   | CRU               | Ro Uo                | —              | —          | Ro              | —        |
+| `delivery-zone` / `slot`        | CRUD      | CRUD                     | —                | R                   | R                 | R                    | R              | —          | R               | R        |
+| `courier`                       | CRUD      | CRUD                     | —                | R                   | R                 | Ro                   | —              | —          | —               | —        |
+| `installation-job`              | CRUD      | CRUD                     | —                | CR                  | —                 | —                    | Ro Uo          | —          | Ro              | —        |
+| `customer`                      | CRUD      | CRUD                     | —                | CRU                 | —                 | Ro (yetkazish uchun) | Ro (ish uchun) | R          | Ro Uo           | —        |
+| `lead`                          | CRUD      | CRUD                     | —                | CRU own             | —                 | —                    | —              | —          | —               | —        |
+| `segment`                       | CRUD      | CRUD                     | —                | R                   | —                 | —                    | —              | R          | —               | —        |
+| `pos:shift`                     | CRUD      | CRUD                     | —                | C Ro Uo             | —                 | —                    | —              | R          | —               | —        |
+| `pos:transaction`               | R         | R                        | —                | C Ro                | —                 | —                    | —              | R          | —               | —        |
+| `review`                        | CRUD      | CRUD                     | RU (moderatsiya) | R                   | —                 | —                    | —              | —          | C Ro Uo D own   | R        |
+| `review:moderate`               | ✓         | ✓                        | ✓                | —                   | —                 | —                    | —              | —          | —               | —        |
+| `question` / `answer`           | CRUD      | CRUD                     | CRUD             | CR (javob)          | —                 | —                    | —              | —          | C own           | R        |
+| `blog-post` / `page` / `banner` | CRUD      | CRUD                     | CRUD             | R                   | —                 | —                    | —              | —          | R               | R        |
+| `report`                        | R         | R                        | —                | Ro (o'z sotuvi)     | R (ombor)         | —                    | —              | R          | —               | —        |
+| `user` (xodim)                  | CRUD      | CRU                      | —                | —                   | —                 | —                    | —              | —          | —               | —        |
+| `user:role`                     | ✓         | ✓ (`OWNER` dan tashqari) | —                | —                   | —                 | —                    | —              | —          | —               | —        |
+| `audit-log`                     | R         | R                        | —                | —                   | —                 | —                    | —              | R          | —               | —        |
+| `feature-flag`                  | CRUD      | RU                       | —                | —                   | —                 | —                    | —              | —          | —               | —        |
+| `settings`                      | CRUD      | RU                       | —                | —                   | —                 | —                    | —              | —          | —               | —        |
 
 ### 4.3 Qat'iy qoidalar
 
@@ -1254,9 +1286,7 @@ export type Role = (typeof ROLES)[number];
  */
 export const ROLE_PERMISSIONS: Readonly<Record<Role, readonly Permission[]>> = {
   OWNER: PERMISSIONS, // yagona rol: hamma narsa
-  ADMIN: PERMISSIONS.filter(
-    (p): p is Permission => p !== 'user:assign_owner_role',
-  ),
+  ADMIN: PERMISSIONS.filter((p): p is Permission => p !== 'user:assign_owner_role'),
   CONTENT_MANAGER: [
     'product:read',
     'product:read_draft',
@@ -1409,19 +1439,14 @@ export function canReadOrder(actor: Actor, order: OrderRef): AccessDecision {
     return { allowed: true };
   }
 
-  if (
-    hasPermission(actor.role, 'order:read_own') &&
-    actor.customerId === order.customerId
-  ) {
+  if (hasPermission(actor.role, 'order:read_own') && actor.customerId === order.customerId) {
     return { allowed: true };
   }
 
   if (hasPermission(actor.role, 'order:read_assigned')) {
     const assigned =
-      (actor.courierId !== undefined &&
-        actor.courierId === order.assignedCourierId) ||
-      (actor.installerId !== undefined &&
-        actor.installerId === order.assignedInstallerId);
+      (actor.courierId !== undefined && actor.courierId === order.assignedCourierId) ||
+      (actor.installerId !== undefined && actor.installerId === order.assignedInstallerId);
     if (assigned) return { allowed: true };
   }
 
@@ -1431,6 +1456,7 @@ export function canReadOrder(actor: Actor, order: OrderRef): AccessDecision {
 ```
 
 **Amalga oshirish qoidalari** ([`docs/11-security.md`](./11-security.md) da batafsil):
+
 - Har endpoint **deklarativ** `@RequirePermission('order:read_own')` bilan belgilanadi.
 - Belgisiz endpoint — **deny by default**. Buni test tekshiradi: barcha route'lar
   bo'ylab yurib, ruxsat metadata'si yo'q bo'lsa test yiqiladi.
@@ -1447,22 +1473,23 @@ export function canReadOrder(actor: Actor, order: OrderRef): AccessDecision {
 Bu sahifalar **allaqachon kodda bor** (kanon §3), lekin **statik**: ma'lumot qo'lda
 yozilgan, `fetch` yo'q. Ish — **layout va dizaynga tegmasdan** ularni API ga ulash.
 
-| # | Sahifa | Maqsad | Kim ko'radi | Asosiy element | Hozirgi holat → kerak |
-|---|---|---|---|---|---|
-| 1 | `Catalog` (bosh) | Kirish nuqtasi, kategoriyalar, aksiya | Hamma | Banner slider, kategoriya gridi, tavsiya | Statik → `content` + `catalog` API |
-| 2 | `AllProducts` | Barcha mahsulotlar + filtr | Hamma | Facet paneli, grid, saralash, pagination | Qo'lda yozilgan ro'yxat → `search` API, cursor pagination |
-| 3 | `ProductDetail` | Mahsulot kartochkasi | Hamma | Galereya, variant tanlash, atribut jadvali, savatga, sharh | Yagona `useState` bor → variant, qoldiq, narx, `review` |
-| 4 | `Basket` | Savat | Hamma | Pozitsiyalar, miqdor, jami, checkout tugmasi | **Ishlamaydi** (qattiq yozilgan rasm) → `cart` API + Zustand |
-| 5 | `Favorites` | Saqlangan mahsulotlar | Hamma | Grid, o'chirish, savatga | Statik → mehmon: localStorage, user: server |
-| 6 | `Blog` | Kontent, SEO | Hamma | Post ro'yxati, kategoriya | Statik → `content` API |
-| 7 | `AboutUs` | Do'kon haqida | Hamma | Matn, foto | Kodda matn → `Page` entity |
-| 8 | `Contacts` | Aloqa | Hamma | Manzil, telefon, **xarita** | ⚠️ Xarita **Moskvani** ko'rsatadi (Figma placeholder) → O'zbekiston |
-| 9 | `DeliveryPayment` | Yetkazish/to'lov shartlari | Hamma | Matn, zona jadvali | Kodda matn → `Page` + real `DeliveryZone` |
-| 10 | `Garant` | Kafolat | Hamma | Matn | Kodda matn → `Page`. ⚠️ Yuridik matn — yurist tekshiradi |
-| 11 | `Return` | Qaytarish | Hamma | Matn, ariza | Kodda matn → `Page` + qaytarish formasi |
-| 12 | `NotFoundPage` | 404 | Hamma | Xabar, qidiruv | Ishlaydi → o'zgarish shart emas |
+| #   | Sahifa            | Maqsad                                | Kim ko'radi | Asosiy element                                             | Hozirgi holat → kerak                                               |
+| --- | ----------------- | ------------------------------------- | ----------- | ---------------------------------------------------------- | ------------------------------------------------------------------- |
+| 1   | `Catalog` (bosh)  | Kirish nuqtasi, kategoriyalar, aksiya | Hamma       | Banner slider, kategoriya gridi, tavsiya                   | Statik → `content` + `catalog` API                                  |
+| 2   | `AllProducts`     | Barcha mahsulotlar + filtr            | Hamma       | Facet paneli, grid, saralash, pagination                   | Qo'lda yozilgan ro'yxat → `search` API, cursor pagination           |
+| 3   | `ProductDetail`   | Mahsulot kartochkasi                  | Hamma       | Galereya, variant tanlash, atribut jadvali, savatga, sharh | Yagona `useState` bor → variant, qoldiq, narx, `review`             |
+| 4   | `Basket`          | Savat                                 | Hamma       | Pozitsiyalar, miqdor, jami, checkout tugmasi               | **Ishlamaydi** (qattiq yozilgan rasm) → `cart` API + Zustand        |
+| 5   | `Favorites`       | Saqlangan mahsulotlar                 | Hamma       | Grid, o'chirish, savatga                                   | Statik → mehmon: localStorage, user: server                         |
+| 6   | `Blog`            | Kontent, SEO                          | Hamma       | Post ro'yxati, kategoriya                                  | Statik → `content` API                                              |
+| 7   | `AboutUs`         | Do'kon haqida                         | Hamma       | Matn, foto                                                 | Kodda matn → `Page` entity                                          |
+| 8   | `Contacts`        | Aloqa                                 | Hamma       | Manzil, telefon, **xarita**                                | ⚠️ Xarita **Moskvani** ko'rsatadi (Figma placeholder) → O'zbekiston |
+| 9   | `DeliveryPayment` | Yetkazish/to'lov shartlari            | Hamma       | Matn, zona jadvali                                         | Kodda matn → `Page` + real `DeliveryZone`                           |
+| 10  | `Garant`          | Kafolat                               | Hamma       | Matn                                                       | Kodda matn → `Page`. ⚠️ Yuridik matn — yurist tekshiradi            |
+| 11  | `Return`          | Qaytarish                             | Hamma       | Matn, ariza                                                | Kodda matn → `Page` + qaytarish formasi                             |
+| 12  | `NotFoundPage`    | 404                                   | Hamma       | Xabar, qidiruv                                             | Ishlaydi → o'zgarish shart emas                                     |
 
 **Butun storefront bo'yicha global o'zgarishlar** (kanon §3):
+
 - Narxlar `₽` → **`UZS`**, formatlash `uz-UZ` locale bilan
 - `index.html`: `<title>lesson17</title>` → **Kelvin**
 - Brend nomi va logotip: NORNLIGHT → **Kelvin** (faqat shu; qolgan dizayn tegilmaydi)
@@ -1470,23 +1497,24 @@ yozilgan, `fetch` yo'q. Ish — **layout va dizaynga tegmasdan** ularni API ga u
 
 ### 5.2 Qo'shiladigan yangi sahifalar
 
-| # | Sahifa | Route | Maqsad | Kim ko'radi | Asosiy element |
-|---|---|---|---|---|---|
-| 13 | Kirish / Ro'yxatdan o'tish | `/auth` | Telefon + SMS kod | `GUEST` | Telefon maydoni, OTP, taymer, qayta yuborish |
-| 14 | Profil | `/profile` | Shaxsiy ma'lumot | `CUSTOMER` | Ism, telefon, til tanlovi, xabar sozlamalari |
-| 15 | Manzillarim | `/profile/addresses` | `Address` boshqaruvi | `CUSTOMER` | Ro'yxat, qo'shish, xarita nuqtasi, asosiy manzil |
-| 16 | Buyurtmalarim | `/orders` | Tarix va holat | `CUSTOMER` | Ro'yxat, holat, takroriy buyurtma |
-| 17 | Buyurtma detali | `/orders/:id` | Bitta buyurtma | `CUSTOMER` (own) | Pozitsiyalar, holat timeline, kuryer, hujjat |
-| 18 | Checkout | `/checkout` | Buyurtma rasmiylashtirish | Hamma | Bosqichlar: kontakt → yetkazish → o'rnatish → to'lov |
-| 19 | To'lov natijasi | `/checkout/result` | Provayderdan qaytish | Hamma | Muvaffaqiyat/xato, buyurtma raqami |
-| 20 | Qidiruv natijalari | `/search?q=` | Matn qidiruvi | Hamma | Natijalar, facet, "topilmadi" holati |
-| 21 | Taqqoslash | `/compare` | Mahsulot taqqoslash | Hamma | Atribut jadvali, 4 tagacha, farqni ajratish |
-| 22 | Loyiha ro'yxatlari | `/projects` | Dizayner ro'yxatlari (P2) | `CUSTOMER` | Nomlangan ro'yxat, miqdor, eksport, savatga |
-| 23 | Xona kalkulyatori | `/tools/lumen-calculator` | m² → lyumen | Hamma | Xona turi, maydon, natija + tavsiya |
-| 24 | Rassrochka kalkulyatori | `/tools/installment` | Grafik oldindan | Hamma | Summa, muddat → oylik to'lov |
-| 25 | Kategoriya sahifasi | `/c/:slug` | SEO landing | Hamma | Kategoriya matni, facet, mahsulotlar |
+| #   | Sahifa                     | Route                     | Maqsad                    | Kim ko'radi      | Asosiy element                                       |
+| --- | -------------------------- | ------------------------- | ------------------------- | ---------------- | ---------------------------------------------------- |
+| 13  | Kirish / Ro'yxatdan o'tish | `/auth`                   | Telefon + SMS kod         | `GUEST`          | Telefon maydoni, OTP, taymer, qayta yuborish         |
+| 14  | Profil                     | `/profile`                | Shaxsiy ma'lumot          | `CUSTOMER`       | Ism, telefon, til tanlovi, xabar sozlamalari         |
+| 15  | Manzillarim                | `/profile/addresses`      | `Address` boshqaruvi      | `CUSTOMER`       | Ro'yxat, qo'shish, xarita nuqtasi, asosiy manzil     |
+| 16  | Buyurtmalarim              | `/orders`                 | Tarix va holat            | `CUSTOMER`       | Ro'yxat, holat, takroriy buyurtma                    |
+| 17  | Buyurtma detali            | `/orders/:id`             | Bitta buyurtma            | `CUSTOMER` (own) | Pozitsiyalar, holat timeline, kuryer, hujjat         |
+| 18  | Checkout                   | `/checkout`               | Buyurtma rasmiylashtirish | Hamma            | Bosqichlar: kontakt → yetkazish → o'rnatish → to'lov |
+| 19  | To'lov natijasi            | `/checkout/result`        | Provayderdan qaytish      | Hamma            | Muvaffaqiyat/xato, buyurtma raqami                   |
+| 20  | Qidiruv natijalari         | `/search?q=`              | Matn qidiruvi             | Hamma            | Natijalar, facet, "topilmadi" holati                 |
+| 21  | Taqqoslash                 | `/compare`                | Mahsulot taqqoslash       | Hamma            | Atribut jadvali, 4 tagacha, farqni ajratish          |
+| 22  | Loyiha ro'yxatlari         | `/projects`               | Dizayner ro'yxatlari (P2) | `CUSTOMER`       | Nomlangan ro'yxat, miqdor, eksport, savatga          |
+| 23  | Xona kalkulyatori          | `/tools/lumen-calculator` | m² → lyumen               | Hamma            | Xona turi, maydon, natija + tavsiya                  |
+| 24  | Rassrochka kalkulyatori    | `/tools/installment`      | Grafik oldindan           | Hamma            | Summa, muddat → oylik to'lov                         |
+| 25  | Kategoriya sahifasi        | `/c/:slug`                | SEO landing               | Hamma            | Kategoriya matni, facet, mahsulotlar                 |
 
 **Izohlar:**
+
 - **13 (Auth)**: parol YO'Q, telefon + OTP. O'zbekistonda bu odatiy va parol tiklash
   oqimini butunlay yo'q qiladi. ⚠️ Xodimlar uchun parol kerakmi — `11-security.md`.
 - **23 (Kalkulyator)**: normativ qiymatlar ⚠️ **to'qib chiqarilmaydi** — QMQ/ShNQ yoki
@@ -1505,59 +1533,59 @@ ADR da asoslanadi).
 
 **Prinsip:** admin — **ish quroli**, vitrina emas. Zichlik > bo'shliq. Klaviatura > sichqoncha.
 
-| Bo'lim | Sahifa | Kim ko'radi | Asosiy element |
-|---|---|---|---|
-| **Dashboard** | Bosh | `OWNER`, `ADMIN` | Bugungi sotuv, buyurtma, past qoldiq, kechikkan rassrochka |
-| **Mahsulot** | Mahsulotlar ro'yxati | `OWNER`, `ADMIN`, `CONTENT_MANAGER` | Jadval, filtr, ommaviy amal, holat (`DRAFT`/`PUBLISHED`) |
-| | Mahsulot tahriri | ⌐ | Tablar: asosiy, atribut, variant, media, narx, SEO, i18n |
-| | **Variant generatori** | ⌐ | O'q tanlash → matritsa preview → tozalash → yaratish (US-CAT-01) |
-| | Kategoriyalar | ⌐ | Daraxt, drag-drop tartib, i18n |
-| | Atribut lug'ati | ⌐ | `Attribute` + `AttributeValue`, filtrda ko'rinishi, birlik |
-| | Import | ⌐ | CSV/Excel, mapping profili, **dry-run**, xatolar hisoboti |
-| | Media kutubxonasi | ⌐ | Yuklash, qayta ishlash holati, mahsulotga bog'lash |
-| **Narx** | Narx ro'yxatlari | `OWNER`, `ADMIN` | `PriceList`, segment (B2C/dizayner/B2B) |
-| | Chegirma va aksiya | `OWNER`, `ADMIN` | Qoida, tartib, `stackable`, davr |
-| | **Narx debuggeri** | `OWNER`, `ADMIN` | SKU + segment → qaysi qoida qancha berdi (US-PRI-01) |
-| | Bundle | `OWNER`, `ADMIN` | Komponentlar, bundle narxi |
-| **Buyurtma** | Buyurtmalar | `OWNER`, `ADMIN`, `SALES` | Jadval, holat filtri, kanal (online/POS), qidiruv |
-| | Buyurtma detali | ⌐ | Pozitsiyalar, to'lov, rezerv, shipment, holat timeline, izoh |
-| | **Muammoli buyurtmalar** | `OWNER`, `ADMIN` | Saga to'xtaganlari, refund kutayotganlar, picking'da yetishmaganlar |
-| | Qaytarish | `OWNER`, `ADMIN` | Ariza, sabab, holat, refund |
-| **To'lov** | To'lovlar | `OWNER`, `ADMIN`, `ACCOUNTANT` | Jadval, provayder, holat, tekshirish |
-| | Rassrochka | `OWNER`, `ADMIN`, `ACCOUNTANT` | Grafik, kechikkanlar, to'lov qayd etish |
-| | Ledger | `OWNER`, `ADMIN`, `ACCOUNTANT` | `LedgerEntry` ro'yxati, balans (o'qish) |
-| **Ombor** | Qoldiq | `OWNER`, `ADMIN`, `WAREHOUSE` | SKU × ombor matritsasi, `onHand`/`reserved`/`available` |
-| | Harakatlar | ⌐ | `StockMovement` jurnali, filtr (tur, sana, foydalanuvchi) |
-| | Kirim | ⌐ | `PurchaseOrder` bo'yicha skanerlash, farq qayd etish |
-| | Inventarizatsiya | ⌐ | Sessiya, sanash, farq, tasdiqlash |
-| | Picking | `WAREHOUSE` | Buyurtma navbati, ro'yxat, joylashuv |
-| | Omborlar | `OWNER`, `ADMIN` | `Warehouse` CRUD |
-| **Xarid** | Ta'minotchilar | `OWNER`, `ADMIN` | `Supplier` CRUD, shartlar |
-| | Xarid buyurtmalari | `OWNER`, `ADMIN` | `PurchaseOrder`, holat, kutilayotgan kelish |
-| | Past qoldiq | `OWNER`, `ADMIN` | `reorderPoint` dan pastdagilar |
-| **Yetkazish** | Zonalar va slotlar | `OWNER`, `ADMIN` | `DeliveryZone` (xarita), `DeliverySlot` sig'imi, narx |
-| | Marshrutlar | `OWNER`, `ADMIN` | Kunlik yetkazishlar, kuryerga **qo'lda** tayinlash |
-| | Kuryerlar | `OWNER`, `ADMIN` | `Courier` CRUD, yuklama |
-| | O'rnatishlar | `OWNER`, `ADMIN`, `SALES` | `InstallationJob` kalendari, elektrikka tayinlash |
-| **Mijoz** | Mijozlar | `OWNER`, `ADMIN`, `SALES` | Ro'yxat, qidiruv (telefon), buyurtma tarixi |
-| | Mijoz kartochkasi | ⌐ | Kontakt, manzil, buyurtma, rassrochka, izoh |
-| | Lidlar | `OWNER`, `ADMIN`, `SALES` | Voronka (kanban), keyingi aloqa |
-| | Segmentlar | `OWNER`, `ADMIN` | Qoida, hisoblangan a'zolar |
-| **POS** | Kassa | `SALES` | Skanerlash, chek, to'lov (alohida sodda ekran) |
-| | Smenalar | `OWNER`, `ADMIN`, `ACCOUNTANT` | `PosShift` ro'yxati, naqd farqi |
-| **Kontent** | Blog | `CONTENT_MANAGER`+ | `BlogPost` CRUD, i18n |
-| | Sahifalar | `CONTENT_MANAGER`+ | `Page` CRUD (statik sahifalar matni) |
-| | Bannerlar | `CONTENT_MANAGER`+ | `Banner`, davr, til |
-| | Sharh moderatsiyasi | `CONTENT_MANAGER`+ | Navbat, tasdiqlash/rad, savol-javob |
-| **Hisobot** | Sotuv | `OWNER`, `ADMIN`, `ACCOUNTANT` | Davr, kategoriya, kanal |
-| | Sotuvchi bo'yicha | `OWNER`, `ADMIN` | Sotuv + komissiya |
-| | ABC tahlil | `OWNER`, `ADMIN` | A/B/C guruhlar, o'lik zaxira |
-| | Voronka | `OWNER`, `ADMIN` | Ko'rish → savat → checkout → to'lov |
-| **Sozlama** | Foydalanuvchilar | `OWNER`, `ADMIN` | Xodim, rol tayinlash |
-| | **Audit log** | `OWNER`, `ADMIN`, `ACCOUNTANT` | Append-only jurnal, filtr |
-| | Feature flag | `OWNER` (yozish), `ADMIN` (o'qish) | Yoqish/o'chirish |
-| | Integratsiyalar | `OWNER` | Click/Payme/Eskiz/Telegram konfiguratsiyasi |
-| | Umumiy | `OWNER` | Do'kon rekvizitlari, ish vaqti, til |
+| Bo'lim        | Sahifa                   | Kim ko'radi                         | Asosiy element                                                      |
+| ------------- | ------------------------ | ----------------------------------- | ------------------------------------------------------------------- |
+| **Dashboard** | Bosh                     | `OWNER`, `ADMIN`                    | Bugungi sotuv, buyurtma, past qoldiq, kechikkan rassrochka          |
+| **Mahsulot**  | Mahsulotlar ro'yxati     | `OWNER`, `ADMIN`, `CONTENT_MANAGER` | Jadval, filtr, ommaviy amal, holat (`DRAFT`/`PUBLISHED`)            |
+|               | Mahsulot tahriri         | ⌐                                   | Tablar: asosiy, atribut, variant, media, narx, SEO, i18n            |
+|               | **Variant generatori**   | ⌐                                   | O'q tanlash → matritsa preview → tozalash → yaratish (US-CAT-01)    |
+|               | Kategoriyalar            | ⌐                                   | Daraxt, drag-drop tartib, i18n                                      |
+|               | Atribut lug'ati          | ⌐                                   | `Attribute` + `AttributeValue`, filtrda ko'rinishi, birlik          |
+|               | Import                   | ⌐                                   | CSV/Excel, mapping profili, **dry-run**, xatolar hisoboti           |
+|               | Media kutubxonasi        | ⌐                                   | Yuklash, qayta ishlash holati, mahsulotga bog'lash                  |
+| **Narx**      | Narx ro'yxatlari         | `OWNER`, `ADMIN`                    | `PriceList`, segment (B2C/dizayner/B2B)                             |
+|               | Chegirma va aksiya       | `OWNER`, `ADMIN`                    | Qoida, tartib, `stackable`, davr                                    |
+|               | **Narx debuggeri**       | `OWNER`, `ADMIN`                    | SKU + segment → qaysi qoida qancha berdi (US-PRI-01)                |
+|               | Bundle                   | `OWNER`, `ADMIN`                    | Komponentlar, bundle narxi                                          |
+| **Buyurtma**  | Buyurtmalar              | `OWNER`, `ADMIN`, `SALES`           | Jadval, holat filtri, kanal (online/POS), qidiruv                   |
+|               | Buyurtma detali          | ⌐                                   | Pozitsiyalar, to'lov, rezerv, shipment, holat timeline, izoh        |
+|               | **Muammoli buyurtmalar** | `OWNER`, `ADMIN`                    | Saga to'xtaganlari, refund kutayotganlar, picking'da yetishmaganlar |
+|               | Qaytarish                | `OWNER`, `ADMIN`                    | Ariza, sabab, holat, refund                                         |
+| **To'lov**    | To'lovlar                | `OWNER`, `ADMIN`, `ACCOUNTANT`      | Jadval, provayder, holat, tekshirish                                |
+|               | Rassrochka               | `OWNER`, `ADMIN`, `ACCOUNTANT`      | Grafik, kechikkanlar, to'lov qayd etish                             |
+|               | Ledger                   | `OWNER`, `ADMIN`, `ACCOUNTANT`      | `LedgerEntry` ro'yxati, balans (o'qish)                             |
+| **Ombor**     | Qoldiq                   | `OWNER`, `ADMIN`, `WAREHOUSE`       | SKU × ombor matritsasi, `onHand`/`reserved`/`available`             |
+|               | Harakatlar               | ⌐                                   | `StockMovement` jurnali, filtr (tur, sana, foydalanuvchi)           |
+|               | Kirim                    | ⌐                                   | `PurchaseOrder` bo'yicha skanerlash, farq qayd etish                |
+|               | Inventarizatsiya         | ⌐                                   | Sessiya, sanash, farq, tasdiqlash                                   |
+|               | Picking                  | `WAREHOUSE`                         | Buyurtma navbati, ro'yxat, joylashuv                                |
+|               | Omborlar                 | `OWNER`, `ADMIN`                    | `Warehouse` CRUD                                                    |
+| **Xarid**     | Ta'minotchilar           | `OWNER`, `ADMIN`                    | `Supplier` CRUD, shartlar                                           |
+|               | Xarid buyurtmalari       | `OWNER`, `ADMIN`                    | `PurchaseOrder`, holat, kutilayotgan kelish                         |
+|               | Past qoldiq              | `OWNER`, `ADMIN`                    | `reorderPoint` dan pastdagilar                                      |
+| **Yetkazish** | Zonalar va slotlar       | `OWNER`, `ADMIN`                    | `DeliveryZone` (xarita), `DeliverySlot` sig'imi, narx               |
+|               | Marshrutlar              | `OWNER`, `ADMIN`                    | Kunlik yetkazishlar, kuryerga **qo'lda** tayinlash                  |
+|               | Kuryerlar                | `OWNER`, `ADMIN`                    | `Courier` CRUD, yuklama                                             |
+|               | O'rnatishlar             | `OWNER`, `ADMIN`, `SALES`           | `InstallationJob` kalendari, elektrikka tayinlash                   |
+| **Mijoz**     | Mijozlar                 | `OWNER`, `ADMIN`, `SALES`           | Ro'yxat, qidiruv (telefon), buyurtma tarixi                         |
+|               | Mijoz kartochkasi        | ⌐                                   | Kontakt, manzil, buyurtma, rassrochka, izoh                         |
+|               | Lidlar                   | `OWNER`, `ADMIN`, `SALES`           | Voronka (kanban), keyingi aloqa                                     |
+|               | Segmentlar               | `OWNER`, `ADMIN`                    | Qoida, hisoblangan a'zolar                                          |
+| **POS**       | Kassa                    | `SALES`                             | Skanerlash, chek, to'lov (alohida sodda ekran)                      |
+|               | Smenalar                 | `OWNER`, `ADMIN`, `ACCOUNTANT`      | `PosShift` ro'yxati, naqd farqi                                     |
+| **Kontent**   | Blog                     | `CONTENT_MANAGER`+                  | `BlogPost` CRUD, i18n                                               |
+|               | Sahifalar                | `CONTENT_MANAGER`+                  | `Page` CRUD (statik sahifalar matni)                                |
+|               | Bannerlar                | `CONTENT_MANAGER`+                  | `Banner`, davr, til                                                 |
+|               | Sharh moderatsiyasi      | `CONTENT_MANAGER`+                  | Navbat, tasdiqlash/rad, savol-javob                                 |
+| **Hisobot**   | Sotuv                    | `OWNER`, `ADMIN`, `ACCOUNTANT`      | Davr, kategoriya, kanal                                             |
+|               | Sotuvchi bo'yicha        | `OWNER`, `ADMIN`                    | Sotuv + komissiya                                                   |
+|               | ABC tahlil               | `OWNER`, `ADMIN`                    | A/B/C guruhlar, o'lik zaxira                                        |
+|               | Voronka                  | `OWNER`, `ADMIN`                    | Ko'rish → savat → checkout → to'lov                                 |
+| **Sozlama**   | Foydalanuvchilar         | `OWNER`, `ADMIN`                    | Xodim, rol tayinlash                                                |
+|               | **Audit log**            | `OWNER`, `ADMIN`, `ACCOUNTANT`      | Append-only jurnal, filtr                                           |
+|               | Feature flag             | `OWNER` (yozish), `ADMIN` (o'qish)  | Yoqish/o'chirish                                                    |
+|               | Integratsiyalar          | `OWNER`                             | Click/Payme/Eskiz/Telegram konfiguratsiyasi                         |
+|               | Umumiy                   | `OWNER`                             | Do'kon rekvizitlari, ish vaqti, til                                 |
 
 ⌐ = yuqoridagi qator bilan bir xil rollar.
 
@@ -1567,11 +1595,11 @@ ADR da asoslanadi).
 
 ### 7.1 Qo'llab-quvvatlanadigan tillar
 
-| Kod | Til | Rol |
-|---|---|---|
-| `uz-Latn-UZ` | O'zbek (lotin) | **Asosiy**, default |
-| `uz-Cyrl-UZ` | O'zbek (kirill) | Qo'llab-quvvatlanadi |
-| `ru-UZ` | Rus | To'liq qo'llab-quvvatlanadi |
+| Kod          | Til             | Rol                         |
+| ------------ | --------------- | --------------------------- |
+| `uz-Latn-UZ` | O'zbek (lotin)  | **Asosiy**, default         |
+| `uz-Cyrl-UZ` | O'zbek (kirill) | Qo'llab-quvvatlanadi        |
+| `ru-UZ`      | Rus             | To'liq qo'llab-quvvatlanadi |
 
 **Vaziyat (halol):** Figma dizayni va hozirgi kod — **rus tilida**. Ya'ni bugungi holat
 `ru` yagona til. O'zbek tili **i18n orqali qo'shiladi**, kod ichidagi matnlarni
@@ -1598,18 +1626,18 @@ rejimida.
 
 ### 7.3 Nima qayerda tarjima qilinadi
 
-| Nima | Qayerda | Mexanizm |
-|---|---|---|
-| UI matnlari (tugma, label) | Frontend | i18n resurs fayllari |
-| Mahsulot nomi, tavsif | DB | `Product` ning tarjima jadvali |
-| Kategoriya nomi | DB | tarjima jadvali |
-| Atribut nomi (`Rang harorati`) | DB | `Attribute` tarjimasi |
-| Atribut **qiymati** (`2700K`) | — | **Tarjima qilinmaydi** — bu texnik qiymat |
-| Blog, statik sahifa | DB | `BlogPost` / `Page` locale bo'yicha |
-| SMS/Telegram xabar | Backend | Shablon, `Customer.preferredLocale` bo'yicha |
-| API xato **matni** | Backend | `Accept-Language` bo'yicha ([`04-api-spec.md`](./04-api-spec.md) §12) |
-| API xato **`code`** | — | **Hech qachon tarjima qilinmaydi** — mashina uchun |
-| Enum qiymatlari | — | **Tarjima qilinmaydi** — UI o'zi ko'rsatadi |
+| Nima                           | Qayerda  | Mexanizm                                                              |
+| ------------------------------ | -------- | --------------------------------------------------------------------- |
+| UI matnlari (tugma, label)     | Frontend | i18n resurs fayllari                                                  |
+| Mahsulot nomi, tavsif          | DB       | `Product` ning tarjima jadvali                                        |
+| Kategoriya nomi                | DB       | tarjima jadvali                                                       |
+| Atribut nomi (`Rang harorati`) | DB       | `Attribute` tarjimasi                                                 |
+| Atribut **qiymati** (`2700K`)  | —        | **Tarjima qilinmaydi** — bu texnik qiymat                             |
+| Blog, statik sahifa            | DB       | `BlogPost` / `Page` locale bo'yicha                                   |
+| SMS/Telegram xabar             | Backend  | Shablon, `Customer.preferredLocale` bo'yicha                          |
+| API xato **matni**             | Backend  | `Accept-Language` bo'yicha ([`04-api-spec.md`](./04-api-spec.md) §12) |
+| API xato **`code`**            | —        | **Hech qachon tarjima qilinmaydi** — mashina uchun                    |
+| Enum qiymatlari                | —        | **Tarjima qilinmaydi** — UI o'zi ko'rsatadi                           |
 
 ### 7.4 Til tanlash tartibi
 
@@ -1625,11 +1653,13 @@ qarori. Prefiks tavsiya etiladi (sodda, bitta domen), lekin yakuniy tasdiq kerak
 ### 7.5 ⚠️ Ingliz tili kerakmi? — OCHIQ SAVOL
 
 **Ha tarafdorlari:**
+
 - Dizayner/arxitektorlar (P2) xalqaro brendlar bilan ishlaydi, texnik datasheet ingliz tilida.
 - Chet ellik mijozlar (elchixona, xalqaro kompaniya ofisi) bo'lishi mumkin.
 - README va kod ingliz tilida (kanon §0) — mos keladi.
 
 **Yo'q tarafdorlari:**
+
 - **Do'kon bitta, bozor — O'zbekiston.** Ingliz tilidagi mijoz ulushi ehtimol juda kichik.
 - To'rtinchi til = har mahsulot uchun +1 tarjima. Kontent menejer allaqachon 3 tilni
   boshqaradi (P8 og'rig'i).
@@ -1694,40 +1724,40 @@ kechiktirilgan "ha".
 
 ### 8.1 Arxitektura darajasida YO'Q
 
-| Nima | Nega yo'q |
-|---|---|
-| **Marketplace** | Kelvin — bitta do'kon. Boshqa sotuvchilar yo'q, komissiya yo'q, sotuvchi kabineti yo'q. Bu ma'lumot modelini tubdan o'zgartiradi. |
-| **Multi-tenant / SaaS** | Kanon §1: bitta do'kon. Har jadvalga `tenantId` qo'shish — bu abstraksiya narxi, unga hech kim to'lamaydi. Kerak bo'lsa — bu **boshqa loyiha**. |
-| **Boshqa do'konlarga sotish** | Bu Kelvin uchun mahsulot strategiyasi emas. Agar bo'lsa — yuqoridagi qatorga qarang. |
-| **White-label** | Brend qattiq: Kelvin. Dizayn qattiq: Figma'dan. |
-| **Mikroservislar** | Bitta do'kon yuklamasida modulli monolit yetarli. Tarqoq tizimning murakkabligi hech narsa bermaydi. Asoslash → [`02-architecture.md`](./02-architecture.md) |
-| **Event sourcing (butun tizim uchun)** | Faqat `LedgerEntry` va `StockMovement` append-only. Butun domenni event sourcing qilish — asossiz murakkablik. |
+| Nima                                   | Nega yo'q                                                                                                                                                    |
+| -------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **Marketplace**                        | Kelvin — bitta do'kon. Boshqa sotuvchilar yo'q, komissiya yo'q, sotuvchi kabineti yo'q. Bu ma'lumot modelini tubdan o'zgartiradi.                            |
+| **Multi-tenant / SaaS**                | Kanon §1: bitta do'kon. Har jadvalga `tenantId` qo'shish — bu abstraksiya narxi, unga hech kim to'lamaydi. Kerak bo'lsa — bu **boshqa loyiha**.              |
+| **Boshqa do'konlarga sotish**          | Bu Kelvin uchun mahsulot strategiyasi emas. Agar bo'lsa — yuqoridagi qatorga qarang.                                                                         |
+| **White-label**                        | Brend qattiq: Kelvin. Dizayn qattiq: Figma'dan.                                                                                                              |
+| **Mikroservislar**                     | Bitta do'kon yuklamasida modulli monolit yetarli. Tarqoq tizimning murakkabligi hech narsa bermaydi. Asoslash → [`02-architecture.md`](./02-architecture.md) |
+| **Event sourcing (butun tizim uchun)** | Faqat `LedgerEntry` va `StockMovement` append-only. Butun domenni event sourcing qilish — asossiz murakkablik.                                               |
 
 ### 8.2 Funksiya darajasida YO'Q (birinchi versiyada)
 
-| Nima | Nega yo'q | Keyin bo'ladimi? |
-|---|---|---|
-| **Mobil ilova (iOS/Android)** | Storefront responsive. Native ilova = +2 platforma, +2 relizlar oqimi. | Ehtimol yo'q. PWA yetarli. |
-| **Real-time kuryer xaritasi** | GPS kuzatuvi, batareya, maxfiylik. Mijoz uchun holat + vaqt oralig'i yetarli. | Ehtimol |
-| **Avtomatik marshrut optimizatsiyasi (VRP)** | Kanon §9.8: NP-qiyin. Boshida qo'lda tayinlash. Bir necha kuryerda qo'lda ham ishlaydi. | Ha, ikkinchi bosqich |
-| **AR: "chiroqni xonangizda ko'ring"** | Har SKU uchun 3D model kerak. Ta'minotchilar bermaydi. Xarajat > qiymat. | Ehtimol yo'q |
-| **AI tavsiya dvigateli** | O'rgatish uchun ma'lumot yo'q (tizim endi ishga tushyapti). Boshida qoidaga asoslangan tavsiya. | Ma'lumot yig'ilgach |
-| **Chatbot / jonli chat** | Telegram bor. Yana bir kanal = yana bir javobsiz xabarlar navbati. | Ehtimol |
-| **Sodiqlik dasturi / ballar** | Alohida moliyaviy mantiq (ball = majburiyat). Avval asosiy oqim ishlasin. | Ehtimol |
-| **Ko'p valyuta** | Bozor — O'zbekiston, valyuta — UZS. `currency` ustuni bor (kanon §8), lekin faqat bitta qiymat ishlatiladi. | Kerak bo'lmasa yo'q |
-| **Ta'minotchi kabineti** | Ta'minotchilar Excel yuboradi. Ularni portalga majburlash — ishlamaydi. | Yo'q |
-| **Ommaviy ochiq API** | Kelvin API si o'z mijozlari uchun. Tashqi integratsiya — 1C, u alohida (§11-OS13). | Yo'q |
+| Nima                                         | Nega yo'q                                                                                                   | Keyin bo'ladimi?           |
+| -------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | -------------------------- |
+| **Mobil ilova (iOS/Android)**                | Storefront responsive. Native ilova = +2 platforma, +2 relizlar oqimi.                                      | Ehtimol yo'q. PWA yetarli. |
+| **Real-time kuryer xaritasi**                | GPS kuzatuvi, batareya, maxfiylik. Mijoz uchun holat + vaqt oralig'i yetarli.                               | Ehtimol                    |
+| **Avtomatik marshrut optimizatsiyasi (VRP)** | Kanon §9.8: NP-qiyin. Boshida qo'lda tayinlash. Bir necha kuryerda qo'lda ham ishlaydi.                     | Ha, ikkinchi bosqich       |
+| **AR: "chiroqni xonangizda ko'ring"**        | Har SKU uchun 3D model kerak. Ta'minotchilar bermaydi. Xarajat > qiymat.                                    | Ehtimol yo'q               |
+| **AI tavsiya dvigateli**                     | O'rgatish uchun ma'lumot yo'q (tizim endi ishga tushyapti). Boshida qoidaga asoslangan tavsiya.             | Ma'lumot yig'ilgach        |
+| **Chatbot / jonli chat**                     | Telegram bor. Yana bir kanal = yana bir javobsiz xabarlar navbati.                                          | Ehtimol                    |
+| **Sodiqlik dasturi / ballar**                | Alohida moliyaviy mantiq (ball = majburiyat). Avval asosiy oqim ishlasin.                                   | Ehtimol                    |
+| **Ko'p valyuta**                             | Bozor — O'zbekiston, valyuta — UZS. `currency` ustuni bor (kanon §8), lekin faqat bitta qiymat ishlatiladi. | Kerak bo'lmasa yo'q        |
+| **Ta'minotchi kabineti**                     | Ta'minotchilar Excel yuboradi. Ularni portalga majburlash — ishlamaydi.                                     | Yo'q                       |
+| **Ommaviy ochiq API**                        | Kelvin API si o'z mijozlari uchun. Tashqi integratsiya — 1C, u alohida (§11-OS13).                          | Yo'q                       |
 
 ### 8.3 Bu hujjatda YOZILMAYDI (kanon §10)
 
-| Nima | Nega |
-|---|---|
-| Frontend dizayn qarorlari | Dizayn Figma'dan (ustoz bergan kurs topshirig'i). O'zgarmaydi. Faqat brend Kelvin ga. |
-| Biznes-mantiq implementatsiyasi | Bu TZ. Kod — skelet, interfeys, TODO. |
-| To'qib chiqarilgan statistika | "10 000 foydalanuvchi", "konversiya 3.2%" — bunday raqam **yo'q**. Yozilsa — yolg'on. |
-| Click/Payme/rassrochka API detallari | Rasmiy hujjat kerak. Yodda yozilgan protokol — xato manbai (§11-OS1). |
-| Yuridik maslahat | Fiskal chek, shaxsiy ma'lumot, reklama SMS, kafolat matni — **yurist savoli** (§11-OS6). |
-| Yoritish normalari | Lyumen normalari QMQ/ShNQ dan tekshiriladi. To'qib chiqarilmaydi (§11-OS3). |
+| Nima                                 | Nega                                                                                     |
+| ------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Frontend dizayn qarorlari            | Dizayn Figma'dan (ustoz bergan kurs topshirig'i). O'zgarmaydi. Faqat brend Kelvin ga.    |
+| Biznes-mantiq implementatsiyasi      | Bu TZ. Kod — skelet, interfeys, TODO.                                                    |
+| To'qib chiqarilgan statistika        | "10 000 foydalanuvchi", "konversiya 3.2%" — bunday raqam **yo'q**. Yozilsa — yolg'on.    |
+| Click/Payme/rassrochka API detallari | Rasmiy hujjat kerak. Yodda yozilgan protokol — xato manbai (§11-OS1).                    |
+| Yuridik maslahat                     | Fiskal chek, shaxsiy ma'lumot, reklama SMS, kafolat matni — **yurist savoli** (§11-OS6). |
+| Yoritish normalari                   | Lyumen normalari QMQ/ShNQ dan tekshiriladi. To'qib chiqarilmaydi (§11-OS3).              |
 
 ---
 
@@ -1749,35 +1779,35 @@ Bazaviy qiymatsiz target — bu fantaziya. Shuning uchun metrikalar ikki guruhga
 Bular **mahsulot metrikasi emas, muhandislik mezoni**. Ular bazaviy qiymat talab qilmaydi —
 ular yo bajarilgan, yo yo'q.
 
-| # | Mezon | Maqsad | Qanday o'lchanadi |
-|---|---|---|---|
-| M1 | Savat ishlaydi | 100% (bugun: 0%) | E2E test: qo'shish → yangilash → checkout |
-| M2 | Buyurtma yaratiladi va to'lanadi | Uchidan uchiga ishlaydi | E2E: sandbox to'lov |
-| M3 | **Oversell nol** | 0 holat | Property test (fast-check): N parallel checkout → sotilgan ≤ qoldiq. Prodda: `sold > onHand` holatlari |
-| M4 | Ikkilangan buyurtma nol | 0 holat | Idempotentlik testi: bir `Idempotency-Key` bilan N so'rov → 1 `Order` |
-| M5 | Yo'qolgan to'lov nol | 0 holat | Webhook idempotentligi + `LedgerEntry` yarashuvi |
-| M6 | Qoldiq izsiz o'zgarmaydi | 100% | Har `StockItem.onHand` o'zgarishi ortida `StockMovement` bor — DB constraint/test |
-| M7 | Sezgir amal audit'siz emas | 100% | §4.3.6 ro'yxatidagi har amal → `AuditLog` yozuvi (test) |
-| M8 | Ruxsatsiz endpoint yo'q | 100% | Route sweep testi: metadata'siz route → test yiqiladi (§4.5) |
-| M9 | Narx determinizmi | 100% | Snapshot test: bir xil kirish → bir xil narx |
-| M10 | Rassrochka grafigi yaxlit | 100% | Property test: Σ jadval == jami summa (`BigInt`, tiyinda) |
-| M11 | Nashr etilgan mahsulot to'liq | 100% | Majburiy atributsiz nashr → `422` |
-| M12 | Katalog 3 tilda | 100% | Nashr etilgan SKU larda 3 locale tarjimasi bor |
+| #   | Mezon                            | Maqsad                  | Qanday o'lchanadi                                                                                      |
+| --- | -------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------ |
+| M1  | Savat ishlaydi                   | 100% (bugun: 0%)        | E2E test: qo'shish → yangilash → checkout                                                              |
+| M2  | Buyurtma yaratiladi va to'lanadi | Uchidan uchiga ishlaydi | E2E: sandbox to'lov                                                                                    |
+| M3  | **Oversell nol**                 | 0 holat                 | Property test (fast-check): N parallel checkout → sotilgan ≤ qoldiq. Prodda: `sold > onHand` holatlari |
+| M4  | Ikkilangan buyurtma nol          | 0 holat                 | Idempotentlik testi: bir `Idempotency-Key` bilan N so'rov → 1 `Order`                                  |
+| M5  | Yo'qolgan to'lov nol             | 0 holat                 | Webhook idempotentligi + `LedgerEntry` yarashuvi                                                       |
+| M6  | Qoldiq izsiz o'zgarmaydi         | 100%                    | Har `StockItem.onHand` o'zgarishi ortida `StockMovement` bor — DB constraint/test                      |
+| M7  | Sezgir amal audit'siz emas       | 100%                    | §4.3.6 ro'yxatidagi har amal → `AuditLog` yozuvi (test)                                                |
+| M8  | Ruxsatsiz endpoint yo'q          | 100%                    | Route sweep testi: metadata'siz route → test yiqiladi (§4.5)                                           |
+| M9  | Narx determinizmi                | 100%                    | Snapshot test: bir xil kirish → bir xil narx                                                           |
+| M10 | Rassrochka grafigi yaxlit        | 100%                    | Property test: Σ jadval == jami summa (`BigInt`, tiyinda)                                              |
+| M11 | Nashr etilgan mahsulot to'liq    | 100%                    | Majburiy atributsiz nashr → `422`                                                                      |
+| M12 | Katalog 3 tilda                  | 100%                    | Nashr etilgan SKU larda 3 locale tarjimasi bor                                                         |
 
 **Bu metrikalar to'qima emas.** Ularning har biri kod bilan tekshiriladi.
 
 ### 9.3 B guruh: bazaviy qiymat kerak (o'lchash → keyin target)
 
-| # | Metrika | Bazaviy | Target | Qachon |
-|---|---|---|---|---|
-| M13 | Onlayn buyurtmalar ulushi (vs zal) | ⚠️ NOMA'LUM (bugun 0 — sayt ishlamaydi) | ⚠️ 3 oy o'lchov | Ishga tushgach |
-| M14 | Katalog → savat konversiyasi | ⚠️ NOMA'LUM | ⚠️ o'lchov | Ishga tushgach |
-| M15 | Savat → to'lov konversiyasi | ⚠️ NOMA'LUM | ⚠️ o'lchov | Ishga tushgach |
-| M16 | "Bormi?" qo'ng'iroqlari soni | ⚠️ NOMA'LUM (hozir hisoblanmaydi) | Pasayish | Qo'lda o'lchov kerak |
-| M17 | Qaytarish ulushi (sabab: "rang boshqa") | ⚠️ NOMA'LUM | Pasayish | 6 oy |
-| M18 | Inventarizatsiya farqi | ⚠️ NOMA'LUM | Do'kon egasi belgilaydi | Birinchi inventarizatsiyadan keyin |
-| M19 | Buyurtma rasmiylashtirish vaqti (POS) | ⚠️ NOMA'LUM | Pasayish | Ishga tushgach |
-| M20 | O'rnatish upsell ulushi | 0 (funksiya yo'q) | ⚠️ o'lchov | 3 oy |
+| #   | Metrika                                 | Bazaviy                                 | Target                  | Qachon                             |
+| --- | --------------------------------------- | --------------------------------------- | ----------------------- | ---------------------------------- |
+| M13 | Onlayn buyurtmalar ulushi (vs zal)      | ⚠️ NOMA'LUM (bugun 0 — sayt ishlamaydi) | ⚠️ 3 oy o'lchov         | Ishga tushgach                     |
+| M14 | Katalog → savat konversiyasi            | ⚠️ NOMA'LUM                             | ⚠️ o'lchov              | Ishga tushgach                     |
+| M15 | Savat → to'lov konversiyasi             | ⚠️ NOMA'LUM                             | ⚠️ o'lchov              | Ishga tushgach                     |
+| M16 | "Bormi?" qo'ng'iroqlari soni            | ⚠️ NOMA'LUM (hozir hisoblanmaydi)       | Pasayish                | Qo'lda o'lchov kerak               |
+| M17 | Qaytarish ulushi (sabab: "rang boshqa") | ⚠️ NOMA'LUM                             | Pasayish                | 6 oy                               |
+| M18 | Inventarizatsiya farqi                  | ⚠️ NOMA'LUM                             | Do'kon egasi belgilaydi | Birinchi inventarizatsiyadan keyin |
+| M19 | Buyurtma rasmiylashtirish vaqti (POS)   | ⚠️ NOMA'LUM                             | Pasayish                | Ishga tushgach                     |
+| M20 | O'rnatish upsell ulushi                 | 0 (funksiya yo'q)                       | ⚠️ o'lchov              | 3 oy                               |
 
 **Qoida:** B guruhidagi hech bir metrikaga **bugun target qo'yilmaydi**. Avval
 3 oy o'lchanadi, keyin do'kon egasi bilan birga target belgilanadi. Bu kechiktirish emas —
@@ -1787,13 +1817,13 @@ bu **halollik**.
 
 Quyidagi qiymatlar **taxmin**, o'lchovga qadar ular **maqsad emas, gipoteza**:
 
-| Ko'rsatkich | Gipoteza | Izoh |
-|---|---|---|
-| Faceted search p95 | < 300 ms | Engine tanlovi shu o'lchovga bog'liq ([`05-catalog-and-search.md`](./05-catalog-and-search.md)) |
-| Mahsulot sahifasi p95 | < 500 ms | Kesh bilan |
-| Checkout p95 | < 1 s | To'lov provayderisiz qism |
-| Webhook qayta ishlash | < 2 s | Provayder timeout'iga bog'liq — ⚠️ NOMA'LUM (§11-OS1) |
-| Mavjudlik | ⚠️ belgilanmagan | Infra byudjeti noma'lum |
+| Ko'rsatkich           | Gipoteza         | Izoh                                                                                            |
+| --------------------- | ---------------- | ----------------------------------------------------------------------------------------------- |
+| Faceted search p95    | < 300 ms         | Engine tanlovi shu o'lchovga bog'liq ([`05-catalog-and-search.md`](./05-catalog-and-search.md)) |
+| Mahsulot sahifasi p95 | < 500 ms         | Kesh bilan                                                                                      |
+| Checkout p95          | < 1 s            | To'lov provayderisiz qism                                                                       |
+| Webhook qayta ishlash | < 2 s            | Provayder timeout'iga bog'liq — ⚠️ NOMA'LUM (§11-OS1)                                           |
+| Mavjudlik             | ⚠️ belgilanmagan | Infra byudjeti noma'lum                                                                         |
 
 **Bu raqamlar bugun kafolat emas.** Ular yuklama testidan keyin SLO ga aylanadi
 yoki o'zgaradi.
@@ -1819,25 +1849,25 @@ Bu hujjat qabul qilingan hisoblanadi, agar:
 
 ## 11. Ochiq savollar
 
-| # | Savol | Nega muhim | Kim javob beradi | Blokirovka qiladimi |
-|---|---|---|---|---|
-| **OS1** | Click / Payme / Uzum va rassrochka provayderlarining **aniq API protokoli**: webhook formati, imzo algoritmi, timeout, retry siyosati, sandbox | To'lovsiz e-commerce yo'q. Protokolni yodda yozish — pul yo'qotish demak | Provayderlarning rasmiy hujjati + shartnoma | **HA** — `payment` moduli |
-| **OS2** | `StockReservation` TTL aniq qiymati | To'lov oynasidan qisqa bo'lsa → to'langan buyurtma tovarsiz qoladi. Uzun bo'lsa → tovar bekorga bloklanadi | OS1 (provayder timeout'i) + do'kon egasi | **HA** — `inventory` |
-| **OS3** | Xona yoritilganlik normalari (lm/m² xona turi bo'yicha) | Kalkulyator noto'g'ri maslahat bersa — mijoz xato tovar oladi. Kanon §4.3: **to'qib chiqarish taqiqlanadi** | O'zbekiston QMQ/ShNQ yoki xalqaro standart (EN 12464-1) + elektrik | Yo'q — kalkulyator `FeatureFlag` ostida |
-| **OS4** | 12V transformator zaxira koeffitsienti (20%? 30%?) | Kam bo'lsa transformator kuyadi | Elektrik / ta'minotchi hujjati | Yo'q — ogohlantirish, blok emas |
-| **OS5** | Tannarx metodi: o'rtacha vaznli / FIFO | Foyda hisobiga bevosita ta'sir | Buxgalter + do'kon egasi | Yo'q — hisobotgacha |
-| **OS6** | Yuridik: fiskal chek talabimi? Shaxsiy ma'lumot saqlash? Reklama SMS uchun rozilik? Kafolat matni? | Jarima riski. Kanon §10: yuridik maslahat berilmaydi | **Yurist** | Qisman — `pos` fiskal qismi |
-| **OS7** | Qoldiqning aniq soni mijozga ko'rsatiladimi yoki `>10` shaklidami? | Raqobatchi qoldiqni ko'radi. Lekin aniq son ishonch beradi | Do'kon egasi | Yo'q |
-| **OS8** | Kuryer PWA: offline rejim qanchalik chuqur kerak? Native ilova kerakmi? | Toshkentda qamrov yaxshi, viloyatda? | Do'kon egasi + kuryerlar bilan suhbat | Yo'q |
-| **OS9** | Mehmon savati TTL (30 kun taxmin) | Uzun TTL → keraksiz `Cart` yozuvlari | Do'kon egasi | Yo'q |
-| **OS10** | Qoldiq tuzatishi (`ADJUSTMENT`) uchun summa limiti va `OWNER` tasdig'i kerakmi? | O'g'irlikni yashirish yo'li | Do'kon egasi | Yo'q |
-| **OS11** | Sharh faqat sotib olganlar uchunmi? | Cheklov sharh sonini kamaytiradi, lekin ishonchni oshiradi | Do'kon egasi | Yo'q |
-| **OS12** | Til URL strategiyasi: `/uz/` prefiks vs subdomain | SEO ga uzoq muddatli ta'sir, keyin o'zgartirish qimmat | SEO + do'kon egasi | Yo'q — lekin **erta** hal qilinsin |
-| **OS13** | **1C integratsiyasi kerakmi?** Agar ha — qaysi konfiguratsiya, qaysi yo'nalish (bir tomonlama/ikki tomonlama), qanday almashinuv (fayl/OData/HTTP)? | Kanon §6: **tasdiqlanmagan**. Kerak bo'lsa — bu katta ish, arxitekturaga ta'sir qiladi | Do'kon egasi + 1C ma'muri | Yo'q — lekin arxitektura buni **imkonsiz qilmasligi** kerak |
-| **OS14** | Do'konning **real ko'lami**: SKU soni, kunlik buyurtma, mijozlar bazasi, omborlar soni | §9.3 dagi har bir target shunga bog'liq. Bugun **hech qanday raqam yo'q** | Do'kon egasi | Yo'q — lekin metrikalarni bloklaydi |
-| **OS15** | **Ingliz tili kerakmi?** (§7.5) | To'rtinchi til = doimiy tarjima xarajati | Do'kon egasi, ishga tushgandan 3 oy keyin analitika bilan | Yo'q |
-| **OS16** | Xodimlar uchun parol bilan kirish kerakmi yoki telefon+OTP yetarlimi? | Ombor xodimi kuniga o'nlab marta kirsa — OTP azob | Do'kon egasi + [`11-security.md`](./11-security.md) | Yo'q |
-| **OS17** | Dizayner segmenti uchun B2B narx qanday aniqlanadi — qo'lda tasdiqmi yoki avtomatikmi? | Suiiste'mol riski | Do'kon egasi | Yo'q |
+| #        | Savol                                                                                                                                               | Nega muhim                                                                                                  | Kim javob beradi                                                   | Blokirovka qiladimi                                         |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------ | ----------------------------------------------------------- |
+| **OS1**  | Click / Payme / Uzum va rassrochka provayderlarining **aniq API protokoli**: webhook formati, imzo algoritmi, timeout, retry siyosati, sandbox      | To'lovsiz e-commerce yo'q. Protokolni yodda yozish — pul yo'qotish demak                                    | Provayderlarning rasmiy hujjati + shartnoma                        | **HA** — `payment` moduli                                   |
+| **OS2**  | `StockReservation` TTL aniq qiymati                                                                                                                 | To'lov oynasidan qisqa bo'lsa → to'langan buyurtma tovarsiz qoladi. Uzun bo'lsa → tovar bekorga bloklanadi  | OS1 (provayder timeout'i) + do'kon egasi                           | **HA** — `inventory`                                        |
+| **OS3**  | Xona yoritilganlik normalari (lm/m² xona turi bo'yicha)                                                                                             | Kalkulyator noto'g'ri maslahat bersa — mijoz xato tovar oladi. Kanon §4.3: **to'qib chiqarish taqiqlanadi** | O'zbekiston QMQ/ShNQ yoki xalqaro standart (EN 12464-1) + elektrik | Yo'q — kalkulyator `FeatureFlag` ostida                     |
+| **OS4**  | 12V transformator zaxira koeffitsienti (20%? 30%?)                                                                                                  | Kam bo'lsa transformator kuyadi                                                                             | Elektrik / ta'minotchi hujjati                                     | Yo'q — ogohlantirish, blok emas                             |
+| **OS5**  | Tannarx metodi: o'rtacha vaznli / FIFO                                                                                                              | Foyda hisobiga bevosita ta'sir                                                                              | Buxgalter + do'kon egasi                                           | Yo'q — hisobotgacha                                         |
+| **OS6**  | Yuridik: fiskal chek talabimi? Shaxsiy ma'lumot saqlash? Reklama SMS uchun rozilik? Kafolat matni?                                                  | Jarima riski. Kanon §10: yuridik maslahat berilmaydi                                                        | **Yurist**                                                         | Qisman — `pos` fiskal qismi                                 |
+| **OS7**  | Qoldiqning aniq soni mijozga ko'rsatiladimi yoki `>10` shaklidami?                                                                                  | Raqobatchi qoldiqni ko'radi. Lekin aniq son ishonch beradi                                                  | Do'kon egasi                                                       | Yo'q                                                        |
+| **OS8**  | Kuryer PWA: offline rejim qanchalik chuqur kerak? Native ilova kerakmi?                                                                             | Toshkentda qamrov yaxshi, viloyatda?                                                                        | Do'kon egasi + kuryerlar bilan suhbat                              | Yo'q                                                        |
+| **OS9**  | Mehmon savati TTL (30 kun taxmin)                                                                                                                   | Uzun TTL → keraksiz `Cart` yozuvlari                                                                        | Do'kon egasi                                                       | Yo'q                                                        |
+| **OS10** | Qoldiq tuzatishi (`ADJUSTMENT`) uchun summa limiti va `OWNER` tasdig'i kerakmi?                                                                     | O'g'irlikni yashirish yo'li                                                                                 | Do'kon egasi                                                       | Yo'q                                                        |
+| **OS11** | Sharh faqat sotib olganlar uchunmi?                                                                                                                 | Cheklov sharh sonini kamaytiradi, lekin ishonchni oshiradi                                                  | Do'kon egasi                                                       | Yo'q                                                        |
+| **OS12** | Til URL strategiyasi: `/uz/` prefiks vs subdomain                                                                                                   | SEO ga uzoq muddatli ta'sir, keyin o'zgartirish qimmat                                                      | SEO + do'kon egasi                                                 | Yo'q — lekin **erta** hal qilinsin                          |
+| **OS13** | **1C integratsiyasi kerakmi?** Agar ha — qaysi konfiguratsiya, qaysi yo'nalish (bir tomonlama/ikki tomonlama), qanday almashinuv (fayl/OData/HTTP)? | Kanon §6: **tasdiqlanmagan**. Kerak bo'lsa — bu katta ish, arxitekturaga ta'sir qiladi                      | Do'kon egasi + 1C ma'muri                                          | Yo'q — lekin arxitektura buni **imkonsiz qilmasligi** kerak |
+| **OS14** | Do'konning **real ko'lami**: SKU soni, kunlik buyurtma, mijozlar bazasi, omborlar soni                                                              | §9.3 dagi har bir target shunga bog'liq. Bugun **hech qanday raqam yo'q**                                   | Do'kon egasi                                                       | Yo'q — lekin metrikalarni bloklaydi                         |
+| **OS15** | **Ingliz tili kerakmi?** (§7.5)                                                                                                                     | To'rtinchi til = doimiy tarjima xarajati                                                                    | Do'kon egasi, ishga tushgandan 3 oy keyin analitika bilan          | Yo'q                                                        |
+| **OS16** | Xodimlar uchun parol bilan kirish kerakmi yoki telefon+OTP yetarlimi?                                                                               | Ombor xodimi kuniga o'nlab marta kirsa — OTP azob                                                           | Do'kon egasi + [`11-security.md`](./11-security.md)                | Yo'q                                                        |
+| **OS17** | Dizayner segmenti uchun B2B narx qanday aniqlanadi — qo'lda tasdiqmi yoki avtomatikmi?                                                              | Suiiste'mol riski                                                                                           | Do'kon egasi                                                       | Yo'q                                                        |
 
 ---
 

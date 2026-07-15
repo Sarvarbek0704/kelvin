@@ -15,14 +15,14 @@ oqlanadi. Qo'rquv yo'q joyda test ham yozilmaydi.
 
 Kelvin'ning asosiy qo'rquvlari (CANON §9 dan):
 
-| # | Qo'rquv | Oqibat | Yopadigan test |
-|---|---|---|---|
-| 1 | **Oversell** — oxirgi qandil ikki mijozga sotiladi | Mijoz pul to'ladi, tovar yo'q. Ishonch yo'qoladi | ⚠️ **Concurrency test** (§4) |
-| 2 | **Pul yo'qoladi/paydo bo'ladi** — yaxlitlash xatosi | Buxgalteriya mos kelmaydi. Rassrochkada — sud | ⚠️ **Property-based** (§5) |
-| 3 | **Narx nodeterminizmi** — bir savat, ikki xil narx | Mijoz ishonchi, nizolar | Property-based (§5) |
-| 4 | **Buyurtma noto'g'ri holatga o'tadi** | Yetkazilmagan buyurtma "yakunlangan" | State machine test (§5) |
-| 5 | **Checkout sinadi** | To'g'ridan-to'g'ri daromad yo'qotish | E2E (§6) |
-| 6 | **Aksiya paytida tizim yotadi** | Eng qimmat vaqtda | Load test (§7) |
+| #   | Qo'rquv                                             | Oqibat                                           | Yopadigan test               |
+| --- | --------------------------------------------------- | ------------------------------------------------ | ---------------------------- |
+| 1   | **Oversell** — oxirgi qandil ikki mijozga sotiladi  | Mijoz pul to'ladi, tovar yo'q. Ishonch yo'qoladi | ⚠️ **Concurrency test** (§4) |
+| 2   | **Pul yo'qoladi/paydo bo'ladi** — yaxlitlash xatosi | Buxgalteriya mos kelmaydi. Rassrochkada — sud    | ⚠️ **Property-based** (§5)   |
+| 3   | **Narx nodeterminizmi** — bir savat, ikki xil narx  | Mijoz ishonchi, nizolar                          | Property-based (§5)          |
+| 4   | **Buyurtma noto'g'ri holatga o'tadi**               | Yetkazilmagan buyurtma "yakunlangan"             | State machine test (§5)      |
+| 5   | **Checkout sinadi**                                 | To'g'ridan-to'g'ri daromad yo'qotish             | E2E (§6)                     |
+| 6   | **Aksiya paytida tizim yotadi**                     | Eng qimmat vaqtda                                | Load test (§7)               |
 
 ⚠️ **Halol boshlang'ich holat:** hozirgi repozitoriyada **test 0 ta**. Test runner
 ham o'rnatilmagan. Ya'ni bu hujjat — mavjud narsani tavsiflash emas, **quriladigan
@@ -54,12 +54,12 @@ graph TB
     E --- I --- U --- P
 ```
 
-| Daraja | Ulush | Nega bunday |
-|---|---|---|
-| **Unit** | ~60% | Sof mantiq ko'p: `Money`, narx dvigateli, rassrochka grafigi, holat mashinalari. Bular tez va arzon |
-| **Integration** | ⚠️ **~30%** (odatdagidan ko'p) | ⚠️ **Eng katta risklar shu yerda.** Oversell, saga, tranzaksiya — real DB'siz tekshirib bo'lmaydi |
-| **E2E** | ~5% | Qimmat, sekin, flaky. Faqat **pul keltiradigan oqimlar** |
-| **Property-based** | ~5% soni bo'yicha | ⚠️ Soni kam, **qiymati eng yuqori**. Bitta property test minglab holatni tekshiradi |
+| Daraja             | Ulush                          | Nega bunday                                                                                         |
+| ------------------ | ------------------------------ | --------------------------------------------------------------------------------------------------- |
+| **Unit**           | ~60%                           | Sof mantiq ko'p: `Money`, narx dvigateli, rassrochka grafigi, holat mashinalari. Bular tez va arzon |
+| **Integration**    | ⚠️ **~30%** (odatdagidan ko'p) | ⚠️ **Eng katta risklar shu yerda.** Oversell, saga, tranzaksiya — real DB'siz tekshirib bo'lmaydi   |
+| **E2E**            | ~5%                            | Qimmat, sekin, flaky. Faqat **pul keltiradigan oqimlar**                                            |
+| **Property-based** | ~5% soni bo'yicha              | ⚠️ Soni kam, **qiymati eng yuqori**. Bitta property test minglab holatni tekshiradi                 |
 
 ⚠️ **Muhim tamoyil:** bu nisbat **maqsad emas, natija**. "Integration 30% bo'lsin"
 deb test yozilmaydi. Risk qayerda — test o'sha yerda.
@@ -84,8 +84,8 @@ CANON §8: **pul — `BigInt`, tiyinda. `Float` hech qachon.**
 // packages/contracts/src/money/money.ts
 export class Money {
   private constructor(
-    readonly minor: bigint,          // tiyin
-    readonly currency: 'UZS',        // ⚠️ single-tenant, bitta valyuta (CANON §1)
+    readonly minor: bigint, // tiyin
+    readonly currency: 'UZS', // ⚠️ single-tenant, bitta valyuta (CANON §1)
   ) {}
 
   static fromMinor(minor: bigint, currency: 'UZS' = 'UZS'): Money {
@@ -113,14 +113,13 @@ export class Money {
       throw new RangeError('parts must be a positive integer');
     }
     const n = BigInt(parts);
-    const base = this.minor / n;              // BigInt bo'lish — nolga qarab kesadi
-    const remainder = this.minor - base * n;  // ⚠️ manfiy summa uchun ham to'g'ri
+    const base = this.minor / n; // BigInt bo'lish — nolga qarab kesadi
+    const remainder = this.minor - base * n; // ⚠️ manfiy summa uchun ham to'g'ri
 
     const result: Money[] = [];
     for (let i = 0n; i < n; i++) {
-      const extra = i < (remainder < 0n ? -remainder : remainder)
-        ? (remainder < 0n ? -1n : 1n)
-        : 0n;
+      const extra =
+        i < (remainder < 0n ? -remainder : remainder) ? (remainder < 0n ? -1n : 1n) : 0n;
       result.push(new Money(base + extra, this.currency));
     }
     return result;
@@ -136,15 +135,15 @@ export class Money {
 
 **Nima test qilinadi:**
 
-| Test | Nega |
-|---|---|
-| `add`, `subtract` — oddiy holatlar | Asos |
-| ⚠️ `allocate` — qoldiq to'g'ri tarqaladi | **Rassrochka.** §5.1 da property test |
-| ⚠️ `allocate` — **manfiy** summa (refund) | Refund ham bo'linadi. Belgi ishlovi boshqacha |
-| `allocate(0)`, `allocate(-1)`, `allocate(1.5)` | Xato tashlashi shart |
-| Valyuta mos kelmasa — xato | Kelajakda ko'p valyuta bo'lsa |
-| ⚠️ **Juda katta summa** (BigInt chegarasi yo'q) | `Number` bo'lganda `MAX_SAFE_INTEGER` da sinar edi |
-| Serialization: JSON'ga → string, qaytib → BigInt | ⚠️ `JSON.stringify(1n)` **xato tashlaydi** |
+| Test                                             | Nega                                               |
+| ------------------------------------------------ | -------------------------------------------------- |
+| `add`, `subtract` — oddiy holatlar               | Asos                                               |
+| ⚠️ `allocate` — qoldiq to'g'ri tarqaladi         | **Rassrochka.** §5.1 da property test              |
+| ⚠️ `allocate` — **manfiy** summa (refund)        | Refund ham bo'linadi. Belgi ishlovi boshqacha      |
+| `allocate(0)`, `allocate(-1)`, `allocate(1.5)`   | Xato tashlashi shart                               |
+| Valyuta mos kelmasa — xato                       | Kelajakda ko'p valyuta bo'lsa                      |
+| ⚠️ **Juda katta summa** (BigInt chegarasi yo'q)  | `Number` bo'lganda `MAX_SAFE_INTEGER` da sinar edi |
+| Serialization: JSON'ga → string, qaytib → BigInt | ⚠️ `JSON.stringify(1n)` **xato tashlaydi**         |
 
 ### 2.2 Narx / chegirma dvigateli
 
@@ -156,7 +155,7 @@ CANON §9.5: qoida baholash tartibi, ustma-ust chegirma, bundle narxi.
 export interface PricingContext {
   readonly items: readonly CartLine[];
   readonly customerSegmentIds: readonly string[];
-  readonly at: Date;                       // ⚠️ vaqt INJEKSIYA qilinadi
+  readonly at: Date; // ⚠️ vaqt INJEKSIYA qilinadi
   readonly appliedPromotionCodes: readonly string[];
 }
 
@@ -176,6 +175,7 @@ bo'lmaydi. Bu klassik flaky manba.
 javob bera olishi kerak. Bu **mahsulot talabi**.
 
 **Nima test qilinadi:**
+
 - Qoidalar tartibi: chegirma → aksiya → bundle → segment
 - ⚠️ **Ustma-ust chegirma:** 20% + 10% = 30% emas, **28%** (ketma-ket qo'llash).
   Bu klassik xato
@@ -203,14 +203,14 @@ export interface InstallmentSchedule {
 
 **Nima test qilinadi:**
 
-| Test | Nega |
-|---|---|
-| ⚠️ **`sum(principal) === asl summa`** | **ANIQ**. 1 tiyin ham farq qilmaydi (§5.1) |
-| `sum(total) === totalPayable` | Ichki muvofiqlik |
-| To'lov sanalari: oyning 31-kuni → fevral? | ⚠️ **Klassik xato.** 31-yanvar + 1 oy = ? |
-| 0% rassrochka | `interest = 0`, `principal` yig'indisi asl summa |
-| 3/6/9/12 oy | Har biri uchun |
-| ⚠️ Kechikish jarimasi | ⚠️ **Formula noma'lum** — provayder hujjatidan. **To'qib chiqarilmaydi** |
+| Test                                      | Nega                                                                     |
+| ----------------------------------------- | ------------------------------------------------------------------------ |
+| ⚠️ **`sum(principal) === asl summa`**     | **ANIQ**. 1 tiyin ham farq qilmaydi (§5.1)                               |
+| `sum(total) === totalPayable`             | Ichki muvofiqlik                                                         |
+| To'lov sanalari: oyning 31-kuni → fevral? | ⚠️ **Klassik xato.** 31-yanvar + 1 oy = ?                                |
+| 0% rassrochka                             | `interest = 0`, `principal` yig'indisi asl summa                         |
+| 3/6/9/12 oy                               | Har biri uchun                                                           |
+| ⚠️ Kechikish jarimasi                     | ⚠️ **Formula noma'lum** — provayder hujjatidan. **To'qib chiqarilmaydi** |
 
 ⚠️ **Halol:** foiz stavkasi, jarima formulasi, kechikish qoidalari — bularning
 hech biri hozir ma'lum emas. Test **strukturasi** yoziladi, **konkret raqamlar**
@@ -223,22 +223,29 @@ provayder hujjati kelgach to'ldiriladi. → `docs/15-roadmap.md`, Faza 5 (yuridi
 ```ts
 // apps/api/src/order/order-state-machine.ts
 export type OrderStatus =
-  | 'DRAFT' | 'PENDING_PAYMENT' | 'PAID' | 'CONFIRMED'
-  | 'PICKING' | 'SHIPPED' | 'DELIVERED' | 'COMPLETED'
-  | 'CANCELLED' | 'REFUNDED';
+  | 'DRAFT'
+  | 'PENDING_PAYMENT'
+  | 'PAID'
+  | 'CONFIRMED'
+  | 'PICKING'
+  | 'SHIPPED'
+  | 'DELIVERED'
+  | 'COMPLETED'
+  | 'CANCELLED'
+  | 'REFUNDED';
 
 /** ⚠️ Yagona haqiqat manbai. Kodning boshqa joyida `status = 'PAID'` yozilmaydi. */
 export const ORDER_TRANSITIONS: Readonly<Record<OrderStatus, readonly OrderStatus[]>> = {
-  DRAFT:           ['PENDING_PAYMENT', 'CANCELLED'],
+  DRAFT: ['PENDING_PAYMENT', 'CANCELLED'],
   PENDING_PAYMENT: ['PAID', 'CANCELLED'],
-  PAID:            ['CONFIRMED', 'REFUNDED'],
-  CONFIRMED:       ['PICKING', 'CANCELLED'],
-  PICKING:         ['SHIPPED', 'CANCELLED'],
-  SHIPPED:         ['DELIVERED'],
-  DELIVERED:       ['COMPLETED', 'REFUNDED'],
-  COMPLETED:       ['REFUNDED'],
-  CANCELLED:       [],        // ⚠️ terminal
-  REFUNDED:        [],        // ⚠️ terminal
+  PAID: ['CONFIRMED', 'REFUNDED'],
+  CONFIRMED: ['PICKING', 'CANCELLED'],
+  PICKING: ['SHIPPED', 'CANCELLED'],
+  SHIPPED: ['DELIVERED'],
+  DELIVERED: ['COMPLETED', 'REFUNDED'],
+  COMPLETED: ['REFUNDED'],
+  CANCELLED: [], // ⚠️ terminal
+  REFUNDED: [], // ⚠️ terminal
 } as const;
 
 export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
@@ -247,6 +254,7 @@ export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
 ```
 
 **Nima test qilinadi:**
+
 - Har ruxsat etilgan o'tish — ishlaydi
 - ⚠️ Har **ruxsat etilmagan** o'tish — **bloklanadi** (§5.4)
 - Terminal holatdan chiqib bo'lmaydi
@@ -257,13 +265,13 @@ export function canTransition(from: OrderStatus, to: OrderStatus): boolean {
 
 → `docs/13-frontend-spec.md` §12
 
-| Nima | Nega |
-|---|---|
-| `resolveOptionState` — variant matritsasi | ⚠️ `nonexistent` va `out-of-stock` farqi |
-| `parseFilters` / `writeFilter` — URL ↔ state | Round-trip: parse(write(x)) === x |
-| `formatMoney(minor, locale)` | 3 til × chegara qiymatlar |
-| Savat merge mantiqi (`max`) | ⚠️ Konflikt hal qilish |
-| Transliteratsiya (lotin↔kirill) | ⚠️ Istisnolar lug'ati |
+| Nima                                         | Nega                                     |
+| -------------------------------------------- | ---------------------------------------- |
+| `resolveOptionState` — variant matritsasi    | ⚠️ `nonexistent` va `out-of-stock` farqi |
+| `parseFilters` / `writeFilter` — URL ↔ state | Round-trip: parse(write(x)) === x        |
+| `formatMoney(minor, locale)`                 | 3 til × chegara qiymatlar                |
+| Savat merge mantiqi (`max`)                  | ⚠️ Konflikt hal qilish                   |
+| Transliteratsiya (lotin↔kirill)              | ⚠️ Istisnolar lug'ati                    |
 
 ---
 
@@ -276,17 +284,17 @@ Bu **hujjatning eng muhim texnik pozitsiyalaridan biri**.
 Mock qilingan `PrismaClient` — bu **sizning DB haqidagi faraziyangiz**, DB emas.
 U quyidagilarni **umuman modellashtirmaydi**:
 
-| Real DB'da bor | Mock'da |
-|---|---|
-| ⚠️ **Tranzaksiya izolyatsiya darajasi** (`READ COMMITTED` vs `SERIALIZABLE`) | Yo'q |
-| ⚠️ **Lock** (`SELECT ... FOR UPDATE`), deadlock | Yo'q |
-| ⚠️ **Race condition** | Yo'q — mock ketma-ket ishlaydi |
-| **Cheklovlar:** `UNIQUE`, `CHECK`, `FOREIGN KEY` | ⚠️ Yo'q — mock hamma narsani qabul qiladi |
-| **Trigger, kaskad o'chirish** | Yo'q |
-| ⚠️ **`BigInt` ↔ `numeric` konvertatsiyasi** | Yo'q — JS'da qoladi |
-| Timezone (`timestamptz`) xulqi | Yo'q |
-| Query rejasi, indeks | Yo'q |
-| ⚠️ **Prisma'ning o'z xatolari** | Yo'q |
+| Real DB'da bor                                                               | Mock'da                                   |
+| ---------------------------------------------------------------------------- | ----------------------------------------- |
+| ⚠️ **Tranzaksiya izolyatsiya darajasi** (`READ COMMITTED` vs `SERIALIZABLE`) | Yo'q                                      |
+| ⚠️ **Lock** (`SELECT ... FOR UPDATE`), deadlock                              | Yo'q                                      |
+| ⚠️ **Race condition**                                                        | Yo'q — mock ketma-ket ishlaydi            |
+| **Cheklovlar:** `UNIQUE`, `CHECK`, `FOREIGN KEY`                             | ⚠️ Yo'q — mock hamma narsani qabul qiladi |
+| **Trigger, kaskad o'chirish**                                                | Yo'q                                      |
+| ⚠️ **`BigInt` ↔ `numeric` konvertatsiyasi**                                  | Yo'q — JS'da qoladi                       |
+| Timezone (`timestamptz`) xulqi                                               | Yo'q                                      |
+| Query rejasi, indeks                                                         | Yo'q                                      |
+| ⚠️ **Prisma'ning o'z xatolari**                                              | Yo'q                                      |
 
 **Konkret misol:** oversell testi. Mock DB bilan:
 
@@ -343,11 +351,11 @@ export async function startTestStack(): Promise<TestStack> {
 
 ⚠️ **Konteyner hayot sikli — bu tezlik masalasi:**
 
-| Strategiya | Vaqt | Izolyatsiya |
-|---|---|---|
-| Har test uchun yangi konteyner | ⚠️ **Juda sekin** (~3-5s × N) | Mukammal |
-| **Butun suite uchun bitta + har testdan keyin `TRUNCATE`** | ✅ Tez | ⚠️ Yetarli |
-| Bitta + tranzaksiya rollback | Eng tez | ❌ ⚠️ **Concurrency testni buzadi** |
+| Strategiya                                                 | Vaqt                          | Izolyatsiya                         |
+| ---------------------------------------------------------- | ----------------------------- | ----------------------------------- |
+| Har test uchun yangi konteyner                             | ⚠️ **Juda sekin** (~3-5s × N) | Mukammal                            |
+| **Butun suite uchun bitta + har testdan keyin `TRUNCATE`** | ✅ Tez                        | ⚠️ Yetarli                          |
+| Bitta + tranzaksiya rollback                               | Eng tez                       | ❌ ⚠️ **Concurrency testni buzadi** |
 
 **Tanlangan: bitta konteyner + `TRUNCATE`.**
 
@@ -371,16 +379,16 @@ async function truncateAll(prisma: PrismaClient): Promise<void> {
 
 ### 3.3 Nima integratsion test qilinadi
 
-| Modul | Nima |
-|---|---|
-| ⚠️ `inventory` | **Rezerv, oversell, TTL bo'shatish** (§4) |
-| ⚠️ `order` | **Saga:** to'lov ↔ rezerv ↔ yetkazib berish, kompensatsiya |
-| `payment` | Ledger balansi, ⚠️ **idempotentlik** (webhook 2 marta kelsa) |
-| `search` | Meilisearch indeksatsiya, ⚠️ **facet count to'g'riligi** |
-| `cart` | Mehmon savati birlashishi + konflikt |
-| `identity` | ⚠️ Refresh rotatsiyasi, token qayta ishlatishni aniqlash |
-| `catalog` | Variant matritsasi, atribut merosi |
-| Outbox | ⚠️ Event **yo'qolmasligi** (at-least-once) |
+| Modul          | Nima                                                         |
+| -------------- | ------------------------------------------------------------ |
+| ⚠️ `inventory` | **Rezerv, oversell, TTL bo'shatish** (§4)                    |
+| ⚠️ `order`     | **Saga:** to'lov ↔ rezerv ↔ yetkazib berish, kompensatsiya   |
+| `payment`      | Ledger balansi, ⚠️ **idempotentlik** (webhook 2 marta kelsa) |
+| `search`       | Meilisearch indeksatsiya, ⚠️ **facet count to'g'riligi**     |
+| `cart`         | Mehmon savati birlashishi + konflikt                         |
+| `identity`     | ⚠️ Refresh rotatsiyasi, token qayta ishlatishni aniqlash     |
+| `catalog`      | Variant matritsasi, atribut merosi                           |
+| Outbox         | ⚠️ Event **yo'qolmasligi** (at-least-once)                   |
 
 ⚠️ **Idempotentlik — alohida ta'kidlanadi.** Click/Payme webhook'lari **bir necha
 marta kelishi mumkin** (bu ularning normal xulqi, xato emas). Bir xil webhook 2
@@ -392,7 +400,7 @@ marta kelsa → **1 ta to'lov** yozilishi kerak, 2 ta emas. Bu test **majburiy**
 
 **Bu bo'lim — butun hujjatning markazi.**
 
-CANON §9.2: *"Oversell oldini olish — bu loyihaning eng nozik joyi."*
+CANON §9.2: _"Oversell oldini olish — bu loyihaning eng nozik joyi."_
 
 ### 4.1 Muammo
 
@@ -422,7 +430,7 @@ Bu **nazariy muammo emas**. Aksiya paytida, oxirgi tovar ustida — bu **muqarra
 ```ts
 // apps/api/test/integration/inventory/oversell.spec.ts
 describe('StockReservation — concurrency', () => {
-  it('⚠️ 100 parallel so\'rov, 1 dona tovar → ANIQ 1 muvaffaqiyat', async () => {
+  it("⚠️ 100 parallel so'rov, 1 dona tovar → ANIQ 1 muvaffaqiyat", async () => {
     const variantId = await seedVariantWithStock({ quantity: 1 });
 
     // ⚠️ Promise.allSettled — Promise.all EMAS.
@@ -453,7 +461,7 @@ describe('StockReservation — concurrency', () => {
 
     // ⚠️ DB holati ham tekshiriladi — service javobiga ishonish yetarli emas
     const stock = await prisma.stockItem.findUniqueOrThrow({ where: { variantId } });
-    expect(stock.quantity).toBe(1n);          // fizik qoldiq o'zgarmaydi
+    expect(stock.quantity).toBe(1n); // fizik qoldiq o'zgarmaydi
 
     const reservations = await prisma.stockReservation.count({
       where: { variantId, status: 'ACTIVE' },
@@ -477,7 +485,7 @@ describe('StockReservation — concurrency', () => {
     expect(results.filter((r) => r.status === 'fulfilled')).toHaveLength(10);
   });
 
-  it('⚠️ Turli miqdor: 3+3+3+3 parallel, 10 dona → 3 ta o\'tadi (9), 1 rad', async () => {
+  it("⚠️ Turli miqdor: 3+3+3+3 parallel, 10 dona → 3 ta o'tadi (9), 1 rad", async () => {
     // ⚠️ Bu holat murakkabroq: qisman bajarish BO'LMASLIGI kerak.
     // 4-so'rov 1 dona qolganini ko'rib, "3 so'radim, 1 beraman" DEMASLIGI kerak.
     const variantId = await seedVariantWithStock({ quantity: 10 });
@@ -492,7 +500,7 @@ describe('StockReservation — concurrency', () => {
     expect(results.filter((r) => r.status === 'rejected')).toHaveLength(1);
   });
 
-  it('TTL tugagach rezerv bo\'shatiladi va tovar qayta sotiladi', async () => {
+  it("TTL tugagach rezerv bo'shatiladi va tovar qayta sotiladi", async () => {
     const variantId = await seedVariantWithStock({ quantity: 1 });
     await inventoryService.reserve({ variantId, quantity: 1, cartId: randomUUID(), ttlSeconds: 1 });
 
@@ -544,14 +552,14 @@ Rezerv mexanizmining o'zi (lock strategiyasi, TTL, Redis vs PostgreSQL):
 
 ### 4.4 Boshqa concurrency testlar
 
-| Ssenariy | Tasdiq |
-|---|---|
-| ⚠️ Bir savat, ikki tab, parallel checkout | **1 ta buyurtma**, 2 ta emas |
-| Bir xil webhook 2 marta (Click) | **1 ta** `Payment` |
-| Parallel refresh token (10 ta) | ⚠️ **1 ta** yangi token, sessiya buzilmaydi |
-| Ikki admin bir mahsulotni tahrirlaydi | Optimistic lock → 2-si xato oladi |
-| Inventarizatsiya paytida sotuv | Qoldiq mos qoladi |
-| Parallel POS sotuv (2 kassa, 1 tovar) | 1 ta o'tadi |
+| Ssenariy                                  | Tasdiq                                      |
+| ----------------------------------------- | ------------------------------------------- |
+| ⚠️ Bir savat, ikki tab, parallel checkout | **1 ta buyurtma**, 2 ta emas                |
+| Bir xil webhook 2 marta (Click)           | **1 ta** `Payment`                          |
+| Parallel refresh token (10 ta)            | ⚠️ **1 ta** yangi token, sessiya buzilmaydi |
+| Ikki admin bir mahsulotni tahrirlaydi     | Optimistic lock → 2-si xato oladi           |
+| Inventarizatsiya paytida sotuv            | Qoldiq mos qoladi                           |
+| Parallel POS sotuv (2 kassa, 1 tovar)     | 1 ta o'tadi                                 |
 
 ---
 
@@ -577,11 +585,11 @@ import fc from 'fast-check';
 import { Money } from '../src/money/money';
 
 describe('Money.allocate — property', () => {
-  it('⚠️ INVARIANT: qismlar yig\'indisi HAR DOIM asl summaga teng', () => {
+  it("⚠️ INVARIANT: qismlar yig'indisi HAR DOIM asl summaga teng", () => {
     fc.assert(
       fc.property(
-        fc.bigInt({ min: -10_000_000_000n, max: 10_000_000_000n }),  // ⚠️ manfiy ham (refund)
-        fc.integer({ min: 1, max: 60 }),                              // 60 oygacha rassrochka
+        fc.bigInt({ min: -10_000_000_000n, max: 10_000_000_000n }), // ⚠️ manfiy ham (refund)
+        fc.integer({ min: 1, max: 60 }), // 60 oygacha rassrochka
         (minor, parts) => {
           const money = Money.fromMinor(minor);
           const allocated = money.allocate(parts);
@@ -597,13 +605,15 @@ describe('Money.allocate — property', () => {
     );
   });
 
-  it('INVARIANT: qismlar orasidagi farq ko\'pi bilan 1 tiyin', () => {
+  it("INVARIANT: qismlar orasidagi farq ko'pi bilan 1 tiyin", () => {
     fc.assert(
       fc.property(
         fc.bigInt({ min: 0n, max: 10_000_000_000n }),
         fc.integer({ min: 1, max: 60 }),
         (minor, parts) => {
-          const allocated = Money.fromMinor(minor).allocate(parts).map((m) => m.minor);
+          const allocated = Money.fromMinor(minor)
+            .allocate(parts)
+            .map((m) => m.minor);
           const max = allocated.reduce((a, b) => (a > b ? a : b));
           const min = allocated.reduce((a, b) => (a < b ? a : b));
 
@@ -621,7 +631,9 @@ describe('Money.allocate — property', () => {
         fc.bigInt({ min: 0n, max: 10_000_000_000n }),
         fc.integer({ min: 1, max: 60 }),
         (minor, parts) => {
-          const allocated = Money.fromMinor(minor).allocate(parts).map((m) => m.minor);
+          const allocated = Money.fromMinor(minor)
+            .allocate(parts)
+            .map((m) => m.minor);
           // Kamaymaydigan tartib: [34, 33, 33] — to'g'ri, [33, 34, 33] — yo'q
           for (let i = 1; i < allocated.length; i++) {
             expect(allocated[i - 1]).toBeGreaterThanOrEqual(allocated[i]!);
@@ -642,15 +654,24 @@ Rassrochkada esa bu **shartnoma buzilishi** va sud masalasi.
 ### 5.3 Qoldiq hech qachon manfiy emas
 
 ```ts
-it('⚠️ INVARIANT: rezerv/bo\'shatish ketma-ketligidan qat\'i nazar, qoldiq >= 0', () => {
+it("⚠️ INVARIANT: rezerv/bo'shatish ketma-ketligidan qat'i nazar, qoldiq >= 0", () => {
   fc.assert(
     fc.asyncProperty(
-      fc.integer({ min: 1, max: 50 }),                       // boshlang'ich qoldiq
+      fc.integer({ min: 1, max: 50 }), // boshlang'ich qoldiq
       fc.array(
         fc.oneof(
-          fc.record({ type: fc.constant('reserve' as const), qty: fc.integer({ min: 1, max: 10 }) }),
-          fc.record({ type: fc.constant('release' as const), qty: fc.integer({ min: 1, max: 10 }) }),
-          fc.record({ type: fc.constant('confirm' as const), qty: fc.integer({ min: 1, max: 10 }) }),
+          fc.record({
+            type: fc.constant('reserve' as const),
+            qty: fc.integer({ min: 1, max: 10 }),
+          }),
+          fc.record({
+            type: fc.constant('release' as const),
+            qty: fc.integer({ min: 1, max: 10 }),
+          }),
+          fc.record({
+            type: fc.constant('confirm' as const),
+            qty: fc.integer({ min: 1, max: 10 }),
+          }),
         ),
         { minLength: 1, maxLength: 100 },
       ),
@@ -662,14 +683,16 @@ it('⚠️ INVARIANT: rezerv/bo\'shatish ketma-ketligidan qat\'i nazar, qoldiq >
           // Biz INVARIANT hech qachon buzilmasligini tekshiryapmiz.
           try {
             await applyOperation(variantId, op);
-          } catch { /* rad etish — to'g'ri xulq */ }
+          } catch {
+            /* rad etish — to'g'ri xulq */
+          }
 
           const available = await inventoryService.getAvailable(variantId);
-          expect(available).toBeGreaterThanOrEqual(0n);      // ⚠️ INVARIANT
+          expect(available).toBeGreaterThanOrEqual(0n); // ⚠️ INVARIANT
         }
       },
     ),
-    { numRuns: 200 },   // ⚠️ DB bilan — sekin, shuning uchun kamroq
+    { numRuns: 200 }, // ⚠️ DB bilan — sekin, shuning uchun kamroq
   );
 });
 ```
@@ -696,10 +719,10 @@ it('⚠️ INVARIANT: bir xil savat + bir xil vaqt → bir xil narx', () => {
   );
 });
 
-it('⚠️ INVARIANT: savatdagi pozitsiyalar tartibi narxga ta\'sir qilmaydi', () => {
+it("⚠️ INVARIANT: savatdagi pozitsiyalar tartibi narxga ta'sir qilmaydi", () => {
   fc.assert(
     fc.property(arbitraryCart(), arbitraryDate(), (cart, at) => {
-      const forward  = pricingEngine.calculate({ ...cart, at });
+      const forward = pricingEngine.calculate({ ...cart, at });
       const shuffled = pricingEngine.calculate({ ...cart, items: [...cart.items].reverse(), at });
 
       // ⚠️ Bu OSON buziladigan invariant: agar chegirma "birinchi topilgan
@@ -725,7 +748,7 @@ it('INVARIANT: chegirma summasi asl summadan oshmaydi', () => {
   fc.assert(
     fc.property(arbitraryCart(), arbitraryDiscounts(), arbitraryDate(), (cart, discounts, at) => {
       const withDiscount = pricingEngine.calculate({ ...cart, discounts, at });
-      const without      = pricingEngine.calculate({ ...cart, discounts: [], at });
+      const without = pricingEngine.calculate({ ...cart, discounts: [], at });
       expect(withDiscount.total.minor).toBeLessThanOrEqual(without.total.minor);
     }),
     { numRuns: 5_000 },
@@ -738,7 +761,7 @@ it('INVARIANT: chegirma summasi asl summadan oshmaydi', () => {
 ```ts
 const ALL_STATUSES = Object.keys(ORDER_TRANSITIONS) as OrderStatus[];
 
-it('⚠️ INVARIANT: ruxsat etilmagan o\'tish HAR DOIM rad etiladi', () => {
+it("⚠️ INVARIANT: ruxsat etilmagan o'tish HAR DOIM rad etiladi", () => {
   fc.assert(
     fc.asyncProperty(
       fc.constantFrom(...ALL_STATUSES),
@@ -752,8 +775,9 @@ it('⚠️ INVARIANT: ruxsat etilmagan o\'tish HAR DOIM rad etiladi', () => {
         } else {
           // ⚠️ Har bir mumkin bo'lgan JUFTLIK tekshiriladi — 10 × 10 = 100 ta.
           // Qo'lda yozilsa — 100 ta test. Property bilan — bitta.
-          await expect(orderService.transition(order.id, to))
-            .rejects.toThrow(InvalidTransitionError);
+          await expect(orderService.transition(order.id, to)).rejects.toThrow(
+            InvalidTransitionError,
+          );
         }
       },
     ),
@@ -761,15 +785,16 @@ it('⚠️ INVARIANT: ruxsat etilmagan o\'tish HAR DOIM rad etiladi', () => {
   );
 });
 
-it('INVARIANT: terminal holatdan chiqib bo\'lmaydi', () => {
+it("INVARIANT: terminal holatdan chiqib bo'lmaydi", () => {
   fc.assert(
     fc.asyncProperty(
       fc.constantFrom<OrderStatus>('CANCELLED', 'REFUNDED'),
       fc.constantFrom(...ALL_STATUSES),
       async (terminal, target) => {
         const order = await seedOrderInStatus(terminal);
-        await expect(orderService.transition(order.id, target))
-          .rejects.toThrow(InvalidTransitionError);
+        await expect(orderService.transition(order.id, target)).rejects.toThrow(
+          InvalidTransitionError,
+        );
       },
     ),
     { numRuns: 100 },
@@ -783,6 +808,7 @@ Property test — bepul emas: arbitrary yozish vaqt oladi, sekin ishlaydi, va
 buzilganda **debug qilish qiyin** (fast-check shrink qiladi, lekin baribir).
 
 **Arzimaydigan joylar:**
+
 - CRUD — "yaratdim, o'qidim" — bu yerda invariant yo'q
 - UI komponentlari
 - Tashqi API adapterlari (Click/Payme) — u yerda faraz emas, kontrakt
@@ -801,19 +827,19 @@ qilinmaydi.**
 ⚠️ E2E — **qimmat, sekin, flaky**. Shuning uchun **kam**, lekin **pul keltiradigan
 oqimlarda**.
 
-⚠️ **Qoida:** E2E test **faqat** shu savolga javob beradi: *"Foydalanuvchi
-pul to'lay oladimi?"* Boshqa hamma narsa pastroq darajada tekshiriladi.
+⚠️ **Qoida:** E2E test **faqat** shu savolga javob beradi: _"Foydalanuvchi
+pul to'lay oladimi?"_ Boshqa hamma narsa pastroq darajada tekshiriladi.
 
 ### 6.2 Kritik oqimlar
 
-| # | Oqim | Nega kritik |
-|---|---|---|
-| **E2E-1** | ⚠️ **Checkout — mehmon** | Sinsa — **to'g'ridan-to'g'ri daromad yo'qolishi** |
-| **E2E-2** | ⚠️ **Checkout — login qilgan** (savat merge bilan) | Eng ko'p bug shu yerda |
-| **E2E-3** | Qidiruv + filtr + URL | Asosiy navigatsiya |
-| **E2E-4** | Admin: mahsulot + variant matritsasi | Kontent menejerining asosiy ishi |
-| **E2E-5** | POS: smena ochish → sotuv → yopish | Offline kassa |
-| **E2E-6** | Buyurtma holati: admin o'zgartiradi → mijoz ko'radi | Uchdan-uchgacha |
+| #         | Oqim                                                | Nega kritik                                       |
+| --------- | --------------------------------------------------- | ------------------------------------------------- |
+| **E2E-1** | ⚠️ **Checkout — mehmon**                            | Sinsa — **to'g'ridan-to'g'ri daromad yo'qolishi** |
+| **E2E-2** | ⚠️ **Checkout — login qilgan** (savat merge bilan)  | Eng ko'p bug shu yerda                            |
+| **E2E-3** | Qidiruv + filtr + URL                               | Asosiy navigatsiya                                |
+| **E2E-4** | Admin: mahsulot + variant matritsasi                | Kontent menejerining asosiy ishi                  |
+| **E2E-5** | POS: smena ochish → sotuv → yopish                  | Offline kassa                                     |
+| **E2E-6** | Buyurtma holati: admin o'zgartiradi → mijoz ko'radi | Uchdan-uchgacha                                   |
 
 ```ts
 // e2e/checkout-guest.spec.ts
@@ -822,13 +848,16 @@ test('⚠️ E2E-1: mehmon checkout — Click orqali', async ({ page }) => {
 
   // Filtr
   await page.getByRole('checkbox', { name: /4000\s*K/ }).check();
-  await expect(page).toHaveURL(/ct=4000/);              // ⚠️ URL sinxronizatsiyasi
+  await expect(page).toHaveURL(/ct=4000/); // ⚠️ URL sinxronizatsiyasi
 
-  await page.getByRole('link', { name: /Novotech/ }).first().click();
+  await page
+    .getByRole('link', { name: /Novotech/ })
+    .first()
+    .click();
 
   // Variant tanlash
   await page.getByRole('radio', { name: 'Xrom' }).click();
-  await page.getByRole('radio', { name: 'O\'rta' }).click();
+  await page.getByRole('radio', { name: "O'rta" }).click();
 
   await page.getByRole('button', { name: /Savatga/ }).click();
   await expect(page.getByTestId('cart-count')).toHaveText('1');
@@ -870,14 +899,14 @@ integratsiya qo'lda** tekshiriladi. Bu **ochiq savol**.
 
 ### 6.3 ⚠️ Flaky'ga qarshi qoidalar
 
-| ❌ Qilinmaydi | ✅ Qilinadi |
-|---|---|
-| `waitForTimeout(2000)` | Auto-waiting (`expect().toBeVisible()`) |
+| ❌ Qilinmaydi                 | ✅ Qilinadi                                                              |
+| ----------------------------- | ------------------------------------------------------------------------ |
+| `waitForTimeout(2000)`        | Auto-waiting (`expect().toBeVisible()`)                                  |
 | CSS selektor (`.btn-primary`) | ⚠️ `getByRole`, `getByLabel` — **a11y bilan bir xil narsani tekshiradi** |
-| Umumiy test DB | Har test — o'z ma'lumoti (unikal prefiks) |
-| Test tartibiga bog'liqlik | Har test mustaqil |
-| Real tashqi API | Sandbox / mock |
-| `new Date()` | Vaqt aniq belgilanadi |
+| Umumiy test DB                | Har test — o'z ma'lumoti (unikal prefiks)                                |
+| Test tartibiga bog'liqlik     | Har test mustaqil                                                        |
+| Real tashqi API               | Sandbox / mock                                                           |
+| `new Date()`                  | Vaqt aniq belgilanadi                                                    |
 
 ⚠️ **`getByRole` — bu bonus:** u a11y daraxti orqali ishlaydi. Ya'ni agar tugma
 `<div onClick>` bo'lsa — `getByRole('button')` **topolmaydi** va test yiqiladi.
@@ -887,11 +916,15 @@ Ya'ni E2E testlar **a11y'ni ham majburlaydi**. Bu bepul foyda
 ### 6.4 A11y va vizual regressiya
 
 ```ts
-test('a11y: kritik sahifalarda serious/critical yo\'q', async ({ page }) => {
+test("a11y: kritik sahifalarda serious/critical yo'q", async ({ page }) => {
   for (const path of ['/uz', '/uz/catalog/lyustry', '/uz/product/test', '/uz/checkout']) {
     await page.goto(path);
-    const results = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag22aa']).analyze();
-    const serious = results.violations.filter((v) => ['serious', 'critical'].includes(v.impact ?? ''));
+    const results = await new AxeBuilder({ page })
+      .withTags(['wcag2a', 'wcag2aa', 'wcag22aa'])
+      .analyze();
+    const serious = results.violations.filter((v) =>
+      ['serious', 'critical'].includes(v.impact ?? ''),
+    );
     expect(serious, JSON.stringify(serious, null, 2)).toEqual([]);
   }
 });
@@ -902,7 +935,7 @@ for (const locale of ['uz', 'uz-Cyrl', 'ru'] as const) {
     await page.goto(`/${locale}/product/test`);
     await expect(page).toHaveScreenshot(`product-${locale}.png`, {
       maxDiffPixelRatio: 0.01,
-      mask: [page.getByTestId('product-image')],    // ⚠️ rasm o'zgarishi test buzmasin
+      mask: [page.getByTestId('product-image')], // ⚠️ rasm o'zgarishi test buzmasin
     });
   });
 }
@@ -944,7 +977,7 @@ export const options = {
       stages: [
         { duration: '2m', target: 50 },
         { duration: '5m', target: 50 },
-        { duration: '2m', target: 200 },   // ⚠️ bottleneck qidirish
+        { duration: '2m', target: 200 }, // ⚠️ bottleneck qidirish
         { duration: '2m', target: 0 },
       ],
     },
@@ -958,7 +991,7 @@ export const options = {
 };
 
 export default function () {
-  const filters = randomFilterCombination();   // ⚠️ har VU boshqa filtr → kesh yolg'on yordam bermasin
+  const filters = randomFilterCombination(); // ⚠️ har VU boshqa filtr → kesh yolg'on yordam bermasin
   const res = http.get(`${__ENV.API_URL}/search?${filters}`);
 
   check(res, {
@@ -972,13 +1005,13 @@ export default function () {
 Redis keshi 100% hit beradi va test **yolg'on natija** ko'rsatadi. Real
 foydalanuvchilar har xil filtr qo'llaydi.
 
-| Ssenariy | Nima tekshiriladi |
-|---|---|
-| ⚠️ **Faceted search** | Eng og'ir. Meilisearch vs PostgreSQL qarori shunga bog'liq (CANON §9.1) |
-| **Checkout** | ⚠️ Yozish yuklamasi + rezerv locklari |
+| Ssenariy                   | Nima tekshiriladi                                                                              |
+| -------------------------- | ---------------------------------------------------------------------------------------------- |
+| ⚠️ **Faceted search**      | Eng og'ir. Meilisearch vs PostgreSQL qarori shunga bog'liq (CANON §9.1)                        |
+| **Checkout**               | ⚠️ Yozish yuklamasi + rezerv locklari                                                          |
 | ⚠️ **Aksiya (flash sale)** | ⚠️ **Eng qattiq test:** 1000 VU bir vaqtda **bitta** mahsulotni sotib oladi. Lock nima qiladi? |
-| Katalog ko'rish | Eng ko'p trafik, lekin oson (kesh) |
-| Admin jadval | 50 000 yozuv + sort + filter |
+| Katalog ko'rish            | Eng ko'p trafik, lekin oson (kesh)                                                             |
+| Admin jadval               | 50 000 yozuv + sort + filter                                                                   |
 
 ⚠️ **Aksiya ssenariysi — eng qimmatli:** bu **oversell + performance** ni bir
 vaqtda tekshiradi. 1000 VU, 10 dona tovar → **aniq 10 ta buyurtma** bo'lishi
@@ -1041,7 +1074,9 @@ export const productFactory = {
   },
 
   /** ⚠️ To'liq bo'lmagan matritsa — docs/13 §5.1 dagi 'nonexistent' holati */
-  buildWithSparseMatrix(): ProductInput { /* ... */ },
+  buildWithSparseMatrix(): ProductInput {
+    /* ... */
+  },
 };
 ```
 
@@ -1051,17 +1086,18 @@ nom — zararsiz. Tasodifiy **narx yoki qoldiq** — testni flaky qiladi. Qoida:
 
 ### 8.2 Seed
 
-| Seed | Nima uchun |
-|---|---|
-| `minimal` | Unit/integration — 1 kategoriya, 3 mahsulot. **Tez** |
+| Seed        | Nima uchun                                                         |
+| ----------- | ------------------------------------------------------------------ |
+| `minimal`   | Unit/integration — 1 kategoriya, 3 mahsulot. **Tez**               |
 | `realistic` | ⚠️ E2E — 11 kategoriya (CANON §4), ~200 mahsulot, variantlar bilan |
-| `large` | ⚠️ Load test — ~10 000 mahsulot, ~50 000 SKU |
+| `large`     | ⚠️ Load test — ~10 000 mahsulot, ~50 000 SKU                       |
 
 ⚠️ **`realistic` seed — ochiq savol.** CANON §4 kategoriyalarni beradi (Люстры,
 Споты, Светильники, Трековые, Бра, Уличные, Торшеры, Технические, Комплектующие,
 Светодиодные ленты, Настольные лампы), lekin **real mahsulot katalogi yo'q**.
 
 Variantlar:
+
 1. Real do'kon katalogini olish (agar hamkorlik bo'lsa) → **anonimlashtirish**
    (narx, ta'minotchi, marja — olib tashlanadi)
 2. Ochiq katalogdan (Novotech, Maytoni va h.k. sayti) — ⚠️ **yuridik savol**:
@@ -1075,6 +1111,7 @@ ko'chirmasdan, faqat statistika). Bu yuridik jihatdan xavfsiz.
 ### 8.3 Anonimlashtirish
 
 Agar real ma'lumot ishlatilsa — ⚠️ **majburiy**:
+
 - Mijoz ismi, telefon, manzil → generatsiya qilingan
 - Ta'minotchi nomi, xarid narxi → maskalanadi (**tijorat siri**)
 - ⚠️ **Prod DB dumpi dev mashinaga TUSHMAYDI.** Shaxsiy ma'lumot qonuni
@@ -1090,7 +1127,9 @@ Agar real ma'lumot ishlatilsa — ⚠️ **majburiy**:
 ishga tushdi" deydi. Assert bo'lmasa ham coverage 100% bo'ladi:
 
 ```ts
-it('bad test', () => { calculatePrice(cart); });   // ⚠️ Coverage +, qiymat 0
+it('bad test', () => {
+  calculatePrice(cart);
+}); // ⚠️ Coverage +, qiymat 0
 ```
 
 Shuning uchun coverage — **quyi chegara**, sifat o'lchovi emas. Sifat o'lchovi
@@ -1098,29 +1137,29 @@ uchun — mutation testing (§11).
 
 ### 9.2 Modul bo'yicha maqsad
 
-| Modul | Chegara | Nega |
-|---|---|---|
-| ⚠️ `packages/contracts` (`Money`) | **95%** | Har qator pul bilan ishlaydi |
-| ⚠️ `pricing` | **90%** | Determinizm, pul |
-| ⚠️ `inventory` | **90%** | Oversell |
-| ⚠️ `payment` (ledger, rassrochka) | **90%** | Pul |
-| `order` (state machine, saga) | 85% | Murakkab, lekin qism-qism |
-| `identity` | 85% | Xavfsizlik |
-| `cart`, `search`, `catalog` | 75% | |
-| `crm`, `analytics`, `content` | 60% | ⚠️ Ko'p CRUD |
-| `apps/storefront` | 60% | ⚠️ Ko'p qism — styled-components (§9.3) |
-| `apps/admin` | 50% | ⚠️ Ko'p CRUD forma |
+| Modul                             | Chegara | Nega                                    |
+| --------------------------------- | ------- | --------------------------------------- |
+| ⚠️ `packages/contracts` (`Money`) | **95%** | Har qator pul bilan ishlaydi            |
+| ⚠️ `pricing`                      | **90%** | Determinizm, pul                        |
+| ⚠️ `inventory`                    | **90%** | Oversell                                |
+| ⚠️ `payment` (ledger, rassrochka) | **90%** | Pul                                     |
+| `order` (state machine, saga)     | 85%     | Murakkab, lekin qism-qism               |
+| `identity`                        | 85%     | Xavfsizlik                              |
+| `cart`, `search`, `catalog`       | 75%     |                                         |
+| `crm`, `analytics`, `content`     | 60%     | ⚠️ Ko'p CRUD                            |
+| `apps/storefront`                 | 60%     | ⚠️ Ko'p qism — styled-components (§9.3) |
+| `apps/admin`                      | 50%     | ⚠️ Ko'p CRUD forma                      |
 
 ### 9.3 ⚠️ Coverage'dan chiqariladi
 
-| Nima | Nega |
-|---|---|
+| Nima                               | Nega                                                                                 |
+| ---------------------------------- | ------------------------------------------------------------------------------------ |
 | ⚠️ `**/*.styled.js` / `.styled.ts` | **6 313 qator CSS.** Test qilinmaydi. Coverage'ga kirsa — raqam **ma'nosiz** bo'ladi |
-| `**/*.dto.ts` | Faqat dekoratorlar |
-| `**/*.module.ts` | NestJS DI konfiguratsiyasi |
-| `packages/contracts/generated/**` | ⚠️ Generatsiya qilingan — o'z kodimiz emas |
-| `**/main.ts`, `main.jsx` | Bootstrap |
-| `prisma/migrations/**` | |
+| `**/*.dto.ts`                      | Faqat dekoratorlar                                                                   |
+| `**/*.module.ts`                   | NestJS DI konfiguratsiyasi                                                           |
+| `packages/contracts/generated/**`  | ⚠️ Generatsiya qilingan — o'z kodimiz emas                                           |
+| `**/main.ts`, `main.jsx`           | Bootstrap                                                                            |
+| `prisma/migrations/**`             |                                                                                      |
 
 ⚠️ **Bu muhim:** agar `.styled.js` fayllar coverage'ga kirsa, storefront coverage'i
 sun'iy ravishda **20%** ko'rinadi (6 313 qator test qilinmagan CSS) va raqam
@@ -1162,11 +1201,11 @@ Lekin `packages/contracts` o'zgarsa — **hammasi** ishga tushadi (hamma unga bo
 
 ### 10.3 Parallel
 
-| Bosqich | Parallelizatsiya |
-|---|---|
-| Unit | Jest/Vitest — CPU soniga qarab avtomatik |
+| Bosqich        | Parallelizatsiya                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------------------------------------- |
+| Unit           | Jest/Vitest — CPU soniga qarab avtomatik                                                                               |
 | ⚠️ Integration | ⚠️ **Ehtiyotkorlik:** har shard **o'z konteyner to'plamiga** ega bo'lishi kerak. Umumiy DB → testlar bir-birini buzadi |
-| E2E | Playwright shard (`--shard=1/4`) |
+| E2E            | Playwright shard (`--shard=1/4`)                                                                                       |
 
 ### 10.4 ⚠️ Flaky siyosati (quarantine)
 
@@ -1187,13 +1226,13 @@ Flaky test — **yo'q testdan yomonroq**. Sabab: jamoa qizil CI'ga ko'nikadi va
 
 ### 10.5 Nightly
 
-| Ish | Nega nightly |
-|---|---|
+| Ish                                  | Nega nightly                               |
+| ------------------------------------ | ------------------------------------------ |
 | ⚠️ Concurrency test **×1000 takror** | Race oynasi tor — ko'p takror kerak (§4.3) |
-| Property test `numRuns: 100_000` | Sekin, lekin chuqurroq qidiradi |
-| Load test | Sekin |
-| ⚠️ Mutation testing | Juda sekin (§11) |
-| Karantindagi testlar | Tuzalganini bilish uchun |
+| Property test `numRuns: 100_000`     | Sekin, lekin chuqurroq qidiradi            |
+| Load test                            | Sekin                                      |
+| ⚠️ Mutation testing                  | Juda sekin (§11)                           |
+| Karantindagi testlar                 | Tuzalganini bilish uchun                   |
 
 ---
 
@@ -1226,24 +1265,24 @@ export default {
 
   // ⚠️ QAT'IY ro'yxat. Kengaytirilmaydi.
   mutate: [
-    'packages/contracts/src/money/**/*.ts',       // Money.allocate — eng muhim
-    'apps/api/src/pricing/**/*.ts',               // narx dvigateli
-    'apps/api/src/inventory/**/*.ts',             // qoldiq, rezerv
-    'apps/api/src/payment/installment/**/*.ts',   // rassrochka grafigi
-    'apps/api/src/order/order-state-machine.ts',  // holat o'tishlari
+    'packages/contracts/src/money/**/*.ts', // Money.allocate — eng muhim
+    'apps/api/src/pricing/**/*.ts', // narx dvigateli
+    'apps/api/src/inventory/**/*.ts', // qoldiq, rezerv
+    'apps/api/src/payment/installment/**/*.ts', // rassrochka grafigi
+    'apps/api/src/order/order-state-machine.ts', // holat o'tishlari
   ],
 
-  thresholds: { high: 90, low: 80, break: 75 },   // ⚠️ break — CI yiqiladi
+  thresholds: { high: 90, low: 80, break: 75 }, // ⚠️ break — CI yiqiladi
 };
 ```
 
-| Modul | Maqsad | Nega |
-|---|---|---|
-| ⚠️ `Money` | **90%+** | 1 tiyin xatosi = buxgalteriya + sud |
-| ⚠️ `pricing` | 85%+ | Noto'g'ri narx = yo'qotish yoki nizolar |
-| ⚠️ `inventory` | 85%+ | Oversell |
-| ⚠️ `installment` | 85%+ | Rassrochka = **yuridik hujjat** |
-| `order-state-machine` | 80%+ | Noto'g'ri o'tish = operatsion tartibsizlik |
+| Modul                 | Maqsad   | Nega                                       |
+| --------------------- | -------- | ------------------------------------------ |
+| ⚠️ `Money`            | **90%+** | 1 tiyin xatosi = buxgalteriya + sud        |
+| ⚠️ `pricing`          | 85%+     | Noto'g'ri narx = yo'qotish yoki nizolar    |
+| ⚠️ `inventory`        | 85%+     | Oversell                                   |
+| ⚠️ `installment`      | 85%+     | Rassrochka = **yuridik hujjat**            |
+| `order-state-machine` | 80%+     | Noto'g'ri o'tish = operatsion tartibsizlik |
 
 ### 11.3 ⚠️ Qayerda ARZIMAYDI
 
@@ -1262,40 +1301,40 @@ mutatsiya qilinadi (~1-2 min), va u yerdagi xato **eng qimmat**.
 
 ## 12. Acceptance criteria (test tizimi uchun)
 
-| # | Mezon |
-|---|---|
-| T-01 | ⚠️ Concurrency test mavjud: 100 parallel, 1 tovar → aniq 1 muvaffaqiyat |
+| #    | Mezon                                                                                     |
+| ---- | ----------------------------------------------------------------------------------------- |
+| T-01 | ⚠️ Concurrency test mavjud: 100 parallel, 1 tovar → aniq 1 muvaffaqiyat                   |
 | T-02 | ⚠️ Integration testlar **real PostgreSQL 17** da (Testcontainers). Mock Prisma — **0 ta** |
-| T-03 | ⚠️ `Money.allocate` property test: `sum === original`, `numRuns >= 10_000` |
-| T-04 | Narx dvigateli determinizm property testi mavjud |
-| T-05 | ⚠️ Holat mashinasi: **barcha** noto'g'ri o'tishlar bloklanadi (property) |
-| T-06 | E2E: checkout (mehmon + login) ishlaydi |
-| T-07 | ⚠️ Webhook idempotentligi tekshirilgan (2 marta → 1 to'lov) |
-| T-08 | ⚠️ Single-flight refresh: 10 parallel 401 → 1 refresh |
-| T-09 | Coverage: `Money`/`pricing`/`inventory` ≥ 90% |
-| T-10 | ⚠️ Mutation score `Money` ≥ 90% |
-| T-11 | ⚠️ `.styled.js` coverage'dan chiqarilgan |
-| T-12 | CI < 15 min (unit + integration + e2e) |
-| T-13 | ⚠️ Karantin ro'yxati **bo'sh yoki < 3 ta** |
-| T-14 | Load test bazaviy raqamlari yozib olingan |
-| T-15 | axe-core: serious/critical = 0 |
+| T-03 | ⚠️ `Money.allocate` property test: `sum === original`, `numRuns >= 10_000`                |
+| T-04 | Narx dvigateli determinizm property testi mavjud                                          |
+| T-05 | ⚠️ Holat mashinasi: **barcha** noto'g'ri o'tishlar bloklanadi (property)                  |
+| T-06 | E2E: checkout (mehmon + login) ishlaydi                                                   |
+| T-07 | ⚠️ Webhook idempotentligi tekshirilgan (2 marta → 1 to'lov)                               |
+| T-08 | ⚠️ Single-flight refresh: 10 parallel 401 → 1 refresh                                     |
+| T-09 | Coverage: `Money`/`pricing`/`inventory` ≥ 90%                                             |
+| T-10 | ⚠️ Mutation score `Money` ≥ 90%                                                           |
+| T-11 | ⚠️ `.styled.js` coverage'dan chiqarilgan                                                  |
+| T-12 | CI < 15 min (unit + integration + e2e)                                                    |
+| T-13 | ⚠️ Karantin ro'yxati **bo'sh yoki < 3 ta**                                                |
+| T-14 | Load test bazaviy raqamlari yozib olingan                                                 |
+| T-15 | axe-core: serious/critical = 0                                                            |
 
 ---
 
 ## 13. Ochiq savollar
 
-| # | Savol | Kim | ⚠️ Izoh |
-|---|---|---|---|
-| 1 | ⚠️ **Click/Payme sandbox bormi?** Xulqi qanday? | ⚠️ **Rasmiy hujjat kerak** | Yo'q bo'lsa — o'z mock + qo'lda test. **E2E-1 shunga bog'liq** |
-| 2 | ⚠️ **Rassrochka:** foiz, jarima, kechikish formulasi? | ⚠️ **Provayder + yurist** | Test strukturasi bor, **raqamlar yo'q** |
-| 3 | ⚠️ Real katalog test ma'lumoti sifatida: yuridik jihatdan mumkinmi? | ⚠️ **Yurist** | §8.2 |
-| 4 | Kutilayotgan yuklama (RPS, VU)? | ⚠️ **Real do'kon yo'q → noma'lum** | Load threshold'lari faraz |
-| 5 | ⚠️ Prod DB dumpi test uchun — shaxsiy ma'lumot qonuni nima deydi? | ⚠️ **Yurist** | §8.3 |
-| 6 | CI runner: GitHub-hosted yetarlimi? (Testcontainers og'ir) | O'lchov | Self-hosted kerak bo'lishi mumkin |
-| 7 | Vizual regressiya: Docker'da barqarormi? | O'lchov | Flaky bo'lsa — o'chiriladi |
-| 8 | ⚠️ 1C integratsiyasi test qilinadimi? Sandbox bormi? | ⚠️ **Tasdiqlanmagan talab** (CANON §6) | |
-| 9 | Meilisearch vs PostgreSQL — load test qachon qaror beradi? | Faza 2 | CANON §9.1 |
-| 10 | ⚠️ Bitta odam uchun bu test hajmi realmi? | ⚠️ **Loyiha egasi** | Halol savol: test yozish — kod yozishdan ko'p vaqt olishi mumkin |
+| #   | Savol                                                               | Kim                                    | ⚠️ Izoh                                                          |
+| --- | ------------------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------- |
+| 1   | ⚠️ **Click/Payme sandbox bormi?** Xulqi qanday?                     | ⚠️ **Rasmiy hujjat kerak**             | Yo'q bo'lsa — o'z mock + qo'lda test. **E2E-1 shunga bog'liq**   |
+| 2   | ⚠️ **Rassrochka:** foiz, jarima, kechikish formulasi?               | ⚠️ **Provayder + yurist**              | Test strukturasi bor, **raqamlar yo'q**                          |
+| 3   | ⚠️ Real katalog test ma'lumoti sifatida: yuridik jihatdan mumkinmi? | ⚠️ **Yurist**                          | §8.2                                                             |
+| 4   | Kutilayotgan yuklama (RPS, VU)?                                     | ⚠️ **Real do'kon yo'q → noma'lum**     | Load threshold'lari faraz                                        |
+| 5   | ⚠️ Prod DB dumpi test uchun — shaxsiy ma'lumot qonuni nima deydi?   | ⚠️ **Yurist**                          | §8.3                                                             |
+| 6   | CI runner: GitHub-hosted yetarlimi? (Testcontainers og'ir)          | O'lchov                                | Self-hosted kerak bo'lishi mumkin                                |
+| 7   | Vizual regressiya: Docker'da barqarormi?                            | O'lchov                                | Flaky bo'lsa — o'chiriladi                                       |
+| 8   | ⚠️ 1C integratsiyasi test qilinadimi? Sandbox bormi?                | ⚠️ **Tasdiqlanmagan talab** (CANON §6) |                                                                  |
+| 9   | Meilisearch vs PostgreSQL — load test qachon qaror beradi?          | Faza 2                                 | CANON §9.1                                                       |
+| 10  | ⚠️ Bitta odam uchun bu test hajmi realmi?                           | ⚠️ **Loyiha egasi**                    | Halol savol: test yozish — kod yozishdan ko'p vaqt olishi mumkin |
 
 ---
 

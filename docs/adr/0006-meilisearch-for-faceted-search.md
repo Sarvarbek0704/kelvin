@@ -41,14 +41,14 @@ Halol bo'lamiz: PostgreSQL ancha narsani qiladi.
 
 ### Meilisearch nima qo'shadi
 
-| | PostgreSQL | Meilisearch |
-|---|---|---|
-| Facet count | Qo'lda agregat, har filtr uchun | **O'rnatilgan**, bitta so'rovda |
-| Typo tolerance | `pg_trgm` similarity — sozlash qiyin | **O'rnatilgan** |
-| Ranking | Qo'lda | O'rnatilgan, sozlanadigan |
-| Ko'p tilli qidiruv | Har til uchun alohida `tsvector` | Bitta index, ko'p maydon |
-| Sinonim | Qo'lda jadval | Konfiguratsiya |
-| Sozlash | Ko'p ish | `npx meilisearch` |
+|                    | PostgreSQL                           | Meilisearch                     |
+| ------------------ | ------------------------------------ | ------------------------------- |
+| Facet count        | Qo'lda agregat, har filtr uchun      | **O'rnatilgan**, bitta so'rovda |
+| Typo tolerance     | `pg_trgm` similarity — sozlash qiyin | **O'rnatilgan**                 |
+| Ranking            | Qo'lda                               | O'rnatilgan, sozlanadigan       |
+| Ko'p tilli qidiruv | Har til uchun alohida `tsvector`     | Bitta index, ko'p maydon        |
+| Sinonim            | Qo'lda jadval                        | Konfiguratsiya                  |
+| Sozlash            | Ko'p ish                             | `npx meilisearch`               |
 
 Facet count — asosiy farq. PostgreSQL'da uni yozish mumkin, lekin har filtr o'zgarishida 15 ta agregat so'rov ishga tushadi va ular indeksdan to'liq foydalanmaydi.
 
@@ -66,11 +66,11 @@ Elasticsearch — 100k+ SKU va murakkab agregatlar uchun. Kelvin unday emas.
 
 Bu qaror "yoritgichda atribut ko'p" degan **farazga** asoslangan. Lekin:
 
-| SKU soni | To'g'ri tanlov |
-|---|---|
-| < 500 | **PostgreSQL yetarli.** Meilisearch — ortiqcha murakkablik |
-| 500–5 000 | Chegara. O'lchov kerak |
-| > 5 000 | Meilisearch o'zini oqlaydi |
+| SKU soni  | To'g'ri tanlov                                             |
+| --------- | ---------------------------------------------------------- |
+| < 500     | **PostgreSQL yetarli.** Meilisearch — ortiqcha murakkablik |
+| 500–5 000 | Chegara. O'lchov kerak                                     |
+| > 5 000   | Meilisearch o'zini oqlaydi                                 |
 
 Real do'konda nechta SKU? **Bilmaymiz** — bu [00-vision-and-scope.md §6](../00-vision-and-scope.md) dagi ochiq savol.
 
@@ -97,6 +97,7 @@ PostgreSQL (haqiqat) → outbox → BullMQ job → Meilisearch (index)
 **Nima bo'lishi mumkin:** mijoz qidiruvda "bor" deb ko'rsatilgan tovarni bosadi, mahsulot sahifasida "tugagan" chiqadi.
 
 **Bu qabul qilinadi**, chunki:
+
 - Qidiruv natijasi — **taxmin**, va'da emas
 - Narx va qoldiq mahsulot sahifasida **PostgreSQL'dan** qayta o'qiladi
 - **Oversell bo'lmaydi** — rezerv PostgreSQL'da atomik ([ADR-0007](./0007-atomic-conditional-reservation.md))
@@ -108,11 +109,13 @@ Ya'ni eskirgan index **noqulaylik** keltiradi, **pul yo'qotmaydi**. Bu farq muhi
 ## Oqibatlar
 
 **Ijobiy:**
+
 - Facet count tayyor
 - Typo tolerance tayyor
 - Qidiruv tez
 
 **Salbiy:**
+
 - **Yangi servis** — backup, monitoring, versiya yangilash
 - **Ikkilangan ma'lumot** → sinxronizatsiya muammosi
 - **RAM** — index xotirada. SKU o'sishi bilan o'sadi
@@ -121,11 +124,11 @@ Ya'ni eskirgan index **noqulaylik** keltiradi, **pul yo'qotmaydi**. Bu farq muhi
 
 ## Qachon qayta ko'riladi
 
-| Signal | Chora |
-|---|---|
-| **SKU < 500 ekani aniqlansa** | **Meilisearch'ni olib tashlash.** PostgreSQL yetarli |
-| Sinxronizatsiya muammosi tez-tez | PostgreSQL'ga qaytish yoki CDC |
-| Meilisearch RAM'i qimmat | O'lchash, keyin qaror |
+| Signal                           | Chora                                                |
+| -------------------------------- | ---------------------------------------------------- |
+| **SKU < 500 ekani aniqlansa**    | **Meilisearch'ni olib tashlash.** PostgreSQL yetarli |
+| Sinxronizatsiya muammosi tez-tez | PostgreSQL'ga qaytish yoki CDC                       |
+| Meilisearch RAM'i qimmat         | O'lchash, keyin qaror                                |
 
 **Birinchi qator eng ehtimolli.** Agar do'konda 300 ta chiroq bo'lsa, bu ADR bekor qilinadi va bu **normal** — qaror o'lchovsiz qabul qilingan edi va o'lchov uni bekor qildi.
 

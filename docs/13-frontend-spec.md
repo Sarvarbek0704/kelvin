@@ -16,13 +16,13 @@ O'zgaradigan yagona narsa: **brend nomi va logotip → Kelvin**.
 
 Quyidagilar **O'ZGARMAYDI** va bu hujjatda muhokama qilinmaydi:
 
-| Element | Holat |
-|---|---|
-| Rang palitrasi (`#454545`, `#f2f2f2`, `#ffffff`) | Qotib qolgan |
-| Tipografika (Manrope 200..800) | Qotib qolgan |
+| Element                                                    | Holat        |
+| ---------------------------------------------------------- | ------------ |
+| Rang palitrasi (`#454545`, `#f2f2f2`, `#ffffff`)           | Qotib qolgan |
+| Tipografika (Manrope 200..800)                             | Qotib qolgan |
 | Grid va konteyner (`max-width: 1332px`, `padding: 0 16px`) | Qotib qolgan |
-| Sahifa layout'lari, komponent tuzilishi | Qotib qolgan |
-| Responsive breakpoint'lar | Qotib qolgan |
+| Sahifa layout'lari, komponent tuzilishi                    | Qotib qolgan |
+| Responsive breakpoint'lar                                  | Qotib qolgan |
 
 Bu hujjatda **yangi dizayn taklif qilinmaydi**. Hujjatning mavzusi bitta:
 **mavjud dizayn qobig'ini qanday jonlantirish** — unga state, ma'lumot, API va
@@ -41,19 +41,19 @@ Barcha raqamlar `d:/GitHubim/furniture` repozitoriysidagi kod ustida **o'lchanga
 
 ### 1.1 O'lchangan raqamlar
 
-| Ko'rsatkich | Qiymat | Qanday o'lchangan |
-|---|---|---|
-| Jami kod (`src/`, `.jsx`+`.js`+`.css`) | **8 729 qator** | `find src -type f \( -name "*.jsx" -o -name "*.js" -o -name "*.css" \) -exec cat {} + \| wc -l` |
-| Shundan `.styled.js` | **6 313 qator (72.3%)** | `find src -name "*.styled.js" -exec cat {} + \| wc -l` |
-| Shundan `.jsx` (mantiq + razmetka) | **2 366 qator (27.1%)** | `find src -name "*.jsx" -exec cat {} + \| wc -l` |
-| `.jsx` fayllar soni | **48 ta** | `find src -name "*.jsx" \| wc -l` |
-| Sahifalar | **12 ta** | `src/pages/*` |
-| SVG ikonka komponentlari | **~20 ta** | `src/components/icons/src/*` |
-| `useState` ishlatilgan fayllar | **1 ta** (`ProductDetail`) | `grep -rln "useState\|useEffect" src/` |
-| `fetch` / `axios` chaqiruvlari | **0 ta** | `grep -rn "fetch(\|axios" src/` |
-| `@media` bloklari | **~700 ta**, 23 faylda | `grep -rc "@media" src/ --include="*.styled.js"` |
-| Testlar | **0 ta** | Test runner umuman o'rnatilmagan |
-| TypeScript fayllari | **0 ta** | Butun kod `.jsx` / `.js` |
+| Ko'rsatkich                            | Qiymat                     | Qanday o'lchangan                                                                               |
+| -------------------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------- |
+| Jami kod (`src/`, `.jsx`+`.js`+`.css`) | **8 729 qator**            | `find src -type f \( -name "*.jsx" -o -name "*.js" -o -name "*.css" \) -exec cat {} + \| wc -l` |
+| Shundan `.styled.js`                   | **6 313 qator (72.3%)**    | `find src -name "*.styled.js" -exec cat {} + \| wc -l`                                          |
+| Shundan `.jsx` (mantiq + razmetka)     | **2 366 qator (27.1%)**    | `find src -name "*.jsx" -exec cat {} + \| wc -l`                                                |
+| `.jsx` fayllar soni                    | **48 ta**                  | `find src -name "*.jsx" \| wc -l`                                                               |
+| Sahifalar                              | **12 ta**                  | `src/pages/*`                                                                                   |
+| SVG ikonka komponentlari               | **~20 ta**                 | `src/components/icons/src/*`                                                                    |
+| `useState` ishlatilgan fayllar         | **1 ta** (`ProductDetail`) | `grep -rln "useState\|useEffect" src/`                                                          |
+| `fetch` / `axios` chaqiruvlari         | **0 ta**                   | `grep -rn "fetch(\|axios" src/`                                                                 |
+| `@media` bloklari                      | **~700 ta**, 23 faylda     | `grep -rc "@media" src/ --include="*.styled.js"`                                                |
+| Testlar                                | **0 ta**                   | Test runner umuman o'rnatilmagan                                                                |
+| TypeScript fayllari                    | **0 ta**                   | Butun kod `.jsx` / `.js`                                                                        |
 
 **Asosiy xulosa:** kodning ~72% — CSS-in-JS. Ya'ni bu **dizayn qobig'i**, ilova emas.
 Mantiq deyarli yo'q: 48 ta komponentdan **faqat bittasida** state bor.
@@ -79,19 +79,19 @@ Bu ro'yxatni kamsitmaslik kerak — bu ishning katta qismi allaqachon bajarilgan
 
 ### 1.3 Nima YO'Q
 
-| Yo'q narsa | Isbot |
-|---|---|
-| **State menejment** | 48 komponentdan 1 tasida `useState`. Global store yo'q |
-| **Ma'lumot / API** | `fetch`/`axios` — 0 ta. Butun katalog qo'lda yozilgan |
-| **Backend** | Umuman yo'q |
-| **Savat** | Ishlamaydi. `basketItems` — hardcode massiv |
-| **Forma mantiqi** | `Basket` sahifasida `FormInput`, `FormTextarea`, `CheckboxInput` **stillari** bor, lekin `onChange` ham, state ham, validatsiya ham yo'q |
-| **Auth** | Yo'q. Login/registratsiya sahifasi ham yo'q |
-| **i18n** | Yo'q. Butun matn rus tilida, JSX ichiga qotirilgan |
-| **TypeScript** | Yo'q (`@types/react` dev-dependency'da bor, lekin ishlatilmaydi) |
-| **Test** | Yo'q |
-| **SEO meta** | Yo'q. `<title>lesson17</title>` |
-| **Error boundary / loading / empty state** | Yo'q |
+| Yo'q narsa                                 | Isbot                                                                                                                                    |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| **State menejment**                        | 48 komponentdan 1 tasida `useState`. Global store yo'q                                                                                   |
+| **Ma'lumot / API**                         | `fetch`/`axios` — 0 ta. Butun katalog qo'lda yozilgan                                                                                    |
+| **Backend**                                | Umuman yo'q                                                                                                                              |
+| **Savat**                                  | Ishlamaydi. `basketItems` — hardcode massiv                                                                                              |
+| **Forma mantiqi**                          | `Basket` sahifasida `FormInput`, `FormTextarea`, `CheckboxInput` **stillari** bor, lekin `onChange` ham, state ham, validatsiya ham yo'q |
+| **Auth**                                   | Yo'q. Login/registratsiya sahifasi ham yo'q                                                                                              |
+| **i18n**                                   | Yo'q. Butun matn rus tilida, JSX ichiga qotirilgan                                                                                       |
+| **TypeScript**                             | Yo'q (`@types/react` dev-dependency'da bor, lekin ishlatilmaydi)                                                                         |
+| **Test**                                   | Yo'q                                                                                                                                     |
+| **SEO meta**                               | Yo'q. `<title>lesson17</title>`                                                                                                          |
+| **Error boundary / loading / empty state** | Yo'q                                                                                                                                     |
 
 ### 1.4 ⚠️ Inventarizatsiya paytida topilgan muammolar
 
@@ -108,19 +108,20 @@ Bu eng jiddiy topilma. `src/pages/ProductDetail/index.jsx` da sarlavha:
 
 Lekin ostidagi "Характеристика" jadvali:
 
-| Sarlavha | Qiymat |
-|---|---|
-| Диаметр колеса | 27.5 |
-| Материал рамы | Карбон |
-| Вилка | Rock Shox SID RL3 Air ... ход 100mm |
-| Покрышки | Schwalbe Rocket Ron EVO ... |
-| Седло | Ritchey WCS Streem V3 Titanium rails |
-| Подседельный Штырь | Ritchey WCS 700 Series ... |
+| Sarlavha           | Qiymat                               |
+| ------------------ | ------------------------------------ |
+| Диаметр колеса     | 27.5                                 |
+| Материал рамы      | Карбон                               |
+| Вилка              | Rock Shox SID RL3 Air ... ход 100mm  |
+| Покрышки           | Schwalbe Rocket Ron EVO ...          |
+| Седло              | Ritchey WCS Streem V3 Titanium rails |
+| Подседельный Штырь | Ritchey WCS 700 Series ...           |
 
-Tavsif matni ham: *"Профессиональный гоночный хардтейл для кросс-кантри"* — bu
+Tavsif matni ham: _"Профессиональный гоночный хардтейл для кросс-кантри"_ — bu
 **tog' velosipedi**, yoritgich emas.
 
 **Bu nimani anglatadi:**
+
 1. Figma shabloni boshqa domendan (velosiped do'koni) moslashtirilgan. Atribut jadvali
    **placeholder** — hech qanday domen ma'nosiga ega emas.
 2. Demak "mavjud atribut jadvalini saqlash" degan narsa yo'q — **jadval tuzilishi**
@@ -136,7 +137,7 @@ Nomi `MainLayout`, lekin aslida bu **bosh sahifa**:
 
 ```jsx
 // src/App.jsx
-<Route path="/" element={<MainLayout></MainLayout>} />   // ← layout emas, sahifa
+<Route path="/" element={<MainLayout></MainLayout>} /> // ← layout emas, sahifa
 ```
 
 `Outlet` butun kodda **0 marta** ishlatilgan. Natijada har bir sahifa `Navbar` va
@@ -144,8 +145,8 @@ Nomi `MainLayout`, lekin aslida bu **bosh sahifa**:
 
 ```jsx
 // src/pages/Basket/index.jsx, ProductDetail/index.jsx, ... (har birida)
-import Navbar from "../../layout/Navbar";
-import Footer from "../../layout/Footer";
+import Navbar from '../../layout/Navbar';
+import Footer from '../../layout/Footer';
 ```
 
 **Oqibati:** har route almashganda `Navbar` va `Footer` **qayta mount bo'ladi**.
@@ -158,7 +159,7 @@ bo'ladi.
 #### (c) `/product-detail` — parametrsiz route
 
 ```jsx
-<Route path="/product-detail" element={<ProductDetail />} />   // ← `:slug` yo'q
+<Route path="/product-detail" element={<ProductDetail />} /> // ← `:slug` yo'q
 ```
 
 Bitta statik URL. Ya'ni hozir "mahsulot sahifasi" bitta qotib qolgan mahsulotni
@@ -168,7 +169,7 @@ ko'rsatadi. Real katalog uchun `/product/:slug` kerak (SEO uchun `slug`, `id` em
 
 ```jsx
 <Counter>
-  <p>- 1 +</p>     {/* bitta <p> ichida uchta belgi. Tugma yo'q. onClick yo'q */}
+  <p>- 1 +</p> {/* bitta <p> ichida uchta belgi. Tugma yo'q. onClick yo'q */}
 </Counter>
 ```
 
@@ -191,8 +192,8 @@ yoziladi (§3.6).
 
 ```js
 // src/theme.js
-export const textColors = { primary: "#454545", secondary: "#45454550", white: "#ffffff" };
-export const bgColors  = { primary: "#454545", secondary: "#45454550", lightBlue: "#f2f2f2" };
+export const textColors = { primary: '#454545', secondary: '#45454550', white: '#ffffff' };
+export const bgColors = { primary: '#454545', secondary: '#45454550', lightBlue: '#f2f2f2' };
 ```
 
 `ThemeProvider` — **0 marta** ishlatilgan. `theme.js` faqat **3 ta Navbar styled
@@ -205,16 +206,16 @@ qo'lda tahrirlash kerak. Bu `ThemeProvider` ga ko'chirilishi kerak. ⚠️ Lekin
 
 #### (g) Boshqa mayda, lekin real narsalar
 
-| Muammo | Joy | Ta'sir |
-|---|---|---|
-| `<html lang="en">` | `index.html` | Kontent rus tilida. Screen reader noto'g'ri o'qiydi. SEO'ga zarar |
-| `<title>lesson17</title>` | `index.html` | Rebrending |
-| `"name": "lesson17"` | `package.json` | Rebrending |
-| `favicon` = `vite.svg` | `index.html` | Rebrending |
-| Google Fonts `@import` | `src/index.css` | Render-blocking. LCP'ga zarar (§10.4) |
-| `<a href="/">Главная</a>` | `ProductDetail` | To'liq sahifa qayta yuklanadi — SPA buziladi. `<Link>` kerak |
-| `.DS_Store` | `src/` | `.gitignore` ga qo'shiladi |
-| `₽` belgisi | 8 ta faylda | `UZS` ga o'zgaradi |
+| Muammo                    | Joy             | Ta'sir                                                            |
+| ------------------------- | --------------- | ----------------------------------------------------------------- |
+| `<html lang="en">`        | `index.html`    | Kontent rus tilida. Screen reader noto'g'ri o'qiydi. SEO'ga zarar |
+| `<title>lesson17</title>` | `index.html`    | Rebrending                                                        |
+| `"name": "lesson17"`      | `package.json`  | Rebrending                                                        |
+| `favicon` = `vite.svg`    | `index.html`    | Rebrending                                                        |
+| Google Fonts `@import`    | `src/index.css` | Render-blocking. LCP'ga zarar (§10.4)                             |
+| `<a href="/">Главная</a>` | `ProductDetail` | To'liq sahifa qayta yuklanadi — SPA buziladi. `<Link>` kerak      |
+| `.DS_Store`               | `src/`          | `.gitignore` ga qo'shiladi                                        |
+| `₽` belgisi               | 8 ta faylda     | `UZS` ga o'zgaradi                                                |
 
 ### 1.5 Xulosa: bu qanday loyiha
 
@@ -238,10 +239,10 @@ bo'lar edi. Ilova hali yozilmagan.
 
 ### 2.1 Qaror
 
-| App | Stack | Sabab |
-|---|---|---|
-| `apps/storefront` | React 19 + Vite 7 + **styled-components 6** | Mavjud. O'zgartirilmaydi |
-| `apps/admin` | React 19 + Vite + **shadcn/ui + Tailwind 4** | Yangi. Noldan |
+| App               | Stack                                        | Sabab                    |
+| ----------------- | -------------------------------------------- | ------------------------ |
+| `apps/storefront` | React 19 + Vite 7 + **styled-components 6**  | Mavjud. O'zgartirilmaydi |
+| `apps/admin`      | React 19 + Vite + **shadcn/ui + Tailwind 4** | Yangi. Noldan            |
 
 ### 2.2 ⚠️ Nega bitta stack emas? Bu ataylab qilingan.
 
@@ -249,6 +250,7 @@ Bu savol albatta beriladi ("ikki xil UI kutubxonasi — bu texnik qarz emasmi?")
 Javob: **yo'q, va mana nega.**
 
 **Variant A — hammasini styled-components'da qilish (admin ham):**
+
 - Admin uchun dizayn **yo'q**. Ya'ni har bir tugma, jadval, modal, dropdown,
   date-picker, toast — noldan yoziladi.
 - Admin panelda ~15 ta modul (CANON §7) → o'nlab CRUD ekran.
@@ -258,12 +260,14 @@ Javob: **yo'q, va mana nega.**
   bitta odam uchun oyni yeydi va hech qanday qiymat bermaydi.
 
 **Variant B — hammasini Tailwind + shadcn/ui ga ko'chirish (storefront ham):**
+
 - 6 313 qator styled-components'ni Tailwind'ga qayta yozish.
 - Natija: **aynan o'sha vizual ko'rinish**. Piksel-piksel bir xil.
 - ❌ **Rad etildi:** bu nol biznes qiymatli, yuqori riskli ish. Ishlab turgan
   responsive layout'ni buzish ehtimoli katta. "Toza bo'lsin" — bu sabab emas.
 
 **Variant C — ikki stack (TANLANDI):**
+
 - `storefront`: dizayn Figma'dan keladi va **piksel aniqligi muhim**.
   styled-components bilan allaqachon yozilgan. Tegilmaydi.
 - `admin`: dizayn yo'q, foydalanuvchi — 3-5 xodim, **tezlik > go'zallik**.
@@ -273,18 +277,19 @@ Javob: **yo'q, va mana nega.**
 
 Bepul emas. Real narxi:
 
-| Narx | Baho |
-|---|---|
-| Ikki xil styling mental modeli | Bitta dasturchi uchun — kontekst almashish |
-| Dizayn token'lari ikki joyda | Brend rangi `theme.js` da VA `tailwind.config` da |
-| Umumiy UI komponent paketi bo'lmaydi | `packages/ui` yaratish mantiqsiz — ikki stack |
-| Bundle'lar mustaqil | Bu aslida **afzallik**: admin bundle storefront'ga tushmaydi |
+| Narx                                 | Baho                                                         |
+| ------------------------------------ | ------------------------------------------------------------ |
+| Ikki xil styling mental modeli       | Bitta dasturchi uchun — kontekst almashish                   |
+| Dizayn token'lari ikki joyda         | Brend rangi `theme.js` da VA `tailwind.config` da            |
+| Umumiy UI komponent paketi bo'lmaydi | `packages/ui` yaratish mantiqsiz — ikki stack                |
+| Bundle'lar mustaqil                  | Bu aslida **afzallik**: admin bundle storefront'ga tushmaydi |
 
 **Yumshatish:** brend token'lari (rang, shrift) `packages/config` da bitta JSON'da
 saqlanadi, ikkala tomon shundan o'qiydi. Bu takrorlanishni yo'qotmaydi, lekin
 **haqiqat manbaini bitta qiladi**.
 
 **Nima ikkala app uchun umumiy bo'ladi:**
+
 - `packages/contracts` — OpenAPI'dan generatsiya qilingan tiplar + zod sxemalar
 - `packages/config` — eslint / tsconfig / prettier
 - API client qatlami (fetch wrapper, auth interceptor)
@@ -318,22 +323,22 @@ avval yangi kod `.tsx`, keyin sahifalar birma-bir. `.styled.js` fayllar **oxirid
 
 **Asosiy tamoyil: server state va client state — bu ikki xil narsa.**
 
-| Turi | Nima | Vosita | Nega |
-|---|---|---|---|
-| **Server state** | Mahsulot, katalog, qidiruv natijasi, buyurtma, qoldiq | **TanStack Query** | Cache, invalidatsiya, refetch, stale-while-revalidate, retry — bularning hammasi tayyor |
-| **Client state** | Savat (mehmon), sevimlilar, taqqoslash, UI (drawer ochiq/yopiq) | **Zustand** | Kichik, boilerplate'siz, `persist` middleware localStorage bilan |
-| **URL state** | Qidiruv filtrlari, sahifa, saralash | **`useSearchParams`** | SEO + share + back tugmasi (§3.8) |
-| **Forma state** | Input qiymatlari | **react-hook-form** | Uncontrolled → kam re-render |
+| Turi             | Nima                                                            | Vosita                | Nega                                                                                    |
+| ---------------- | --------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------- |
+| **Server state** | Mahsulot, katalog, qidiruv natijasi, buyurtma, qoldiq           | **TanStack Query**    | Cache, invalidatsiya, refetch, stale-while-revalidate, retry — bularning hammasi tayyor |
+| **Client state** | Savat (mehmon), sevimlilar, taqqoslash, UI (drawer ochiq/yopiq) | **Zustand**           | Kichik, boilerplate'siz, `persist` middleware localStorage bilan                        |
+| **URL state**    | Qidiruv filtrlari, sahifa, saralash                             | **`useSearchParams`** | SEO + share + back tugmasi (§3.8)                                                       |
+| **Forma state**  | Input qiymatlari                                                | **react-hook-form**   | Uncontrolled → kam re-render                                                            |
 
 #### ⚠️ Nega Redux (Toolkit) emas?
 
-| Mezon | Redux Toolkit | Tanlangan yechim |
-|---|---|---|
-| Server state | RTK Query bor, lekin TanStack Query'dan kambag'alroq (facet, infinite query, optimistic API) | TanStack Query — bu aynan shu ish uchun qilingan |
-| Boilerplate | slice + reducer + action + selector | Zustand: ~10 qator store |
-| DevTools | Zo'r | TanStack Query DevTools ham zo'r |
-| Bundle | ~13 KB (RTK+react-redux) | Zustand ~1.2 KB |
-| Bu loyihada global client state hajmi | **Kichik**: savat, sevimlilar, taqqoslash, UI | Redux — bu hajm uchun ortiqcha |
+| Mezon                                 | Redux Toolkit                                                                                | Tanlangan yechim                                 |
+| ------------------------------------- | -------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| Server state                          | RTK Query bor, lekin TanStack Query'dan kambag'alroq (facet, infinite query, optimistic API) | TanStack Query — bu aynan shu ish uchun qilingan |
+| Boilerplate                           | slice + reducer + action + selector                                                          | Zustand: ~10 qator store                         |
+| DevTools                              | Zo'r                                                                                         | TanStack Query DevTools ham zo'r                 |
+| Bundle                                | ~13 KB (RTK+react-redux)                                                                     | Zustand ~1.2 KB                                  |
+| Bu loyihada global client state hajmi | **Kichik**: savat, sevimlilar, taqqoslash, UI                                                | Redux — bu hajm uchun ortiqcha                   |
 
 **Xulosa:** Redux — global client state **katta va murakkab** bo'lganda oqlanadi.
 Kelvin'da global client state — 3 ta ro'yxat. Server state esa — katta. Ya'ni og'irlik
@@ -353,7 +358,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 /** Pul — tiyinda, BigInt. CANON §8. Lekin JSON BigInt'ni serialize qilmaydi →
  *  localStorage'da string sifatida saqlanadi, o'qishda BigInt'ga qaytariladi. */
 export interface GuestCartItem {
-  readonly variantId: string;      // ProductVariant.id (UUID v7)
+  readonly variantId: string; // ProductVariant.id (UUID v7)
   readonly sku: string;
   quantity: number;
 }
@@ -420,10 +425,10 @@ export function App() {
     <Routes>
       {/* RootLayout — Navbar + <Outlet/> + Footer. Navigatsiyada qayta mount BO'LMAYDI */}
       <Route element={<RootLayout />}>
-        <Route index element={<HomePage />} />          {/* eski MainLayout'ning mazmuni */}
+        <Route index element={<HomePage />} /> {/* eski MainLayout'ning mazmuni */}
         <Route path="catalog" element={<CatalogPage />} />
         <Route path="catalog/:categorySlug" element={<CategoryPage />} />
-        <Route path="product/:slug" element={<ProductPage />} />   {/* :slug qo'shildi */}
+        <Route path="product/:slug" element={<ProductPage />} /> {/* :slug qo'shildi */}
         <Route path="cart" element={<CartPage />} />
         <Route path="checkout" element={<CheckoutPage />} />
         <Route path="favorites" element={<FavoritesPage />} />
@@ -436,6 +441,7 @@ export function App() {
 ```
 
 Nima o'zgaradi:
+
 - `MainLayout` → `HomePage` (nomi to'g'rilanadi — u sahifa, layout emas)
 - Yangi `RootLayout` yaratiladi: `<Navbar/> <Outlet/> <Footer/>`
 - 12 ta sahifadan `import Navbar` / `import Footer` **o'chiriladi**
@@ -473,12 +479,12 @@ sequenceDiagram
 
 Bu yerda "to'g'ri" javob yo'q — **qaror qabul qilinishi kerak**:
 
-| Strategiya | Xulq | Muammo |
-|---|---|---|
-| **`max(guest, server)`** | 2 ta mehmon + 3 ta server → 3 | Foydalanuvchi 2 ta qo'shgan, lekin 3 ta ko'radi |
-| **`guest + server`** | 2 + 3 → 5 | Ikki qurilmada bir xil narsa → miqdor sun'iy o'sadi. **Xavfli** |
-| **`guest` yutadi** | 2 + 3 → 2 | Serverdagi eski savat yo'qoladi |
-| **`server` yutadi** | 2 + 3 → 3 | Foydalanuvchi hozirgina qo'shgani yo'qoladi. **Yomon UX** |
+| Strategiya               | Xulq                          | Muammo                                                          |
+| ------------------------ | ----------------------------- | --------------------------------------------------------------- |
+| **`max(guest, server)`** | 2 ta mehmon + 3 ta server → 3 | Foydalanuvchi 2 ta qo'shgan, lekin 3 ta ko'radi                 |
+| **`guest + server`**     | 2 + 3 → 5                     | Ikki qurilmada bir xil narsa → miqdor sun'iy o'sadi. **Xavfli** |
+| **`guest` yutadi**       | 2 + 3 → 2                     | Serverdagi eski savat yo'qoladi                                 |
+| **`server` yutadi**      | 2 + 3 → 3                     | Foydalanuvchi hozirgina qo'shgani yo'qoladi. **Yomon UX**       |
 
 **Tanlangan: `max(guest, server)`** + foydalanuvchiga ko'rsatish.
 
@@ -528,7 +534,7 @@ export function useAddToCart() {
       await qc.cancelQueries({ queryKey: ['cart'] });
       const previous = qc.getQueryData<Cart>(['cart']);
       qc.setQueryData<Cart>(['cart'], (old) => applyAddLocally(old, input));
-      return { previous };            // rollback konteksti
+      return { previous }; // rollback konteksti
     },
 
     onError: (_err, _input, ctx) => {
@@ -539,12 +545,15 @@ export function useAddToCart() {
 
     // ⚠️ Har doim serverdan haqiqatni so'rash: narx, chegirma, qoldiq limiti
     // faqat serverda hisoblanadi. Optimistic qiymat — vaqtinchalik yolg'on.
-    onSettled: () => { void qc.invalidateQueries({ queryKey: ['cart'] }); },
+    onSettled: () => {
+      void qc.invalidateQueries({ queryKey: ['cart'] });
+    },
   });
 }
 ```
 
 ⚠️ **Qayerda optimistic QILINMAYDI:**
+
 - **Checkout / buyurtma yaratish** — bu yerda yolg'on ko'rsatish qabul qilinmaydi
 - **To'lov** — hech qachon
 - **Rezerv** — server javobisiz "band qilindi" deyish mumkin emas
@@ -624,6 +633,7 @@ export type CheckoutInput = z.infer<typeof checkoutSchema>;
 Sxema `packages/contracts` da, u tilni bilmaydi. Tarjima UI'da bo'ladi.
 
 **Checkout nega murakkab:**
+
 1. Ko'p bosqichli (kontakt → yetkazib berish → to'lov → tasdiq)
 2. Shartli maydonlar (`discriminatedUnion` — kuryer tanlansa manzil kerak, pickup tanlansa yo'q)
 3. Server bilan doimiy dialog: yetkazib berish narxi zonaga bog'liq, slot bandligi
@@ -656,8 +666,8 @@ bo'lishi kerak. Aks holda — build fail. Ya'ni eskirgan kontrakt merge bo'lmayd
 export class ApiError extends Error {
   constructor(
     readonly status: number,
-    readonly code: string,          // backend'ning mashina o'qiydigan kodi
-    readonly requestId: string,     // ⚠️ log bilan bog'lash uchun (Pino, OTel)
+    readonly code: string, // backend'ning mashina o'qiydigan kodi
+    readonly requestId: string, // ⚠️ log bilan bog'lash uchun (Pino, OTel)
     message: string,
   ) {
     super(message);
@@ -674,10 +684,10 @@ topadi. Bu arzon, lekin qo'llab-quvvatlashda juda qimmatli.
 
 **Model (CANON §6):** JWT access ~15 min + refresh ~30 kun, rotatsiya bilan.
 
-| Token | Qayerda | Nega |
-|---|---|---|
-| **access** | **JS xotirasida** (Zustand, `persist` SIZ) | localStorage → XSS o'qiydi. Xotira sahifa yangilanganda yo'qoladi — bu qabul qilinadi |
-| **refresh** | **`httpOnly` + `Secure` + `SameSite=Lax` cookie** | JS o'qiy olmaydi → XSS o'g'irlay olmaydi |
+| Token       | Qayerda                                           | Nega                                                                                  |
+| ----------- | ------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| **access**  | **JS xotirasida** (Zustand, `persist` SIZ)        | localStorage → XSS o'qiydi. Xotira sahifa yangilanganda yo'qoladi — bu qabul qilinadi |
+| **refresh** | **`httpOnly` + `Secure` + `SameSite=Lax` cookie** | JS o'qiy olmaydi → XSS o'g'irlay olmaydi                                              |
 
 ⚠️ `SameSite=Lax` — CSRF'dan asosiy himoya. Qo'shimcha: refresh endpoint faqat
 `POST`, va CSRF token tekshiriladi. `SameSite=Strict` qilinmaydi, chunki Click/Payme
@@ -707,7 +717,7 @@ let refreshPromise: Promise<string> | null = null;
 function refreshAccessToken(): Promise<string> {
   refreshPromise ??= fetch('/api/auth/refresh', {
     method: 'POST',
-    credentials: 'include',              // refresh cookie yuboriladi
+    credentials: 'include', // refresh cookie yuboriladi
     headers: { 'X-CSRF-Token': readCsrfToken() },
   })
     .then(async (res) => {
@@ -717,7 +727,7 @@ function refreshAccessToken(): Promise<string> {
       return data.accessToken;
     })
     .finally(() => {
-      refreshPromise = null;             // ⚠️ keyingi safar uchun bo'shatish
+      refreshPromise = null; // ⚠️ keyingi safar uchun bo'shatish
     });
 
   return refreshPromise;
@@ -739,7 +749,7 @@ export async function apiFetch(input: RequestInfo, init: RequestInit = {}): Prom
 
   // ⚠️ Faqat BIR marta qayta urinish. Aks holda cheksiz sikl.
   try {
-    const fresh = await refreshAccessToken();   // parallel chaqiruvlar shu yerda birlashadi
+    const fresh = await refreshAccessToken(); // parallel chaqiruvlar shu yerda birlashadi
     res = await fetch(input, withAuth(fresh));
   } catch {
     authStore.clear();
@@ -772,6 +782,7 @@ solinmaydi). Bu backend qarori → `docs/03-...` (auth) da hal qilinadi.
 ```
 
 **Nega bu muhim:**
+
 1. **SEO** — "IP44 vannaxona chirog'i" qidiruvi indekslanadigan URL'ga tushadi
 2. **Share** — mijoz filtrlangan ro'yxatni Telegram'da tashlashi mumkin
 3. **Back tugmasi** — brauzer tugmasi ishlaydi (state'da bo'lsa — ishlamaydi)
@@ -783,11 +794,11 @@ import { useSearchParams } from 'react-router-dom';
 import { useCallback, useMemo } from 'react';
 
 export interface SearchFilters {
-  readonly colorTemperature: readonly number[];   // 2700, 4000, ...
-  readonly ipRating: readonly string[];           // IP20, IP44, ...
-  readonly socketType: readonly string[];         // E27, GU10, ...
+  readonly colorTemperature: readonly number[]; // 2700, 4000, ...
+  readonly ipRating: readonly string[]; // IP20, IP44, ...
+  readonly socketType: readonly string[]; // E27, GU10, ...
   readonly dimmable: boolean | null;
-  readonly priceMin: bigint | null;               // tiyin. CANON §8
+  readonly priceMin: bigint | null; // tiyin. CANON §8
   readonly priceMax: bigint | null;
   readonly sort: 'relevance' | 'price_asc' | 'price_desc' | 'newest';
   readonly page: number;
@@ -804,17 +815,17 @@ export function useSearchFilters() {
         (prev) => {
           const next = new URLSearchParams(prev);
           writeFilter(next, key, value);
-          next.delete('page');          // ⚠️ filtr o'zgardi → 1-sahifaga qaytish
+          next.delete('page'); // ⚠️ filtr o'zgardi → 1-sahifaga qaytish
           return next;
         },
-        { replace: true },              // ⚠️ har filtr history'ga yozilmaydi
+        { replace: true }, // ⚠️ har filtr history'ga yozilmaydi
       );
     },
     [setParams],
   );
 
   const clearAll = useCallback(() => {
-    setParams(new URLSearchParams(), { replace: false });  // "tozalash" — history'ga yoziladi
+    setParams(new URLSearchParams(), { replace: false }); // "tozalash" — history'ga yoziladi
   }, [setParams]);
 
   return { filters, setFilter, clearAll };
@@ -834,7 +845,7 @@ Buning o'rniga tanlangan filtrlar **chip** sifatida ko'rsatiladi va har birida
 ```ts
 // Og'ir sahifalar alohida chunk'da. Checkout — faqat kerak bo'lganda yuklanadi.
 const CheckoutPage = lazy(() => import('./pages/Checkout'));
-const ComparePage  = lazy(() => import('./pages/Compare'));
+const ComparePage = lazy(() => import('./pages/Compare'));
 ```
 
 ---
@@ -861,23 +872,23 @@ graph TB
 
 ### 4.2 Filtr turlari (CANON §4 atributlaridan)
 
-| Atribut | UI vidjeti | Izoh |
-|---|---|---|
-| `color_temperature` | Checkbox + **rang namunasi** | 2700K sariq, 4000K oq, 6500K ko'k — vizual namuna kerak. Brend nomi shundan |
-| `ip_rating` | Checkbox, **ierarxik** | ⚠️ IP65 tanlagan odam IP67 ni ham ko'rishi kerak (IP67 ≥ IP65). Bu "kamida" mantiqi |
-| `socket_type` | Checkbox | E27, E14, GU10, G9, GU5.3, G4, integrated LED |
-| `luminous_flux` | Range slider | lm. Notekis taqsimot → logarifmik shkala |
-| `power` | Range slider | Vatt |
-| `cri` | Checkbox | 80+, 90+, 95+ — "kamida" mantiqi |
-| `dimmable` | Toggle | |
-| `voltage` | Checkbox | ⚠️ 12V tanlansa — "transformator kerak" ogohlantirishi (CANON §4.4) |
-| `beam_angle` | Range | Faqat spot kategoriyasida ko'rinadi |
-| `bulbs_included` | Toggle | |
-| `light_source` | Checkbox | LED / halogen / ... |
-| `mount_type` | Checkbox | shift / devor / tortma / o'rnatiladigan |
-| `color`, `material` | Checkbox | |
-| `price` | Range | ⚠️ tiyinda saqlanadi, so'mda ko'rsatiladi |
-| `brand` | Checkbox + qidiruv | Ro'yxat uzun → ichida qidiruv |
+| Atribut             | UI vidjeti                   | Izoh                                                                                |
+| ------------------- | ---------------------------- | ----------------------------------------------------------------------------------- |
+| `color_temperature` | Checkbox + **rang namunasi** | 2700K sariq, 4000K oq, 6500K ko'k — vizual namuna kerak. Brend nomi shundan         |
+| `ip_rating`         | Checkbox, **ierarxik**       | ⚠️ IP65 tanlagan odam IP67 ni ham ko'rishi kerak (IP67 ≥ IP65). Bu "kamida" mantiqi |
+| `socket_type`       | Checkbox                     | E27, E14, GU10, G9, GU5.3, G4, integrated LED                                       |
+| `luminous_flux`     | Range slider                 | lm. Notekis taqsimot → logarifmik shkala                                            |
+| `power`             | Range slider                 | Vatt                                                                                |
+| `cri`               | Checkbox                     | 80+, 90+, 95+ — "kamida" mantiqi                                                    |
+| `dimmable`          | Toggle                       |                                                                                     |
+| `voltage`           | Checkbox                     | ⚠️ 12V tanlansa — "transformator kerak" ogohlantirishi (CANON §4.4)                 |
+| `beam_angle`        | Range                        | Faqat spot kategoriyasida ko'rinadi                                                 |
+| `bulbs_included`    | Toggle                       |                                                                                     |
+| `light_source`      | Checkbox                     | LED / halogen / ...                                                                 |
+| `mount_type`        | Checkbox                     | shift / devor / tortma / o'rnatiladigan                                             |
+| `color`, `material` | Checkbox                     |                                                                                     |
+| `price`             | Range                        | ⚠️ tiyinda saqlanadi, so'mda ko'rsatiladi                                           |
+| `brand`             | Checkbox + qidiruv           | Ro'yxat uzun → ichida qidiruv                                                       |
 
 ⚠️ **Kontekstga bog'liq filtrlar:** `beam_angle` faqat spot uchun mantiqiy.
 Filtr paneli **kategoriyaga qarab o'zgaradi** — bu backend'dan `facets` javobida keladi
@@ -896,10 +907,10 @@ Har filtr yonida **nechta natija chiqishi** ko'rsatiladi:
 
 ⚠️ **Nozik joy:** `IP44` tanlangandan keyin, `IP65` yonidagi son nimani bildiradi?
 
-| Talqin | Ma'nosi |
-|---|---|
+| Talqin                               | Ma'nosi                         |
+| ------------------------------------ | ------------------------------- |
 | **"IP65 ni ham qo'shsam"** (to'g'ri) | IP44 **yoki** IP65 → 34+12 = 46 |
-| "Faqat IP65 bo'lsa" (noto'g'ri) | Foydalanuvchi kutgani bu emas |
+| "Faqat IP65 bo'lsa" (noto'g'ri)      | Foydalanuvchi kutgani bu emas   |
 
 Ya'ni **bir xil guruh ichida OR**, guruhlar orasida AND:
 
@@ -930,9 +941,9 @@ kombinatsiyasi alohida cache yozuvi, eski javob boshqa kalitga tushadi):
 
 ```ts
 const { data, isPlaceholderData } = useQuery({
-  queryKey: ['search', categorySlug, filters],   // ⚠️ filters kalit ichida
+  queryKey: ['search', categorySlug, filters], // ⚠️ filters kalit ichida
   queryFn: () => api.search.query({ categorySlug, ...filters }),
-  placeholderData: keepPreviousData,             // ⚠️ eski natija ko'rinib turadi
+  placeholderData: keepPreviousData, // ⚠️ eski natija ko'rinib turadi
   staleTime: 30_000,
 });
 ```
@@ -966,7 +977,8 @@ Bu skeleton'dan yaxshiroq: layout sakramaydi (CLS = 0).
 ### 4.7 Bo'sh natija
 
 ⚠️ "Hech narsa topilmadi" — bu **boshi berk ko'cha**. Buning o'rniga:
-- Qaysi filtr eng ko'p natijani kesganini ko'rsatish: *"IP67 filtrini olib tashlasangiz — 12 ta mahsulot"*
+
+- Qaysi filtr eng ko'p natijani kesganini ko'rsatish: _"IP67 filtrini olib tashlasangiz — 12 ta mahsulot"_
 - Eng yaqin natijalar (filtrsiz o'sha kategoriyadan)
 
 Bu backend'dan qo'shimcha ma'lumot talab qiladi → `docs/05-...` da kelishiladi.
@@ -997,22 +1009,22 @@ Nikel        ✗         ✓        ✓
 **Qoida:** mavjud bo'lmagan kombinatsiya **`disabled`**, yashirilmaydi.
 
 Nega yashirilmaydi: agar "Katta" yashirilsa, foydalanuvchi u umuman yo'q deb o'ylaydi.
-`disabled` + tooltip (*"Xrom rangda katta o'lcham yo'q"*) — aniqroq.
+`disabled` + tooltip (_"Xrom rangda katta o'lcham yo'q"_) — aniqroq.
 
 ```ts
 // apps/storefront/src/features/product/variant-matrix.ts
 
 export interface VariantOption {
-  readonly attributeCode: string;        // 'color' | 'size' | 'bulb_count'
+  readonly attributeCode: string; // 'color' | 'size' | 'bulb_count'
   readonly value: string;
   readonly label: string;
 }
 
 export interface VariantMatrixEntry {
   readonly variantId: string;
-  readonly options: Readonly<Record<string, string>>;   // { color: 'chrome', size: 'm' }
+  readonly options: Readonly<Record<string, string>>; // { color: 'chrome', size: 'm' }
   readonly inStock: boolean;
-  readonly priceMinor: bigint;                          // tiyin. CANON §8
+  readonly priceMinor: bigint; // tiyin. CANON §8
 }
 
 export type OptionState = 'available' | 'out-of-stock' | 'nonexistent';
@@ -1042,9 +1054,9 @@ export function resolveOptionState(
 ⚠️ **UX savoli:** foydalanuvchi "Xrom + O'rta" tanlagan, keyin "Katta" bosdi.
 "Xrom + Katta" mavjud emas. Nima qilish kerak?
 
-| Variant | Xulq |
-|---|---|
-| **Bloklash** | "Katta" `disabled` — bosib bo'lmaydi |
+| Variant          | Xulq                                                |
+| ---------------- | --------------------------------------------------- |
+| **Bloklash**     | "Katta" `disabled` — bosib bo'lmaydi                |
 | **Almashtirish** | "Katta" bosilsa, rang avtomatik "Oltin"ga o'zgaradi |
 
 **Tanlangan: bloklash** (oxirgi tanlangan atribut hech qachon `disabled` bo'lmaydi,
@@ -1060,10 +1072,11 @@ Hozirgi kod (`ProductDetail`) — bu **yagona `useState` ishlatadigan joy**:
 
 ```jsx
 const [selectedImage, setSelectedImage] = useState(lyustra);
-const productImages = [lyustra, lyustra, lyustra, lyustra];   // ⚠️ bir xil rasm 4 marta
+const productImages = [lyustra, lyustra, lyustra, lyustra]; // ⚠️ bir xil rasm 4 marta
 ```
 
 Qayta yozilganda:
+
 - Rasmlar `Media` entity'dan (CANON §8), `variantId` bo'yicha filtrlanadi
 - ⚠️ **Variant o'zgarsa — rasm o'zgaradi** (xrom qandil va oltin qandil — boshqa rasm)
 - Zoom (desktop: hover; mobil: pinch)
@@ -1092,7 +1105,7 @@ Bu izohlar `Attribute` entity'da saqlanadi (`AttributeValue.description`), UI'da
 qotirilmaydi (i18n uchun ham shart).
 
 ⚠️ **12V ogohlantirishi** (CANON §4.4): `voltage = 12V` bo'lsa — jadval ostida
-bloki: *"Bu chiroq 12V. Transformator kerak."* + mos transformatorlar ro'yxati (upsell).
+bloki: _"Bu chiroq 12V. Transformator kerak."_ + mos transformatorlar ro'yxati (upsell).
 Transformator quvvati yuklamaga mos kelishi kerak — bu **hisob**, va u **serverda**
 qilinadi.
 
@@ -1131,19 +1144,20 @@ React 19 + Vite 7 → SPA → client-side rendering
 Ya'ni Googlebot birinchi so'rovda oladi:
 
 ```html
-<div id="root"></div>     <!-- bo'sh. Butun kontent JS bilan chiziladi -->
+<div id="root"></div>
+<!-- bo'sh. Butun kontent JS bilan chiziladi -->
 <title>lesson17</title>
 ```
 
 **"Lekin Google JS'ni render qiladi-ku?"** — Ha, qiladi. Lekin:
 
-| Muammo | Tafsilot |
-|---|---|
-| **Ikki bosqichli indeksatsiya** | Googlebot avval HTML'ni oladi, render'ni **navbatga qo'yadi**. Kechikish — soatlardan kunlargacha |
-| **Byudjet** | Render — qimmat. Yangi/kam obro'li sayt uchun render byudjeti cheklangan |
-| **Boshqa botlar** | Yandex (⚠️ MDH bozorida muhim), Telegram preview, Facebook/Instagram OG — **JS'ni umuman render qilmaydi yoki cheklangan** |
-| **Ijtimoiy ulashish** | Telegram'da havola tashlansa — preview bo'sh. O'zbekistonda Telegram — asosiy kanal. **Bu real yo'qotish** |
-| **LCP** | JS yuklanmaguncha ekran bo'sh |
+| Muammo                          | Tafsilot                                                                                                                   |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| **Ikki bosqichli indeksatsiya** | Googlebot avval HTML'ni oladi, render'ni **navbatga qo'yadi**. Kechikish — soatlardan kunlargacha                          |
+| **Byudjet**                     | Render — qimmat. Yangi/kam obro'li sayt uchun render byudjeti cheklangan                                                   |
+| **Boshqa botlar**               | Yandex (⚠️ MDH bozorida muhim), Telegram preview, Facebook/Instagram OG — **JS'ni umuman render qilmaydi yoki cheklangan** |
+| **Ijtimoiy ulashish**           | Telegram'da havola tashlansa — preview bo'sh. O'zbekistonda Telegram — asosiy kanal. **Bu real yo'qotish**                 |
+| **LCP**                         | JS yuklanmaguncha ekran bo'sh                                                                                              |
 
 ⚠️ **O'zbekiston konteksti:** Telegram bu yerda shunchaki messenjer emas — savdo
 kanali. Mahsulot havolasi preview'siz tashlanishi — o'lchanadigan konversiya
@@ -1156,12 +1170,12 @@ yo'qotishi. Bu SEO'dan ham oldinroq turadigan sabab.
 Build paytida marshrutlar statik HTML'ga chiziladi (`vite-plugin-ssr`/Vike,
 `react-snap`, yoki o'z Puppeteer skripti).
 
-| ✅ | ❌ |
-|---|---|
-| Mavjud kod deyarli o'zgarmaydi | Mahsulot sahifalari **dinamik** — katalog o'zgarsa qayta build kerak |
-| Server kerak emas (statik hosting) | 5 000 mahsulot × 4 kategoriya → build vaqti portlaydi |
-| styled-components bilan ishlaydi | Narx/qoldiq **eskirgan** HTML'da qoladi |
-| Eng arzon | Faceted URL'lar (filtr kombinatsiyasi) — cheksiz, prerender qilib bo'lmaydi |
+| ✅                                 | ❌                                                                          |
+| ---------------------------------- | --------------------------------------------------------------------------- |
+| Mavjud kod deyarli o'zgarmaydi     | Mahsulot sahifalari **dinamik** — katalog o'zgarsa qayta build kerak        |
+| Server kerak emas (statik hosting) | 5 000 mahsulot × 4 kategoriya → build vaqti portlaydi                       |
+| styled-components bilan ishlaydi   | Narx/qoldiq **eskirgan** HTML'da qoladi                                     |
+| Eng arzon                          | Faceted URL'lar (filtr kombinatsiyasi) — cheksiz, prerender qilib bo'lmaydi |
 
 **Baho:** statik sahifalar uchun (`AboutUs`, `Garant`, `Return`, `DeliveryPayment`,
 `Blog`) — **yetarli va arzon**. Mahsulot/katalog uchun — **yetarli emas**.
@@ -1170,21 +1184,21 @@ Build paytida marshrutlar statik HTML'ga chiziladi (`vite-plugin-ssr`/Vike,
 
 `vite-plugin-ssr` (Vike) yoki qo'lda Express + `renderToPipeableStream`.
 
-| ✅ | ❌ |
-|---|---|
-| Mavjud styled-components kodi **saqlanadi** (v6 SSR'ni qo'llab-quvvatlaydi, `ServerStyleSheet`) | Node server kerak → infra murakkablashadi |
-| Dinamik ma'lumot bilan ishlaydi | SSR hydration xatolari — og'riqli debug |
-| Next.js'ga ko'chishdan **ancha arzon** | Router, data fetching, cache — qo'lda sozlanadi |
-| Vite ekotizimida qoladi | Vike — Next.js'chalik "battle-tested" emas |
+| ✅                                                                                              | ❌                                              |
+| ----------------------------------------------------------------------------------------------- | ----------------------------------------------- |
+| Mavjud styled-components kodi **saqlanadi** (v6 SSR'ni qo'llab-quvvatlaydi, `ServerStyleSheet`) | Node server kerak → infra murakkablashadi       |
+| Dinamik ma'lumot bilan ishlaydi                                                                 | SSR hydration xatolari — og'riqli debug         |
+| Next.js'ga ko'chishdan **ancha arzon**                                                          | Router, data fetching, cache — qo'lda sozlanadi |
+| Vite ekotizimida qoladi                                                                         | Vike — Next.js'chalik "battle-tested" emas      |
 
 #### (c) Next.js'ga ko'chirish
 
-| ✅ | ❌ |
-|---|---|
-| Sanoat standarti, SSR/SSG/ISR tayyor | ⚠️ **6 313 qator styled-components** |
+| ✅                                              | ❌                                             |
+| ----------------------------------------------- | ---------------------------------------------- |
+| Sanoat standarti, SSR/SSG/ISR tayyor            | ⚠️ **6 313 qator styled-components**           |
 | `next/image` — rasm optimizatsiyasi tayyor (§8) | ⚠️ **App Router + styled-components = og'riq** |
-| Metadata API, sitemap, robots | Butun routing qayta yoziladi |
-| ISR — mahsulot sahifasi kesh + fon yangilanishi | Vite → Next migratsiyasi: build, env, asset |
+| Metadata API, sitemap, robots                   | Butun routing qayta yoziladi                   |
+| ISR — mahsulot sahifasi kesh + fon yangilanishi | Vite → Next migratsiyasi: build, env, asset    |
 
 ⚠️ **Styled-components + Next.js App Router muammosi — konkret:**
 
@@ -1206,19 +1220,19 @@ rad etilgan).
 
 ### 6.3 Taqqoslash jadvali (halol)
 
-| Mezon | (a) Prerender | (b) Vite SSR | (c) Next.js |
-|---|---|---|---|
-| Mavjud kodni saqlash | ✅ To'liq | ✅ Deyarli to'liq | ⚠️ Routing qayta yoziladi |
-| styled-components | ✅ Muammosiz | ✅ `ServerStyleSheet` | ⚠️ `"use client"` hamma joyda |
-| Dinamik mahsulot sahifasi | ❌ | ✅ | ✅ |
-| Faceted URL SEO | ❌ | ✅ | ✅ |
-| Telegram/OG preview | ⚠️ Faqat statik sahifalar | ✅ | ✅ |
-| ISR / kesh | ❌ | ⚠️ Qo'lda | ✅ Tayyor |
-| Rasm optimizatsiyasi | ❌ Qo'lda | ❌ Qo'lda | ✅ `next/image` |
-| Infra murakkabligi | ✅ Statik | ⚠️ Node server | ⚠️ Node server |
-| Ish hajmi | **Kichik** | **O'rta** | **Katta** |
-| Risk | Past | O'rta | ⚠️ **Yuqori** |
-| Ekotizim yetukligi | — | ⚠️ Vike kichik jamoa | ✅ Vercel + katta jamoa |
+| Mezon                     | (a) Prerender             | (b) Vite SSR          | (c) Next.js                   |
+| ------------------------- | ------------------------- | --------------------- | ----------------------------- |
+| Mavjud kodni saqlash      | ✅ To'liq                 | ✅ Deyarli to'liq     | ⚠️ Routing qayta yoziladi     |
+| styled-components         | ✅ Muammosiz              | ✅ `ServerStyleSheet` | ⚠️ `"use client"` hamma joyda |
+| Dinamik mahsulot sahifasi | ❌                        | ✅                    | ✅                            |
+| Faceted URL SEO           | ❌                        | ✅                    | ✅                            |
+| Telegram/OG preview       | ⚠️ Faqat statik sahifalar | ✅                    | ✅                            |
+| ISR / kesh                | ❌                        | ⚠️ Qo'lda             | ✅ Tayyor                     |
+| Rasm optimizatsiyasi      | ❌ Qo'lda                 | ❌ Qo'lda             | ✅ `next/image`               |
+| Infra murakkabligi        | ✅ Statik                 | ⚠️ Node server        | ⚠️ Node server                |
+| Ish hajmi                 | **Kichik**                | **O'rta**             | **Katta**                     |
+| Risk                      | Past                      | O'rta                 | ⚠️ **Yuqori**                 |
+| Ekotizim yetukligi        | —                         | ⚠️ Vike kichik jamoa  | ✅ Vercel + katta jamoa       |
 
 ### 6.4 Tavsiya (lekin qaror — loyiha egasining)
 
@@ -1258,13 +1272,13 @@ Har yozilgan qator — migratsiya narxini oshiradi. Shuning uchun:
 ⚠️ **Qaror Faza 10 da qabul qilinadi, lekin kod Faza 0 dan boshlab
 "SSR-ga tayyor" yoziladi:**
 
-| Qoida | Nega |
-|---|---|
-| `window` / `document` ga to'g'ridan-to'g'ri murojaat qilinmaydi | SSR'da ular yo'q → crash |
-| localStorage faqat `useEffect` ichida | Server'da localStorage yo'q |
-| Ma'lumot olish komponent ichida emas, **route darajasida** | SSR/RSC ikkalasida ham ko'chiriladi |
-| Har komponent **props orqali** ma'lumot oladi | Global singleton — SSR'da so'rovlar orasida "oqadi" (**xavfsizlik teshigi**) |
-| Router abstraktsiyasi ustida ishlash | `useNavigate` to'g'ridan-to'g'ri emas, o'z hook orqali |
+| Qoida                                                           | Nega                                                                         |
+| --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `window` / `document` ga to'g'ridan-to'g'ri murojaat qilinmaydi | SSR'da ular yo'q → crash                                                     |
+| localStorage faqat `useEffect` ichida                           | Server'da localStorage yo'q                                                  |
+| Ma'lumot olish komponent ichida emas, **route darajasida**      | SSR/RSC ikkalasida ham ko'chiriladi                                          |
+| Har komponent **props orqali** ma'lumot oladi                   | Global singleton — SSR'da so'rovlar orasida "oqadi" (**xavfsizlik teshigi**) |
+| Router abstraktsiyasi ustida ishlash                            | `useNavigate` to'g'ridan-to'g'ri emas, o'z hook orqali                       |
 
 Bu **bepul sug'urta**. Bu qoidalarga rioya qilinsa, migratsiya (b) ga ham, (c) ga
 ham **sezilarli darajada arzonlashadi**. Rioya qilinmasa — har ikkalasi ham qimmat.
@@ -1288,11 +1302,11 @@ Dizayn **rus tilida** yozilgan. Butun matn JSX ichiga qotirilgan:
 
 ### 7.2 Maqsad tillar
 
-| Kod | Til | Izoh |
-|---|---|---|
-| `uz` | **O'zbek (lotin)** | ⚠️ **Asosiy**. Rasmiy alifbo |
-| `uz-Cyrl` | O'zbek (kirill) | Katta yosh auditoriya hali kirill o'qiydi |
-| `ru` | Rus | ⚠️ Real bozorda katta ulush |
+| Kod       | Til                | Izoh                                      |
+| --------- | ------------------ | ----------------------------------------- |
+| `uz`      | **O'zbek (lotin)** | ⚠️ **Asosiy**. Rasmiy alifbo              |
+| `uz-Cyrl` | O'zbek (kirill)    | Katta yosh auditoriya hali kirill o'qiydi |
+| `ru`      | Rus                | ⚠️ Real bozorda katta ulush               |
 
 **Vosita:** `react-i18next` + `i18next-browser-languagedetector`
 
@@ -1310,14 +1324,14 @@ loyihalangan.
 
 **Lekin muammolar bor:**
 
-| Muammo | Misol | Yechim |
-|---|---|---|
-| `s + h` vs `sh` | `Isha` → `Иша` (noto'g'ri) yoki `Исҳа`? Morfema chegarasi | Istisno lug'ati |
-| `ts` vs `s` | `sement`/`tsement` — imlo o'zgargan | Lug'at |
-| `e` boshda | `Elektr` → `Электр`, lekin `Eshik` → `Эшик` | Qoida bor, lekin istisnolar ham |
-| **Rus qarz so'zlari** | `Novotech`, `Philips`, `LED` — o'zgarmaydi | Belgilash kerak |
-| **Brend nomlari** | `Kelvin` → `Кельвин`? Yoki `Kelvin` qoladi? | ⚠️ **Biznes qarori** |
-| Apostrof | `o'`, `g'` — `ў`, `ғ`. Turli Unicode belgilar (`'`, `'`, `ʻ`) | Normalizatsiya |
+| Muammo                | Misol                                                         | Yechim                          |
+| --------------------- | ------------------------------------------------------------- | ------------------------------- |
+| `s + h` vs `sh`       | `Isha` → `Иша` (noto'g'ri) yoki `Исҳа`? Morfema chegarasi     | Istisno lug'ati                 |
+| `ts` vs `s`           | `sement`/`tsement` — imlo o'zgargan                           | Lug'at                          |
+| `e` boshda            | `Elektr` → `Электр`, lekin `Eshik` → `Эшик`                   | Qoida bor, lekin istisnolar ham |
+| **Rus qarz so'zlari** | `Novotech`, `Philips`, `LED` — o'zgarmaydi                    | Belgilash kerak                 |
+| **Brend nomlari**     | `Kelvin` → `Кельвин`? Yoki `Kelvin` qoladi?                   | ⚠️ **Biznes qarori**            |
+| Apostrof              | `o'`, `g'` — `ў`, `ғ`. Turli Unicode belgilar (`'`, `'`, `ʻ`) | Normalizatsiya                  |
 
 **Qaror:**
 
@@ -1349,13 +1363,13 @@ tekshirilishi kerak. To'qib chiqarish mumkin emas. **Ochiq savol.**
 
 Bu **real risk**, chunki dizayn **rus matni ostida** chizilgan va **o'zgarmaydi**.
 
-| Rus | O'zbek (lotin) | O'zbek (kirill) | Farq |
-|---|---|---|---|
-| `В корзину` (9) | `Savatga qo'shish` (17) | `Саватга қўшиш` (14) | **+89%** |
-| `В наличии` (9) | `Mavjud` (6) | `Мавжуд` (6) | −33% |
-| `Главная` (7) | `Bosh sahifa` (11) | `Бош саҳифа` (10) | +57% |
-| `Характеристика` (14) | `Texnik xususiyatlar` (19) | `Техник хусусиятлар` (18) | +36% |
-| `Купить в рассрочку` (18) | `Bo'lib to'lash` (13) | `Бўлиб тўлаш` (11) | −28% |
+| Rus                       | O'zbek (lotin)             | O'zbek (kirill)           | Farq     |
+| ------------------------- | -------------------------- | ------------------------- | -------- |
+| `В корзину` (9)           | `Savatga qo'shish` (17)    | `Саватга қўшиш` (14)      | **+89%** |
+| `В наличии` (9)           | `Mavjud` (6)               | `Мавжуд` (6)              | −33%     |
+| `Главная` (7)             | `Bosh sahifa` (11)         | `Бош саҳифа` (10)         | +57%     |
+| `Характеристика` (14)     | `Texnik xususiyatlar` (19) | `Техник хусусиятлар` (18) | +36%     |
+| `Купить в рассрочку` (18) | `Bo'lib to'lash` (13)      | `Бўлиб тўлаш` (11)        | −28%     |
 
 ⚠️ Ya'ni farq **ikki tomonlama** — ba'zi joyda uzunroq, ba'zida qisqaroq. Uzunroq
 holat **xavfli**: `AddToCartButton` rus matni uchun o'lchangan.
@@ -1386,7 +1400,7 @@ import { initReactI18next } from 'react-i18next';
 void i18n.use(initReactI18next).init({
   fallbackLng: 'uz',
   supportedLngs: ['uz', 'uz-Cyrl', 'ru'],
-  interpolation: { escapeValue: false },   // React o'zi escape qiladi
+  interpolation: { escapeValue: false }, // React o'zi escape qiladi
   // ⚠️ Tarjima fayllari lazy yuklanadi — 3 til × N namespace bundle'ga tushmasin
 });
 ```
@@ -1406,6 +1420,7 @@ void i18n.use(initReactI18next).init({
 ### 8.1 Nega bu jiddiy
 
 Yoritgich — **vizual mahsulot**. Mijoz rasmga qarab sotib oladi. Ya'ni:
+
 - Rasm **sifatli** bo'lishi kerak (katta)
 - Rasm **tez** yuklanishi kerak (kichik)
 - Bu **zid talab**
@@ -1415,21 +1430,21 @@ Bu **placeholder** — real katalogda rasmlar S3'dan keladi.
 
 ### 8.2 Strategiya
 
-| Texnika | Tafsilot |
-|---|---|
-| **Format** | AVIF → WebP → JPEG fallback (`<picture>`). ⚠️ AVIF ~50% kichik, lekin encode sekin → BullMQ job (CANON §6) |
-| **Responsive** | `srcset` + `sizes`. Mobilga 1920px rasm yuborish — trafik isrofi |
-| **Lazy load** | `loading="lazy"` ekrandan tashqaridagi rasmlarga |
+| Texnika         | Tafsilot                                                                                                    |
+| --------------- | ----------------------------------------------------------------------------------------------------------- |
+| **Format**      | AVIF → WebP → JPEG fallback (`<picture>`). ⚠️ AVIF ~50% kichik, lekin encode sekin → BullMQ job (CANON §6)  |
+| **Responsive**  | `srcset` + `sizes`. Mobilga 1920px rasm yuborish — trafik isrofi                                            |
+| **Lazy load**   | `loading="lazy"` ekrandan tashqaridagi rasmlarga                                                            |
 | **⚠️ LCP rasm** | `loading="eager"` + `fetchpriority="high"` + `<link rel="preload">`. **Lazy QILINMAYDI** — bu LCP'ni buzadi |
-| **Placeholder** | BlurHash yoki LQIP (20px inline base64) |
-| **⚠️ CLS** | `width`/`height` **majburiy** — layout sakramaydi |
+| **Placeholder** | BlurHash yoki LQIP (20px inline base64)                                                                     |
+| **⚠️ CLS**      | `width`/`height` **majburiy** — layout sakramaydi                                                           |
 
 ```tsx
 // apps/storefront/src/components/ProductImage.tsx
 interface ProductImageProps {
   readonly media: Media;
   readonly alt: string;
-  readonly priority?: boolean;   // ⚠️ faqat LCP rasm uchun true
+  readonly priority?: boolean; // ⚠️ faqat LCP rasm uchun true
   readonly sizes: string;
 }
 
@@ -1443,7 +1458,7 @@ export function ProductImage({ media, alt, priority = false, sizes }: ProductIma
         srcSet={buildSrcSet(media, 'jpeg')}
         sizes={sizes}
         alt={alt}
-        width={media.width}          // ⚠️ CLS = 0 uchun majburiy
+        width={media.width} // ⚠️ CLS = 0 uchun majburiy
         height={media.height}
         loading={priority ? 'eager' : 'lazy'}
         fetchPriority={priority ? 'high' : 'auto'}
@@ -1492,14 +1507,14 @@ CANON §6: BullMQ aynan shu uchun.
 **Ehtimol yo'q.** Bu kurs topshirig'i uchun qilingan Figma. A11y — bunday
 kontekstda kamdan-kam o'ylanadi. Kodda topilgan **konkret** dalillar:
 
-| Muammo | Joy | WCAG |
-|---|---|---|
-| `<html lang="en">`, kontent rus | `index.html` | 3.1.1 (A) — **buzilgan** |
-| `<p>- 1 +</p>` miqdor tugmasi o'rniga | `ProductDetail` | 4.1.2 (A) — klaviatura bilan **umuman ishlatib bo'lmaydi** |
-| `<a href="/">` SPA ichida | `ProductDetail` | Buzilish emas, lekin sahifa qayta yuklanadi |
-| `#45454550` (alpha 0.31) — `secondary` matn | `theme.js` | ⚠️ 1.4.3 (AA) — kontrast **ehtimol yiqiladi** |
-| Focus indикator | Hech qayerda `:focus-visible` yo'q | 2.4.7 (AA) — **buzilgan** |
-| 23 ta `alt` / 22 ta rasm | `src/` | Qoplanish yaxshi, lekin mazmuni placeholder |
+| Muammo                                      | Joy                                | WCAG                                                       |
+| ------------------------------------------- | ---------------------------------- | ---------------------------------------------------------- |
+| `<html lang="en">`, kontent rus             | `index.html`                       | 3.1.1 (A) — **buzilgan**                                   |
+| `<p>- 1 +</p>` miqdor tugmasi o'rniga       | `ProductDetail`                    | 4.1.2 (A) — klaviatura bilan **umuman ishlatib bo'lmaydi** |
+| `<a href="/">` SPA ichida                   | `ProductDetail`                    | Buzilish emas, lekin sahifa qayta yuklanadi                |
+| `#45454550` (alpha 0.31) — `secondary` matn | `theme.js`                         | ⚠️ 1.4.3 (AA) — kontrast **ehtimol yiqiladi**              |
+| Focus indикator                             | Hech qayerda `:focus-visible` yo'q | 2.4.7 (AA) — **buzilgan**                                  |
+| 23 ta `alt` / 22 ta rasm                    | `src/`                             | Qoplanish yaxshi, lekin mazmuni placeholder                |
 
 ⚠️ **Kontrast hisobi** (`textColors.secondary = #45454550`):
 `#454545` oq fonda kontrast nisbati ≈ **9.0:1** — bu yaxshi (AA uchun 4.5:1 kerak).
@@ -1513,26 +1528,26 @@ tekshirilishi kerak** (axe DevTools). Lekin muammo bo'lishi ehtimoli yuqori.
 
 **Ko'p narsa.** A11y ≠ dizayn. Quyidagilar **piksel o'zgartirmaydi**:
 
-| Ish | Vizual ta'sir |
-|---|---|
-| Semantik HTML: `<div onClick>` → `<button>` | **Yo'q** (styled `<button>` ko'rinishi bir xil qilinadi) |
-| `<html lang="uz">` dinamik | Yo'q |
-| `aria-label` ikonka tugmalarga | Yo'q |
-| Formada `<label for>` | Yo'q (vizual label allaqachon bor) |
-| `alt` matni | Yo'q |
-| Landmark: `<header>`, `<nav>`, `<main>`, `<footer>` | Yo'q |
-| Sarlavha ierarxiyasi: `h1` → `h2` → `h3` (sakramasdan) | Yo'q |
-| `aria-live` — savatga qo'shilganda e'lon | Yo'q |
-| Drawer'da focus trap + `Escape` | Yo'q |
-| Skip link (`Tab` → "Asosiy kontentga o'tish") | ⚠️ Faqat fokuslanganda ko'rinadi |
-| Filtr checkbox → `<fieldset>` + `<legend>` | Yo'q |
+| Ish                                                    | Vizual ta'sir                                            |
+| ------------------------------------------------------ | -------------------------------------------------------- |
+| Semantik HTML: `<div onClick>` → `<button>`            | **Yo'q** (styled `<button>` ko'rinishi bir xil qilinadi) |
+| `<html lang="uz">` dinamik                             | Yo'q                                                     |
+| `aria-label` ikonka tugmalarga                         | Yo'q                                                     |
+| Formada `<label for>`                                  | Yo'q (vizual label allaqachon bor)                       |
+| `alt` matni                                            | Yo'q                                                     |
+| Landmark: `<header>`, `<nav>`, `<main>`, `<footer>`    | Yo'q                                                     |
+| Sarlavha ierarxiyasi: `h1` → `h2` → `h3` (sakramasdan) | Yo'q                                                     |
+| `aria-live` — savatga qo'shilganda e'lon               | Yo'q                                                     |
+| Drawer'da focus trap + `Escape`                        | Yo'q                                                     |
+| Skip link (`Tab` → "Asosiy kontentga o'tish")          | ⚠️ Faqat fokuslanganda ko'rinadi                         |
+| Filtr checkbox → `<fieldset>` + `<legend>`             | Yo'q                                                     |
 
 ### 9.3 Nima dizaynga tegadi (⚠️ kelishiladi)
 
-| Ish | Muammo |
-|---|---|
+| Ish                          | Muammo                                                                                                 |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------ |
 | **`:focus-visible` konturi** | Yangi vizual element. ⚠️ Lekin **majburiy** — klaviatura foydalanuvchisi qayerda ekanini bilishi kerak |
-| **Kontrastni tuzatish** | `#45454550` → ochiqroq alpha. **Rang o'zgaradi** |
+| **Kontrastni tuzatish**      | `#45454550` → ochiqroq alpha. **Rang o'zgaradi**                                                       |
 
 ⚠️ **Bu ikkitasi loyiha egasi bilan alohida muhokama qilinadi.** Halol pozitsiya:
 `:focus-visible` — bu qo'shimcha, u faqat `Tab` bosilganda ko'rinadi, sichqoncha
@@ -1557,12 +1572,12 @@ to'qilgan emas). Lekin **hozirgi loyiha hali o'lchanmagan** — build ham qilinm
 
 ### 10.2 Core Web Vitals maqsadi
 
-| Metrika | "Good" (Google) | Kelvin maqsadi | Izoh |
-|---|---|---|---|
-| **LCP** | ≤ 2.5s | ≤ 2.5s (p75) | ⚠️ Mahsulot rasmi — odatda LCP elementi |
-| **INP** | ≤ 200ms | ≤ 200ms (p75) | ⚠️ Filtr bosish — eng og'ir interaksiya |
-| **CLS** | ≤ 0.1 | ≤ 0.1 | Rasm `width`/`height` bilan 0 ga yaqin bo'lishi kerak |
-| **TTFB** | ≤ 800ms | ⚠️ SSR qaroridan keyin | SPA'da bu deyarli statik |
+| Metrika  | "Good" (Google) | Kelvin maqsadi         | Izoh                                                  |
+| -------- | --------------- | ---------------------- | ----------------------------------------------------- |
+| **LCP**  | ≤ 2.5s          | ≤ 2.5s (p75)           | ⚠️ Mahsulot rasmi — odatda LCP elementi               |
+| **INP**  | ≤ 200ms         | ≤ 200ms (p75)          | ⚠️ Filtr bosish — eng og'ir interaksiya               |
+| **CLS**  | ≤ 0.1           | ≤ 0.1                  | Rasm `width`/`height` bilan 0 ga yaqin bo'lishi kerak |
+| **TTFB** | ≤ 800ms         | ⚠️ SSR qaroridan keyin | SPA'da bu deyarli statik                              |
 
 ⚠️ **p75** — 75-persentil, o'rtacha emas. O'rtacha yolg'on gapiradi.
 
@@ -1570,25 +1585,25 @@ to'qilgan emas). Lekin **hozirgi loyiha hali o'lchanmagan** — build ham qilinm
 
 ⚠️ **Hozirgi bundle o'lchanmagan.** Taxminiy hisob (paket o'lchamlaridan):
 
-| Paket | Taxminiy gzip |
-|---|---|
-| react + react-dom 19 | ~45 KB |
-| react-router-dom 7 | ~15 KB |
-| styled-components 6 | ~13 KB |
-| swiper 12 | ⚠️ ~40 KB (to'liq import qilinsa) |
-| **Qo'shiladi:** TanStack Query | ~13 KB |
-| **Qo'shiladi:** Zustand | ~1.2 KB |
-| **Qo'shiladi:** react-hook-form | ~9 KB |
-| **Qo'shiladi:** zod | ⚠️ ~14 KB |
-| **Qo'shiladi:** i18next + react-i18next | ~20 KB |
+| Paket                                   | Taxminiy gzip                     |
+| --------------------------------------- | --------------------------------- |
+| react + react-dom 19                    | ~45 KB                            |
+| react-router-dom 7                      | ~15 KB                            |
+| styled-components 6                     | ~13 KB                            |
+| swiper 12                               | ⚠️ ~40 KB (to'liq import qilinsa) |
+| **Qo'shiladi:** TanStack Query          | ~13 KB                            |
+| **Qo'shiladi:** Zustand                 | ~1.2 KB                           |
+| **Qo'shiladi:** react-hook-form         | ~9 KB                             |
+| **Qo'shiladi:** zod                     | ⚠️ ~14 KB                         |
+| **Qo'shiladi:** i18next + react-i18next | ~20 KB                            |
 
 **Taklif qilinadigan byudjet (birinchi yuklanish, gzip):**
 
-| Chunk | Byudjet |
-|---|---|
-| Initial JS | ⚠️ **≤ 180 KB** — bu **maqsad**, hozirgi holat noma'lum |
-| Initial CSS | ≤ 20 KB |
-| LCP rasm | ≤ 150 KB |
+| Chunk       | Byudjet                                                 |
+| ----------- | ------------------------------------------------------- |
+| Initial JS  | ⚠️ **≤ 180 KB** — bu **maqsad**, hozirgi holat noma'lum |
+| Initial CSS | ≤ 20 KB                                                 |
+| LCP rasm    | ≤ 150 KB                                                |
 
 ⚠️ **`swiper`** — tekshirilishi kerak. Agar to'liq import qilinayotgan bo'lsa,
 faqat kerakli modullar import qilinadi. Bu arzon yutuq.
@@ -1603,13 +1618,13 @@ sekin-asta shishadi va buni hech kim sezmaydi.
 
 **Halol:** CSS-in-JS **bepul emas**. Bu marketing gapi emas, o'lchanadigan narsa:
 
-| Narx | Tafsilot |
-|---|---|
-| **Runtime** | Har render'da stillar hisoblanadi, `<style>` tegiga yoziladi |
-| **Bundle** | ~13 KB gzip — bu **doimiy soliq** |
-| **Serialization** | Template literal parse + hash + CSS generatsiya |
+| Narx                 | Tafsilot                                                                                      |
+| -------------------- | --------------------------------------------------------------------------------------------- |
+| **Runtime**          | Har render'da stillar hisoblanadi, `<style>` tegiga yoziladi                                  |
+| **Bundle**           | ~13 KB gzip — bu **doimiy soliq**                                                             |
+| **Serialization**    | Template literal parse + hash + CSS generatsiya                                               |
 | **⚠️ Dinamik props** | `styled.div\`color: ${p => p.$active ? red : gray}\`` — har prop o'zgarishida **yangi class** |
-| **⚠️ SSR** | `ServerStyleSheet` — server'da stillarni yig'ish, bu ham vaqt |
+| **⚠️ SSR**           | `ServerStyleSheet` — server'da stillarni yig'ish, bu ham vaqt                                 |
 
 **Solishtirish uchun:** Tailwind — build-time. Runtime narxi **nol**.
 Vanilla-extract, Linaria — zero-runtime CSS-in-JS.
@@ -1620,6 +1635,7 @@ Sabab: 13 KB va runtime hisob — bu **o'lchanadigan, lekin kichik** narx.
 6 313 qatorni qayta yozish — bu **katta va riskli** ish. Nisbat noto'g'ri.
 
 **Nima qilinadi:**
+
 1. ⚠️ **O'lchanadi.** React DevTools Profiler + Lighthouse. Faraz qilinmaydi
 2. Agar muammo topilsa — **nuqtali tuzatiladi**:
    - `styled` komponentlarni render funksiyasi **ichida** yaratmaslik
@@ -1631,13 +1647,13 @@ Sabab: 13 KB va runtime hisob — bu **o'lchanadigan, lekin kichik** narx.
 
 ### 10.5 O'lchov vositalari
 
-| Vosita | Nima uchun |
-|---|---|
-| Lighthouse CI | Har PR'da, regressiya ushlash |
-| `@vitejs/plugin-legacy` ❌ | ⚠️ **Kerak emas** — brauzer qo'llab-quvvatlash aniqlanmagan (**ochiq savol**) |
-| `rollup-plugin-visualizer` | Bundle nima yeb turganini ko'rish |
-| `size-limit` | CI'da byudjet nazorati |
-| **RUM** | ⚠️ **Eng muhimi.** Lab testi yolg'on gapiradi. Real foydalanuvchi — O'zbekistonda, 3G/4G'da, arzon Android'da |
+| Vosita                     | Nima uchun                                                                                                    |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| Lighthouse CI              | Har PR'da, regressiya ushlash                                                                                 |
+| `@vitejs/plugin-legacy` ❌ | ⚠️ **Kerak emas** — brauzer qo'llab-quvvatlash aniqlanmagan (**ochiq savol**)                                 |
+| `rollup-plugin-visualizer` | Bundle nima yeb turganini ko'rish                                                                             |
+| `size-limit`               | CI'da byudjet nazorati                                                                                        |
+| **RUM**                    | ⚠️ **Eng muhimi.** Lab testi yolg'on gapiradi. Real foydalanuvchi — O'zbekistonda, 3G/4G'da, arzon Android'da |
 
 ⚠️ **Bu eng muhim gap:** Lighthouse MacBook'da 100 ball beradi. Real mijoz —
 Toshkentda, 4G'da, 2019-yilgi Android'da. **RUM (`web-vitals` kutubxonasi) real
@@ -1655,20 +1671,20 @@ kam bosish. Chiroyli animatsiya — **ahamiyatsiz**.
 
 ### 11.2 Ekranlar (CANON §7 modullariga mos)
 
-| Modul | Ekranlar |
-|---|---|
-| `catalog` | Mahsulot ro'yxati/forma, ⚠️ **variant matritsasi generatori**, kategoriya, atribut, media |
-| `inventory` | Qoldiq, rezerv, kirim, ⚠️ inventarizatsiya, ko'p ombor, harakat tarixi |
-| `order` | Buyurtma ro'yxati, kartochka, holat o'zgartirish, tarix |
-| `delivery` | Kalendar, slot, kuryer, marshrut, o'rnatish |
-| `payment` | To'lovlar, refund, ⚠️ rassrochka grafigi |
-| `procurement` | Ta'minotchi, xarid buyurtmasi |
-| `crm` | Mijoz, lid, voronka, segment |
-| `pricing` | Narx, chegirma, aksiya, bundle |
-| `review` | Moderatsiya navbati |
-| `content` | Blog, sahifa, banner |
-| `analytics` | Dashboard, hisobot |
-| `admin` | Foydalanuvchi, rol, ⚠️ audit log, feature flag |
+| Modul         | Ekranlar                                                                                  |
+| ------------- | ----------------------------------------------------------------------------------------- |
+| `catalog`     | Mahsulot ro'yxati/forma, ⚠️ **variant matritsasi generatori**, kategoriya, atribut, media |
+| `inventory`   | Qoldiq, rezerv, kirim, ⚠️ inventarizatsiya, ko'p ombor, harakat tarixi                    |
+| `order`       | Buyurtma ro'yxati, kartochka, holat o'zgartirish, tarix                                   |
+| `delivery`    | Kalendar, slot, kuryer, marshrut, o'rnatish                                               |
+| `payment`     | To'lovlar, refund, ⚠️ rassrochka grafigi                                                  |
+| `procurement` | Ta'minotchi, xarid buyurtmasi                                                             |
+| `crm`         | Mijoz, lid, voronka, segment                                                              |
+| `pricing`     | Narx, chegirma, aksiya, bundle                                                            |
+| `review`      | Moderatsiya navbati                                                                       |
+| `content`     | Blog, sahifa, banner                                                                      |
+| `analytics`   | Dashboard, hisobot                                                                        |
+| `admin`       | Foydalanuvchi, rol, ⚠️ audit log, feature flag                                            |
 
 ### 11.3 ⚠️ Jadval — admin panelning yuragi
 
@@ -1690,7 +1706,7 @@ export function useOrdersTable() {
   const query = useQuery({
     queryKey: ['admin', 'orders', pagination, sorting, filters],
     queryFn: () => api.admin.orders.list({ ...toApiParams(pagination, sorting, filters) }),
-    placeholderData: keepPreviousData,     // sahifa almashganda jimirlamasin
+    placeholderData: keepPreviousData, // sahifa almashganda jimirlamasin
   });
 
   return { query, pagination, setPagination, sorting, setSorting, filters, setFilters };
@@ -1727,6 +1743,7 @@ o'chiriladi** (§5.1 dagi `nonexistent`).
 
 ⚠️ **Halol:** dashboard — odatda **eng ko'p vaqt yeydigan va eng kam ishlatiladigan**
 ekran. Boshida **minimal**:
+
 - Bugungi buyurtmalar (soni, summasi)
 - Yangi buyurtmalar navbati
 - Tugab qolgan tovarlar (⚠️ bu **real foydali** — CANON §9.2)
@@ -1740,26 +1757,26 @@ Murakkab analitika — **Faza 9**. Boshida grafik chizish — chalg'ish.
 
 Batafsil: → **`docs/14-testing-strategy.md`**. Bu yerda faqat frontend qismi.
 
-| Daraja | Vosita | Nima |
-|---|---|---|
-| Unit | **Vitest** | `formatMoney`, `resolveOptionState` (§5.1), `parseFilters` (§3.8), transliteratsiya |
-| Komponent | Vitest + Testing Library | Filtr paneli, variant tanlash, savat |
-| API mock | **MSW** | ⚠️ Tarmoq darajasida. `fetch` mock qilinmaydi |
-| E2E | **Playwright** | ⚠️ Checkout — kritik |
-| A11y | axe-core + Playwright | Har sahifada |
-| Vizual | Playwright screenshot | ⚠️ 3 til × layout (§7.4) |
+| Daraja    | Vosita                   | Nima                                                                                |
+| --------- | ------------------------ | ----------------------------------------------------------------------------------- |
+| Unit      | **Vitest**               | `formatMoney`, `resolveOptionState` (§5.1), `parseFilters` (§3.8), transliteratsiya |
+| Komponent | Vitest + Testing Library | Filtr paneli, variant tanlash, savat                                                |
+| API mock  | **MSW**                  | ⚠️ Tarmoq darajasida. `fetch` mock qilinmaydi                                       |
+| E2E       | **Playwright**           | ⚠️ Checkout — kritik                                                                |
+| A11y      | axe-core + Playwright    | Har sahifada                                                                        |
+| Vizual    | Playwright screenshot    | ⚠️ 3 til × layout (§7.4)                                                            |
 
 ### 12.1 ⚠️ Storybook — kerakmi?
 
 **Halol baho: hozircha YO'Q.**
 
-| Foyda | Bu loyihada |
-|---|---|
-| Dizayner bilan komponent muhokamasi | ❌ **Dizayner yo'q.** Figma qotib qolgan |
-| Komponent izolyatsiyada ishlab chiqish | ⚠️ Qisman foydali |
-| Vizual regressiya (Chromatic) | ⚠️ Playwright screenshot bilan ham bo'ladi |
-| Jamoaga hujjat | ❌ **Jamoa yo'q** — bitta dasturchi |
-| Dizayn tizimi katalogi | ❌ Dizayn tizimi yo'q, Figma bor |
+| Foyda                                  | Bu loyihada                                |
+| -------------------------------------- | ------------------------------------------ |
+| Dizayner bilan komponent muhokamasi    | ❌ **Dizayner yo'q.** Figma qotib qolgan   |
+| Komponent izolyatsiyada ishlab chiqish | ⚠️ Qisman foydali                          |
+| Vizual regressiya (Chromatic)          | ⚠️ Playwright screenshot bilan ham bo'ladi |
+| Jamoaga hujjat                         | ❌ **Jamoa yo'q** — bitta dasturchi        |
+| Dizayn tizimi katalogi                 | ❌ Dizayn tizimi yo'q, Figma bor           |
 
 **Xarajat:** sozlash + har komponent uchun story yozish + CI'da build + saqlash.
 
@@ -1775,61 +1792,61 @@ ishlatiladigan komponentlar ko'paysa. Bu **hozir emas**.
 
 ### 13.1 Storefront
 
-| # | Mezon | Qanday tekshiriladi |
-|---|---|---|
-| FE-01 | Barcha sahifalar API'dan ma'lumot oladi. Hardcode massiv **0 ta** | `grep` + code review |
-| FE-02 | ⚠️ `ProductDetail` da velosiped atributlari **yo'q** | Manual + e2e |
-| FE-03 | Savat: qo'shish/o'chirish/miqdor ishlaydi | E2E |
-| FE-04 | Mehmon savati refresh'dan keyin saqlanadi | E2E |
-| FE-05 | Login'da savat birlashadi, konflikt ko'rsatiladi | E2E + unit |
-| FE-06 | Checkout: mehmon + login — ikkalasi ham | E2E |
-| FE-07 | ⚠️ Filtrlar URL'da. Refresh/share/back ishlaydi | E2E |
-| FE-08 | Facet count to'g'ri (§4.3 semantikasi) | Integration |
-| FE-09 | ⚠️ Mavjud bo'lmagan variant `disabled`, yashirilmagan | Unit + e2e |
-| FE-10 | ⚠️ 10 parallel 401 → **aniq 1 refresh** | Integration (MSW) |
-| FE-11 | Uch til ishlaydi, layout buzilmaydi | Vizual regressiya |
-| FE-12 | `<html lang>` tilga mos | E2E |
-| FE-13 | ⚠️ axe-core: `serious`/`critical` — **0 ta** | CI |
-| FE-14 | Klaviatura bilan checkout to'liq o'tiladi | ⚠️ **Qo'lda** |
-| FE-15 | CLS ≤ 0.1 barcha sahifada | Lighthouse CI |
-| FE-16 | Initial JS ≤ 180 KB gzip | `size-limit` |
-| FE-17 | ⚠️ Narx hech qayerda `Float` emas | Code review + tip |
-| FE-18 | `₽` — **0 ta** | `grep` |
-| FE-19 | Har sahifada `<title>`, meta, OG, canonical | E2E |
-| FE-20 | `Navbar` navigatsiyada qayta mount bo'lmaydi | React DevTools + test |
+| #     | Mezon                                                             | Qanday tekshiriladi   |
+| ----- | ----------------------------------------------------------------- | --------------------- |
+| FE-01 | Barcha sahifalar API'dan ma'lumot oladi. Hardcode massiv **0 ta** | `grep` + code review  |
+| FE-02 | ⚠️ `ProductDetail` da velosiped atributlari **yo'q**              | Manual + e2e          |
+| FE-03 | Savat: qo'shish/o'chirish/miqdor ishlaydi                         | E2E                   |
+| FE-04 | Mehmon savati refresh'dan keyin saqlanadi                         | E2E                   |
+| FE-05 | Login'da savat birlashadi, konflikt ko'rsatiladi                  | E2E + unit            |
+| FE-06 | Checkout: mehmon + login — ikkalasi ham                           | E2E                   |
+| FE-07 | ⚠️ Filtrlar URL'da. Refresh/share/back ishlaydi                   | E2E                   |
+| FE-08 | Facet count to'g'ri (§4.3 semantikasi)                            | Integration           |
+| FE-09 | ⚠️ Mavjud bo'lmagan variant `disabled`, yashirilmagan             | Unit + e2e            |
+| FE-10 | ⚠️ 10 parallel 401 → **aniq 1 refresh**                           | Integration (MSW)     |
+| FE-11 | Uch til ishlaydi, layout buzilmaydi                               | Vizual regressiya     |
+| FE-12 | `<html lang>` tilga mos                                           | E2E                   |
+| FE-13 | ⚠️ axe-core: `serious`/`critical` — **0 ta**                      | CI                    |
+| FE-14 | Klaviatura bilan checkout to'liq o'tiladi                         | ⚠️ **Qo'lda**         |
+| FE-15 | CLS ≤ 0.1 barcha sahifada                                         | Lighthouse CI         |
+| FE-16 | Initial JS ≤ 180 KB gzip                                          | `size-limit`          |
+| FE-17 | ⚠️ Narx hech qayerda `Float` emas                                 | Code review + tip     |
+| FE-18 | `₽` — **0 ta**                                                    | `grep`                |
+| FE-19 | Har sahifada `<title>`, meta, OG, canonical                       | E2E                   |
+| FE-20 | `Navbar` navigatsiyada qayta mount bo'lmaydi                      | React DevTools + test |
 
 ### 13.2 Admin
 
-| # | Mezon |
-|---|---|
-| AD-01 | Jadval: server-side pagination/sort/filter |
-| AD-02 | 50 000 yozuvli jadval sekinlashmaydi |
-| AD-03 | Variant matritsasi generatori: 24 SKU **bir amalda** |
-| AD-04 | Fayl yuklash — presigned URL, API orqali emas |
-| AD-05 | Har mutatsiya `AuditLog` ga tushadi |
+| #     | Mezon                                                        |
+| ----- | ------------------------------------------------------------ |
+| AD-01 | Jadval: server-side pagination/sort/filter                   |
+| AD-02 | 50 000 yozuvli jadval sekinlashmaydi                         |
+| AD-03 | Variant matritsasi generatori: 24 SKU **bir amalda**         |
+| AD-04 | Fayl yuklash — presigned URL, API orqali emas                |
+| AD-05 | Har mutatsiya `AuditLog` ga tushadi                          |
 | AD-06 | RBAC: ruxsatsiz ekran **ko'rinmaydi** (va API ham bloklaydi) |
 
 ---
 
 ## 14. Ochiq savollar
 
-| # | Savol | Kim hal qiladi | ⚠️ Kechiktirish narxi |
-|---|---|---|---|
-| **1** | ⚠️ **SEO: SPA + prerender / Vite SSR / Next.js?** Tavsiya — Vite SSR (§6.4) | **Loyiha egasi** | ⚠️ **Juda yuqori.** Har yozilgan qator narxni oshiradi. Faza 10 da hal bo'ladi, lekin kod Faza 0 dan SSR-ga tayyor yoziladi (§6.5) |
-| 2 | Standart til: `uz` yoki `ru`? | Loyiha egasi (biznes) | Past — o'zgartirish oson |
-| 3 | Lotin→kirill transliteratsiya kutubxonasi? Sifati? | Dasturchi (o'lchov) | O'rta |
-| 4 | Brend nomi kirillda: `Kelvin` yoki `Кельвин`? | Loyiha egasi | Past |
-| 5 | Qaysi brauzerlar qo'llab-quvvatlanadi? (`@vitejs/plugin-legacy` kerakmi) | ⚠️ Real analitika kerak | O'rta |
-| 6 | CDN kerakmi yoki S3 yetarli? | O'lchov | Past |
-| 7 | ⚠️ Kontrast (`#45454550`) tuzatilsinmi? Bu dizaynga tegadi | Loyiha egasi | O'rta — kech tuzatish = ko'p sahifa |
-| 8 | ⚠️ `:focus-visible` konturi — dizayn o'zgarishi hisoblanadimi? | Loyiha egasi | Past |
-| 9 | Variant to'liq bo'lmasa: bloklash yoki almashtirish? (§5.1) | Real katalog kelgach | Past |
-| 10 | ⚠️ Rassrochka provayderi va uning formasi? | ⚠️ **Yuridik + provayder hujjati** | ⚠️ Yuqori — Faza 5 bloker |
-| 11 | Ko'p tab: refresh koordinatsiyasi? (§3.7) | Backend bilan birga | O'rta |
-| 12 | ⚠️ Rasm siqish sifati (rang bandlashuvi, §8.2) | ⚠️ **O'lchov** — faraz mumkin emas | Past |
-| 13 | Storybook qachon kerak bo'ladi? | Jamoa o'sganda | Past |
-| 14 | ⚠️ 1C integratsiyasi UI'da kerakmi? | ⚠️ **Tasdiqlanmagan talab** (CANON §6) | ⚠️ Yuqori bo'lishi mumkin |
-| 15 | Bo'sh natijada "filtrni olib tashlang" taklifi — backend qo'llab-quvvatlaydimi? | `docs/05-...` | Past |
+| #     | Savol                                                                           | Kim hal qiladi                         | ⚠️ Kechiktirish narxi                                                                                                              |
+| ----- | ------------------------------------------------------------------------------- | -------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
+| **1** | ⚠️ **SEO: SPA + prerender / Vite SSR / Next.js?** Tavsiya — Vite SSR (§6.4)     | **Loyiha egasi**                       | ⚠️ **Juda yuqori.** Har yozilgan qator narxni oshiradi. Faza 10 da hal bo'ladi, lekin kod Faza 0 dan SSR-ga tayyor yoziladi (§6.5) |
+| 2     | Standart til: `uz` yoki `ru`?                                                   | Loyiha egasi (biznes)                  | Past — o'zgartirish oson                                                                                                           |
+| 3     | Lotin→kirill transliteratsiya kutubxonasi? Sifati?                              | Dasturchi (o'lchov)                    | O'rta                                                                                                                              |
+| 4     | Brend nomi kirillda: `Kelvin` yoki `Кельвин`?                                   | Loyiha egasi                           | Past                                                                                                                               |
+| 5     | Qaysi brauzerlar qo'llab-quvvatlanadi? (`@vitejs/plugin-legacy` kerakmi)        | ⚠️ Real analitika kerak                | O'rta                                                                                                                              |
+| 6     | CDN kerakmi yoki S3 yetarli?                                                    | O'lchov                                | Past                                                                                                                               |
+| 7     | ⚠️ Kontrast (`#45454550`) tuzatilsinmi? Bu dizaynga tegadi                      | Loyiha egasi                           | O'rta — kech tuzatish = ko'p sahifa                                                                                                |
+| 8     | ⚠️ `:focus-visible` konturi — dizayn o'zgarishi hisoblanadimi?                  | Loyiha egasi                           | Past                                                                                                                               |
+| 9     | Variant to'liq bo'lmasa: bloklash yoki almashtirish? (§5.1)                     | Real katalog kelgach                   | Past                                                                                                                               |
+| 10    | ⚠️ Rassrochka provayderi va uning formasi?                                      | ⚠️ **Yuridik + provayder hujjati**     | ⚠️ Yuqori — Faza 5 bloker                                                                                                          |
+| 11    | Ko'p tab: refresh koordinatsiyasi? (§3.7)                                       | Backend bilan birga                    | O'rta                                                                                                                              |
+| 12    | ⚠️ Rasm siqish sifati (rang bandlashuvi, §8.2)                                  | ⚠️ **O'lchov** — faraz mumkin emas     | Past                                                                                                                               |
+| 13    | Storybook qachon kerak bo'ladi?                                                 | Jamoa o'sganda                         | Past                                                                                                                               |
+| 14    | ⚠️ 1C integratsiyasi UI'da kerakmi?                                             | ⚠️ **Tasdiqlanmagan talab** (CANON §6) | ⚠️ Yuqori bo'lishi mumkin                                                                                                          |
+| 15    | Bo'sh natijada "filtrni olib tashlang" taklifi — backend qo'llab-quvvatlaydimi? | `docs/05-...`                          | Past                                                                                                                               |
 
 ---
 

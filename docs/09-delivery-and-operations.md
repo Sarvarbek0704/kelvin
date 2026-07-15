@@ -89,25 +89,25 @@ Mijoz dropdown'dan viloyat/tuman tanlaydi. Zona jadval orqali topiladi:
 region_code + district_code → zone_id
 ```
 
-| Ijobiy | Salbiy |
-|---|---|
+| Ijobiy                                                   | Salbiy                                                                 |
+| -------------------------------------------------------- | ---------------------------------------------------------------------- |
 | Oddiy. `WHERE district_code = ?` — indeks bo'yicha, ~1ms | Tuman ichida bir xil narx. Chilonzorning chekkasi va markazi — bir xil |
-| Tashqi API kerak emas, xarajat yo'q | Mijoz noto'g'ri tuman tanlashi mumkin |
-| Offline ishlaydi | Yangi tuman/chegara o'zgarsa — qo'lda yangilash |
-| Test qilish oson (determinstik) | Toshkent atrofidagi qishloqlar noaniq zonaga tushadi |
+| Tashqi API kerak emas, xarajat yo'q                      | Mijoz noto'g'ri tuman tanlashi mumkin                                  |
+| Offline ishlaydi                                         | Yangi tuman/chegara o'zgarsa — qo'lda yangilash                        |
+| Test qilish oson (determinstik)                          | Toshkent atrofidagi qishloqlar noaniq zonaga tushadi                   |
 
 #### Variant B — Poligon (GeoJSON + PostGIS)
 
 Zona — xaritada chizilgan ko'pburchak. Manzil geokodlanadi (lat/lng), keyin
 `ST_Contains(zone.polygon, point)` bilan zona topiladi.
 
-| Ijobiy | Salbiy |
-|---|---|
-| Aniq. Chegarani xohlagancha chizish mumkin | PostGIS kengaytmasi kerak (PostgreSQL 17 uni qo'llaydi) |
-| Masofa bo'yicha narx hisoblash mumkin | **Geokodlash kerak** → tashqi API (Yandex/Google) → xarajat + kechikish + ishonchsizlik |
-| Zona qo'shish — xaritada chizish, kod o'zgarmaydi | O'zbekiston manzillari geokodlash sifati **NOMA'LUM** — tekshirilishi kerak |
-| | Geokoder xato qilsa — mijoz noto'g'ri narx ko'radi, buni tuzatish qiyin |
-| | Poligonlarni kim chizadi? Admin panelda xarita muharriri kerak — katta ish |
+| Ijobiy                                            | Salbiy                                                                                  |
+| ------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Aniq. Chegarani xohlagancha chizish mumkin        | PostGIS kengaytmasi kerak (PostgreSQL 17 uni qo'llaydi)                                 |
+| Masofa bo'yicha narx hisoblash mumkin             | **Geokodlash kerak** → tashqi API (Yandex/Google) → xarajat + kechikish + ishonchsizlik |
+| Zona qo'shish — xaritada chizish, kod o'zgarmaydi | O'zbekiston manzillari geokodlash sifati **NOMA'LUM** — tekshirilishi kerak             |
+|                                                   | Geokoder xato qilsa — mijoz noto'g'ri narx ko'radi, buni tuzatish qiyin                 |
+|                                                   | Poligonlarni kim chizadi? Admin panelda xarita muharriri kerak — katta ish              |
 
 #### Qaror (boshlang'ich)
 
@@ -126,13 +126,13 @@ Zona — xaritada chizilgan ko'pburchak. Manzil geokodlanadi (lat/lng), keyin
 // packages/contracts/src/delivery/zone-resolver.ts
 
 export interface AddressInput {
-  readonly regionCode: string;      // 'TSH' | 'AND' | 'SAM' | ...
-  readonly districtCode: string;    // 'TSH_CHL' (Chilonzor) | ...
+  readonly regionCode: string; // 'TSH' | 'AND' | 'SAM' | ...
+  readonly districtCode: string; // 'TSH_CHL' (Chilonzor) | ...
   readonly street: string;
   readonly house: string;
   readonly apartment?: string;
-  readonly landmark?: string;       // "mo'ljal" — O'zbekistonda manzildan muhimroq
-  readonly lat?: number;            // kelajakda: geokodlash natijasi
+  readonly landmark?: string; // "mo'ljal" — O'zbekistonda manzildan muhimroq
+  readonly lat?: number; // kelajakda: geokodlash natijasi
   readonly lng?: number;
 }
 
@@ -235,7 +235,7 @@ Qoida: buyurtma summasi `freeThreshold` dan katta yoki teng bo'lsa — yetkazish
 export interface DeliveryQuote {
   readonly zoneId: string;
   readonly zoneName: string;
-  readonly price: bigint;          // tiyin
+  readonly price: bigint; // tiyin
   readonly currency: 'UZS';
   readonly isFree: boolean;
   readonly freeThreshold: bigint | null;
@@ -275,6 +275,7 @@ Yoritishda 3 metrli trek yoki 15 kg lik kristall qandil bor. Bu oddiy kuryer
 mashinasiga sig'maydi.
 
 ⚠️ **Bu hal qilinmagan.** Variantlar:
+
 - `Product` ga `oversized: boolean` bayrog'i → bunday tovar uchun alohida narx/logistika.
 - Hajm/og'irlik bo'yicha avtomatik hisob (`dimensions`, `weight` atributlari kanon §4 da bor).
 
@@ -368,6 +369,7 @@ ko'rsatishda har safar konvertatsiya kerak va DST bo'lmagan mamlakatda bu ortiqc
 murakkablik keltiradi.
 
 **Qaror:**
+
 - `slotDate` — `@db.Date` (vaqt zonasisiz sana).
 - `startTime` / `endTime` — `String` (`'09:00'`), Toshkent vaqti (UTC+5) deb tushuniladi.
 - `Shipment.deliveredAt` kabi **hodisa vaqtlari** — odatdagidek `Timestamptz(3)`, UTC.
@@ -607,8 +609,8 @@ import fc from 'fast-check';
 it('hech qachon capacity dan oshiq band qilmaydi', async () => {
   await fc.assert(
     fc.asyncProperty(
-      fc.integer({ min: 1, max: 10 }),   // capacity
-      fc.integer({ min: 1, max: 30 }),   // parallel urinishlar soni
+      fc.integer({ min: 1, max: 10 }), // capacity
+      fc.integer({ min: 1, max: 30 }), // parallel urinishlar soni
       async (capacity, attempts) => {
         const slot = await createSlot({ capacity });
 
@@ -822,6 +824,7 @@ Mas'uliyat chegarasi — `HANDOVER` va `DELIVERED` fotolari orasida.
 
 ⚠️ **Kuryer moliyaviy javobgarligi — YURIST SAVOLI.**
 Kuryer o'z ish haqidan singan tovar qiymatini to'laydimi? Bu:
+
 - mehnat shartnomasiga bog'liq (shtat kuryeri vs shartnoma asosida);
 - O'zbekiston Mehnat kodeksi moddiy javobgarlik cheklovlariga bog'liq;
 - tizim buni **hisoblab berishi mumkin**, lekin **qoidani belgilay olmaydi**.
@@ -858,6 +861,7 @@ Kanon §4.6: "O'rnatish xizmati — elektrik. Bu upsell va alohida operatsion oq
 
 Qandilni shiftga osish — elektr ishi. Mijozning ko'pchiligi buni o'zi qila olmaydi
 yoki xohlamaydi. Do'kon uchun bu:
+
 - **daromad** (xizmat narxi);
 - **farqlanish** (raqobatchi qilmasa);
 - **mas'uliyat** (noto'g'ri o'rnatilsa — qandil tushadi).
@@ -992,16 +996,16 @@ model InstallationPhoto {
 
 O'rnatish narxi qat'iy emas. Omillar:
 
-| Omil | Nega ta'sir qiladi |
-|---|---|
-| **Shift balandligi** | 2.7 m — stremyanka. 4 m — tur yoki uzun narvon, ikki kishi |
-| **Qandil shoxlari soni** | 12 shoxli qandil — har shoxni alohida yig'ish, soatlab ish |
-| **Og'irlik** | 15 kg qandil — ankerli mahkamlash, betonga teshik |
-| **Shift materiali** | Gipsokarton — anker kerak. Beton — perforator. Yog'och — oddiy |
-| **Elektr simi bormi** | Sim yo'q bo'lsa — shtroblash, bu butunlay boshqa ish hajmi |
-| **Dimmer o'rnatish** | Qo'shimcha ish (kanon §4: `dimmable` atributi) |
-| **12V transformator** | Kanon §4.4 — transformator joylashuvi, yuklamani tekshirish |
-| **Nechta chiroq** | 6 ta spot — 6 marta ish |
+| Omil                     | Nega ta'sir qiladi                                             |
+| ------------------------ | -------------------------------------------------------------- |
+| **Shift balandligi**     | 2.7 m — stremyanka. 4 m — tur yoki uzun narvon, ikki kishi     |
+| **Qandil shoxlari soni** | 12 shoxli qandil — har shoxni alohida yig'ish, soatlab ish     |
+| **Og'irlik**             | 15 kg qandil — ankerli mahkamlash, betonga teshik              |
+| **Shift materiali**      | Gipsokarton — anker kerak. Beton — perforator. Yog'och — oddiy |
+| **Elektr simi bormi**    | Sim yo'q bo'lsa — shtroblash, bu butunlay boshqa ish hajmi     |
+| **Dimmer o'rnatish**     | Qo'shimcha ish (kanon §4: `dimmable` atributi)                 |
+| **12V transformator**    | Kanon §4.4 — transformator joylashuvi, yuklamani tekshirish    |
+| **Nechta chiroq**        | 6 ta spot — 6 marta ish                                        |
 
 ⚠️ **Har omil uchun aniq narx — NOMA'LUM.** Bu do'kon egasi va ustalar
 kelishuvi. Kodda qattiq yozilmaydi → **konfiguratsiya jadvali**.
@@ -1118,6 +1122,7 @@ flowchart TD
 ```
 
 **Qaysi kategoriyalar uchun?** Kanon §4 dagi kategoriyalar ro'yxatidan:
+
 - **Ha:** Люстры (qandil), Бра (devor), Трековые светильники (trek),
   Технические светильники, Уличные светильники, Светодиодные ленты
 - **Yo'q:** Настольные лампы (stol lampasi — rozetkaga tiqiladi),
@@ -1267,16 +1272,16 @@ bir xil printsip (`docs/07-order-and-checkout.md`):
 
 ```ts
 const SHIPMENT_TRANSITIONS: Readonly<Record<ShipmentStatus, readonly ShipmentStatus[]>> = {
-  PENDING:    ['PICKING', 'CANCELLED'],
-  PICKING:    ['PACKED', 'CANCELLED'],
-  PACKED:     ['DISPATCHED', 'CANCELLED'],
+  PENDING: ['PICKING', 'CANCELLED'],
+  PICKING: ['PACKED', 'CANCELLED'],
+  PACKED: ['DISPATCHED', 'CANCELLED'],
   DISPATCHED: ['IN_TRANSIT', 'FAILED'],
   IN_TRANSIT: ['DELIVERED', 'DAMAGED', 'FAILED'],
-  DELIVERED:  ['RETURNED'],
-  FAILED:     ['PENDING', 'CANCELLED'],
-  DAMAGED:    ['RETURNED'],
-  RETURNED:   [],
-  CANCELLED:  [],
+  DELIVERED: ['RETURNED'],
+  FAILED: ['PENDING', 'CANCELLED'],
+  DAMAGED: ['RETURNED'],
+  RETURNED: [],
+  CANCELLED: [],
 } as const;
 
 export function canTransition(from: ShipmentStatus, to: ShipmentStatus): boolean {
@@ -1308,12 +1313,12 @@ bo'lsa, kuryer aynan shu oraliqda yetib borishi kerak.
 
 Bu hal qiluvchi raqam:
 
-| Kunlik yetkazish | To'g'ri yechim |
-|---|---|
-| ~10 gacha | **Qo'lda tayinlash.** Menejer xaritaga qaraydi, kuryerga aytadi. Algoritm ortiqcha murakkablik |
-| ~10-40 | Yordamchi vosita: manzillarni xaritada ko'rsatish, tumanlar bo'yicha guruhlash. **Odam qaror qiladi** |
-| ~40-150 | Heuristika mantiqan asoslanadi (nearest neighbor + 2-opt, yoki tayyor kutubxona) |
-| 150+ | Jiddiy VRP solver yoki tashqi xizmat |
+| Kunlik yetkazish | To'g'ri yechim                                                                                        |
+| ---------------- | ----------------------------------------------------------------------------------------------------- |
+| ~10 gacha        | **Qo'lda tayinlash.** Menejer xaritaga qaraydi, kuryerga aytadi. Algoritm ortiqcha murakkablik        |
+| ~10-40           | Yordamchi vosita: manzillarni xaritada ko'rsatish, tumanlar bo'yicha guruhlash. **Odam qaror qiladi** |
+| ~40-150          | Heuristika mantiqan asoslanadi (nearest neighbor + 2-opt, yoki tayyor kutubxona)                      |
+| 150+             | Jiddiy VRP solver yoki tashqi xizmat                                                                  |
 
 ⚠️ **Yuqoridagi chegaralar — muhandislik mo'ljali, o'lchangan haqiqat emas.**
 Ular tajribadan tekshirilishi kerak.
@@ -1339,6 +1344,7 @@ Bu — **to'liq yechim**, vaqtinchalik ish emas. Kichik hajmda odam algoritmdan
 yaxshiroq qaror qiladi: u biladi "bu mijoz doim kechikadi", "u ko'chada remont bor".
 
 **Kod nima qiladi:**
+
 1. Shipment'larni zona + tuman + slot bo'yicha guruhlaydi (`GROUP BY`).
 2. Kuryerning shu slotdagi yukini ko'rsatadi.
 3. `routeSequence` ni saqlaydi.
@@ -1366,7 +1372,7 @@ export interface RoutePlanner {
 }
 
 export interface RoutePlanInput {
-  readonly date: string;              // 'YYYY-MM-DD'
+  readonly date: string; // 'YYYY-MM-DD'
   readonly slotId: string;
   readonly shipments: readonly RoutableShipment[];
   readonly couriers: readonly AvailableCourier[];
@@ -1376,7 +1382,7 @@ export interface RoutableShipment {
   readonly shipmentId: string;
   readonly zoneId: string;
   readonly districtCode: string;
-  readonly lat: number | null;        // geokodlash bo'lsa
+  readonly lat: number | null; // geokodlash bo'lsa
   readonly lng: number | null;
   readonly fragility: FragilityLevel;
   readonly volumeCm3: number | null;
@@ -1402,12 +1408,12 @@ export interface RoutePlanResult {
 Agar keyinchalik optimizatsiya kerak bo'lsa, masofa matritsasi kerak
 ("A dan B gacha necha daqiqa"). Variantlar:
 
-| Variant | Ijobiy | Salbiy |
-|---|---|---|
-| **Yandex Maps API** | O'zbekiston/MDH da qamrovi yaxshiroq. Yandex Go O'zbekistonda ishlaydi | Narx va limitlar **noma'lum**. Shartlar tekshirilishi kerak |
-| **Google Maps API** | Yetuk API, hujjatlari yaxshi | O'zbekiston yo'l ma'lumotlari sifati **noma'lum**. To'lov karta bilan — O'zbekistondan murakkab bo'lishi mumkin |
-| **OpenStreetMap + OSRM** | Bepul, o'zimizda hostlanadi, limit yo'q | O'zbekiston OSM ma'lumotlari to'liqligi **noma'lum**. Server saqlash kerak |
-| **Yo'q — to'g'ri chiziq masofa** | Bepul, oddiy | Toshkentda to'g'ri chiziq ≠ haqiqiy yo'l. Faqat qo'pol guruhlash uchun |
+| Variant                          | Ijobiy                                                                 | Salbiy                                                                                                          |
+| -------------------------------- | ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------- |
+| **Yandex Maps API**              | O'zbekiston/MDH da qamrovi yaxshiroq. Yandex Go O'zbekistonda ishlaydi | Narx va limitlar **noma'lum**. Shartlar tekshirilishi kerak                                                     |
+| **Google Maps API**              | Yetuk API, hujjatlari yaxshi                                           | O'zbekiston yo'l ma'lumotlari sifati **noma'lum**. To'lov karta bilan — O'zbekistondan murakkab bo'lishi mumkin |
+| **OpenStreetMap + OSRM**         | Bepul, o'zimizda hostlanadi, limit yo'q                                | O'zbekiston OSM ma'lumotlari to'liqligi **noma'lum**. Server saqlash kerak                                      |
+| **Yo'q — to'g'ri chiziq masofa** | Bepul, oddiy                                                           | Toshkentda to'g'ri chiziq ≠ haqiqiy yo'l. Faqat qo'pol guruhlash uchun                                          |
 
 ⚠️ **Hech biri tekshirilmagan.** Qamrov sifati va narxlarni **to'qib chiqarmayman**
 (kanon §2). → **Ochiq savol №2.**
@@ -1419,11 +1425,11 @@ bo'yicha. Bu yetarli, chunki dispetcher Toshkentni o'zi biladi.
 
 Kuryer nima bilan ishlaydi? Uchta variant:
 
-| Variant | Ijobiy | Salbiy |
-|---|---|---|
+| Variant          | Ijobiy                                                                                                                                           | Salbiy                                                                                                          |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------- |
 | **Telegram bot** | O'zbekistonda hamma Telegram'da. O'rnatish kerak emas. Kanon §6 da Telegram bot **allaqachon bor** — yangi bog'liqlik emas. Foto yuborish tabiiy | Offline ishlamaydi. UI cheklangan (tugmalar, inline keyboard). Geolokatsiya — mumkin, lekin doimiy kuzatuv yo'q |
-| **PWA** | To'liq UI nazorati. Offline (service worker + IndexedDB). Kamera, GPS. Store'ga chiqarish shart emas | Yozish kerak — bu **yangi ilova** (`apps/courier`). Kanon §6 da bunday app yo'q. iOS Safari'da PWA cheklovlari |
-| **Native** | Eng yaxshi tajriba, fon rejimida GPS | Katta ish. React Native/Flutter — **yangi stack**. Kanon §6 buni qo'llamaydi |
+| **PWA**          | To'liq UI nazorati. Offline (service worker + IndexedDB). Kamera, GPS. Store'ga chiqarish shart emas                                             | Yozish kerak — bu **yangi ilova** (`apps/courier`). Kanon §6 da bunday app yo'q. iOS Safari'da PWA cheklovlari  |
+| **Native**       | Eng yaxshi tajriba, fon rejimida GPS                                                                                                             | Katta ish. React Native/Flutter — **yangi stack**. Kanon §6 buni qo'llamaydi                                    |
 
 **Native — darrov rad etiladi:** kanon §6 texnologiya ro'yxati qat'iy, mobil
 stack u yerda yo'q.
@@ -1436,6 +1442,7 @@ Kuryer "yetkazildi" tugmasini bosolmasa — bu jiddiy muammomi yoki 5 daqiqadan
 keyin bosadimi?
 
 **Amaliy taklif:** Telegram botdan boshlash. Sabablari:
+
 1. Kanon §6 da Telegram bot allaqachon rejalashtirilgan — infratuzilma bor.
 2. Kuryerlar soni kam (ehtimol) — o'qitish oson.
 3. PWA yozish — haftalar. Bot — kunlar.
@@ -1488,7 +1495,7 @@ export interface PickingListItem {
   readonly orderItemId: string;
   readonly sku: string;
   readonly productName: string;
-  readonly variantLabel: string;      // "Xrom, 60cm, 6 lampa"
+  readonly variantLabel: string; // "Xrom, 60cm, 6 lampa"
   readonly quantity: number;
   /** Ombordagi joy: "A-12-3" (qator-javon-polka) */
   readonly location: string | null;
@@ -1521,9 +1528,7 @@ export interface PickingList {
  * `location` null bo'lgan pozitsiyalar oxiriga tushadi — omborchi ularni
  * qo'lda qidiradi.
  */
-export function sortByPickingPath(
-  items: readonly PickingListItem[],
-): readonly PickingListItem[] {
+export function sortByPickingPath(items: readonly PickingListItem[]): readonly PickingListItem[] {
   return [...items].sort((a, b) => {
     if (a.location === null && b.location === null) return 0;
     if (a.location === null) return 1;
@@ -1624,6 +1629,7 @@ muammo bo'lsa) — qo'shiladi. → **Ochiq savol №6.**
 ### 7.1. Kanallar
 
 Kanon §6 va §7 (modul 16 `notification`):
+
 - **SMS** — Eskiz.uz
 - **Telegram bot**
 - **Email** — O'zbekistonda kuchsiz kanal, lekin bor
@@ -1633,19 +1639,19 @@ cheklangan va foydalanuvchi ruxsat berishi kerak. **MVP da yo'q.**
 
 ### 7.2. Qaysi bosqichda qanday xabar
 
-| Hodisa | SMS | Telegram | Email | Nega |
-|---|---|---|---|---|
-| Buyurtma qabul qilindi | ✅ | ✅ | ✅ | Mijoz kutadi. Buyurtma raqami kerak |
-| To'lov o'tdi | ✅ | ✅ | ✅ | Pul — muhim |
-| To'lov muvaffaqiyatsiz | ✅ | ✅ | — | Shoshilinch: rezerv TTL ketyapti |
-| Yig'ilyapti (PICKING) | — | ✅ | — | Kam qiziq. SMS = pul, arzimaydi |
-| Kuryerga topshirildi | ✅ | ✅ | — | Mijoz uyda bo'lishi kerak |
-| Kuryer yo'lda | — | ✅ | — | "Bugun kuryer keladi" — SMS ortiqcha |
-| Yetkazildi | — | ✅ | ✅ | Tasdiq. Sharh so'rash uchun ham |
-| Yetkazib bo'lmadi | ✅ | ✅ | — | Kritik: mijoz nima bo'lganini bilishi kerak |
-| O'rnatish sanasi tasdiqlandi | ✅ | ✅ | ✅ | Mijoz kunini rejalashtirishi kerak |
-| O'rnatish — ertaga eslatma | ✅ | ✅ | — | Unutmasin |
-| Qaytarish qabul qilindi | ✅ | ✅ | ✅ | Pul qaytishi bilan bog'liq |
+| Hodisa                       | SMS | Telegram | Email | Nega                                        |
+| ---------------------------- | --- | -------- | ----- | ------------------------------------------- |
+| Buyurtma qabul qilindi       | ✅  | ✅       | ✅    | Mijoz kutadi. Buyurtma raqami kerak         |
+| To'lov o'tdi                 | ✅  | ✅       | ✅    | Pul — muhim                                 |
+| To'lov muvaffaqiyatsiz       | ✅  | ✅       | —     | Shoshilinch: rezerv TTL ketyapti            |
+| Yig'ilyapti (PICKING)        | —   | ✅       | —     | Kam qiziq. SMS = pul, arzimaydi             |
+| Kuryerga topshirildi         | ✅  | ✅       | —     | Mijoz uyda bo'lishi kerak                   |
+| Kuryer yo'lda                | —   | ✅       | —     | "Bugun kuryer keladi" — SMS ortiqcha        |
+| Yetkazildi                   | —   | ✅       | ✅    | Tasdiq. Sharh so'rash uchun ham             |
+| Yetkazib bo'lmadi            | ✅  | ✅       | —     | Kritik: mijoz nima bo'lganini bilishi kerak |
+| O'rnatish sanasi tasdiqlandi | ✅  | ✅       | ✅    | Mijoz kunini rejalashtirishi kerak          |
+| O'rnatish — ertaga eslatma   | ✅  | ✅       | —     | Unutmasin                                   |
+| Qaytarish qabul qilindi      | ✅  | ✅       | ✅    | Pul qaytishi bilan bog'liq                  |
 
 **Printsip:** SMS — **pul turadi**. Faqat mijoz **harakat qilishi kerak** bo'lgan
 yoki **pul** bilan bog'liq hodisalarda. Telegram — bepul, ko'proq yuborish mumkin.
@@ -1675,10 +1681,12 @@ flowchart TD
 ⚠️ **Kanon §2 va §10: API detallari to'qib chiqarilmaydi.**
 
 Ma'lum:
+
 - Eskiz.uz — O'zbekistondagi SMS provayder (kanon §6 da tanlangan).
 - SMS uchun **shablon tasdiqlanishi** kerak — bu MDH bozorlarida odatiy amaliyot.
 
 **NOMA'LUM va rasmiy hujjatdan tekshirilishi kerak:**
+
 - Autentifikatsiya usuli (token? qancha yashaydi? qanday yangilanadi?)
 - Endpoint URL, so'rov/javob formati
 - Yetkazish statusi qanday olinadi — callback (webhook) yoki polling?
@@ -1728,8 +1736,7 @@ export type SmsSendResult =
   | { readonly kind: 'rejected'; readonly reason: string; readonly retryable: boolean }
   | { readonly kind: 'rate_limited'; readonly retryAfterMs: number };
 
-export type SmsDeliveryStatus =
-  | 'pending' | 'delivered' | 'failed' | 'expired' | 'unknown';
+export type SmsDeliveryStatus = 'pending' | 'delivered' | 'failed' | 'expired' | 'unknown';
 ```
 
 ### 7.5. Idempotentlik — kritik
@@ -1774,10 +1781,10 @@ bo'lmaydi.
 
 Bu farq muhim, chunki **oqimlar boshqacha**:
 
-| Tur | Sabab | Kim to'laydi | Tovar taqdiri |
-|---|---|---|---|
-| **Shikast** (`DAMAGED`) | Singan holda yetdi | Do'kon (yoki kuryer/ta'minotchi) | Brak yoki ta'minotchiga |
-| **Voz kechish** (`RETURN`) | Mijoz fikrini o'zgartirdi, rang mos kelmadi | ⚠️ Yuridik savol | Tekshiruvdan keyin — omborga |
+| Tur                        | Sabab                                       | Kim to'laydi                     | Tovar taqdiri                |
+| -------------------------- | ------------------------------------------- | -------------------------------- | ---------------------------- |
+| **Shikast** (`DAMAGED`)    | Singan holda yetdi                          | Do'kon (yoki kuryer/ta'minotchi) | Brak yoki ta'minotchiga      |
+| **Voz kechish** (`RETURN`) | Mijoz fikrini o'zgartirdi, rang mos kelmadi | ⚠️ Yuridik savol                 | Tekshiruvdan keyin — omborga |
 
 ### 8.2. Qaytarish oqimi
 
@@ -1893,7 +1900,7 @@ export interface DeliveryZoneDto {
   readonly code: string;
   readonly nameUz: string;
   readonly nameRu: string;
-  readonly basePrice: string;       // BigInt → JSON: string (pastdagi izohga qara)
+  readonly basePrice: string; // BigInt → JSON: string (pastdagi izohga qara)
   readonly currency: 'UZS';
   readonly freeThreshold: string | null;
   readonly etaMinDays: number;
@@ -1906,9 +1913,9 @@ export interface DeliveryZoneDto {
 export interface DeliverySlotDto {
   readonly id: string;
   readonly zoneId: string;
-  readonly date: string;            // 'YYYY-MM-DD' (Toshkent lokal sanasi)
-  readonly startTime: string;       // 'HH:mm'
-  readonly endTime: string;         // 'HH:mm'
+  readonly date: string; // 'YYYY-MM-DD' (Toshkent lokal sanasi)
+  readonly startTime: string; // 'HH:mm'
+  readonly endTime: string; // 'HH:mm'
   /** Mijozga booked/capacity ko'rsatilmaydi — faqat bor/yo'q */
   readonly isAvailable: boolean;
 }
@@ -1921,8 +1928,16 @@ export interface SlotAvailabilityQuery {
 
 // ─── Shipment ───────────────────────────────────────────────────────────
 export type ShipmentStatusDto =
-  | 'PENDING' | 'PICKING' | 'PACKED' | 'DISPATCHED' | 'IN_TRANSIT'
-  | 'DELIVERED' | 'FAILED' | 'DAMAGED' | 'RETURNED' | 'CANCELLED';
+  | 'PENDING'
+  | 'PICKING'
+  | 'PACKED'
+  | 'DISPATCHED'
+  | 'IN_TRANSIT'
+  | 'DELIVERED'
+  | 'FAILED'
+  | 'DAMAGED'
+  | 'RETURNED'
+  | 'CANCELLED';
 
 export interface ShipmentDto {
   readonly id: string;
@@ -1932,26 +1947,32 @@ export interface ShipmentDto {
   readonly slot: DeliverySlotDto | null;
   readonly courierName: string | null;
   readonly courierPhone: string | null;
-  readonly price: string;           // BigInt → string
+  readonly price: string; // BigInt → string
   readonly currency: 'UZS';
   readonly maxFragility: 'NORMAL' | 'FRAGILE' | 'VERY_FRAGILE';
-  readonly dispatchedAt: string | null;   // ISO 8601 UTC
+  readonly dispatchedAt: string | null; // ISO 8601 UTC
   readonly deliveredAt: string | null;
 }
 
 // ─── InstallationJob ────────────────────────────────────────────────────
 export type InstallationJobStatusDto =
-  | 'PENDING' | 'SCHEDULED' | 'EN_ROUTE' | 'IN_PROGRESS'
-  | 'COMPLETED' | 'FAILED' | 'CANCELLED' | 'RESCHEDULED';
+  | 'PENDING'
+  | 'SCHEDULED'
+  | 'EN_ROUTE'
+  | 'IN_PROGRESS'
+  | 'COMPLETED'
+  | 'FAILED'
+  | 'CANCELLED'
+  | 'RESCHEDULED';
 
 export interface InstallationJobDto {
   readonly id: string;
   readonly orderId: string;
   readonly status: InstallationJobStatusDto;
-  readonly scheduledDate: string | null;   // 'YYYY-MM-DD'
+  readonly scheduledDate: string | null; // 'YYYY-MM-DD'
   readonly slot: DeliverySlotDto | null;
   readonly crewName: string | null;
-  readonly quotedPrice: string;            // BigInt → string
+  readonly quotedPrice: string; // BigInt → string
   readonly finalPrice: string | null;
   readonly currency: 'UZS';
   readonly customerNote: string | null;
@@ -1973,9 +1994,7 @@ export interface InstallationJobDto {
 import { z } from 'zod';
 
 /** Pul — string, faqat raqamlardan. BigInt ga aylantiriladi. */
-const moneyString = z
-  .string()
-  .regex(/^\d+$/, 'Pul faqat musbat butun son (tiyin) bo\'lishi kerak');
+const moneyString = z.string().regex(/^\d+$/, "Pul faqat musbat butun son (tiyin) bo'lishi kerak");
 
 export const createShipmentSchema = z.object({
   orderId: z.string().uuid(),
@@ -2011,7 +2030,10 @@ export const installationRequestSchema = z.object({
     needsTransformer: z.boolean(),
     unitCount: z.number().int().min(1),
   }),
-  preferredDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable(),
+  preferredDate: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/)
+    .nullable(),
   customerNote: z.string().max(500).nullable(),
 });
 
@@ -2115,33 +2137,33 @@ export type InstallationRequestInput = z.infer<typeof installationRequestSchema>
 > Quyidagilar — **javob berilmagan** savollar. Ular loyiha egasi, do'kon egasi
 > yoki yuristdan javob talab qiladi.
 
-| № | Savol | Kimga | Nega muhim |
-|---|---|---|---|
-| **1** | **Do'kon kuniga nechta buyurtma yetkazadi? Necha kuryer bor? Bitta kuryer bir slotda nechta manzilga yetib boradi?** | Do'kon egasi | Bu — bu hujjatdagi eng muhim noma'lum. Slot `capacity`, marshrut optimizatsiyasi kerakligi, batch picking foydasi — hammasi shunga bog'liq. Bu raqamsiz §2 va §5 dagi qarorlar **taxmin** |
-| **2** | Xarita API: Yandex, Google, OSM yoki hech biri? Narx, limit, O'zbekiston qamrovi sifati? | Loyiha egasi + o'lchov | Geokodlash va masofa matritsasi shunga bog'liq. Hozircha "hech biri" tanlangan |
-| **3** | Kuryer nima bilan ishlaydi — Telegram bot yoki PWA? Offline rejim kerakmi? | Do'kon egasi | Telegram bot taklif qilingan (kanon §6 da bor), lekin bu tasdiqlanmagan. PWA — `apps/courier` yangi ilova, kanon §6 ni kengaytiradi |
-| **4** | Oversized tovar (3 m trek, 15 kg qandil) qanday belgilanadi — qo'lda bayroq yoki `weight`/`dimensions` dan avtomatik? Chegara qayerda? | Do'kon egasi | Avtomatik to'g'riroq, lekin chegara koeffitsiyentlari noma'lum |
-| **5** | Ombor rejasi qanday? `location` formati ("A-12-3")? Omborchi qanday yo'l bilan yuradi? | Do'kon egasi | Picking list tartibi shunga bog'liq. Hozirgi sodda tartib faraz asosida |
-| **6** | Buyurtmalar orasida SKU takrorlanishi qanchalik yuqori? | O'lchov (real ma'lumot kerak) | Batch picking foydasi shunga bog'liq. MVP da batch yo'q |
-| **7** | **Kuryer singan tovar uchun moddiy javobgar bo'ladimi? Qanday hujjat bilan?** | ⚖️ **Yurist** | Mehnat kodeksi moddiy javobgarlik cheklovlari + shartnoma turi. Kanon §10: yuridik maslahat berilmaydi |
-| **8** | `InstallationCrew` — kanon §8 entity ro'yxatiga qo'shiladimi? | Kanon egasi | `InstallationJob` kimgadir tayinlanishi kerak. `Courier` ni ishlatish — semantik xato |
-| **9** | Usta kelib narxni oshirsa, mijoz rozi bo'lmasa — kim yo'l xarajatini to'laydi? | Do'kon egasi | Biznes siyosati. Tizim buni faqat qayd qiladi |
-| **10** | **Eskiz.uz API:** auth usuli, endpoint, yetkazish statusi (webhook yoki polling?), narx, limit, shablon tasdiqlash muddati? | Rasmiy hujjat | Kanon §10: API detallari to'qib chiqarilmaydi. Adapter shunga qarab yoziladi |
-| **11** | Qaytarishda yetkazib berish narxi mijozga qaytariladimi? Shikast va "fikr o'zgardi" holatlarida farq bormi? | ⚖️ **Yurist** + do'kon egasi | Iste'molchi huquqlari qonunchiligi + biznes siyosati |
-| **12** | Viloyatlarga yetkazish o'zimizmi yoki transport kompaniyasi orqalimi? Agar kompaniya bo'lsa — qaysi? Uning API si bormi? | Do'kon egasi | `slotsEnabled=false` deb faraz qilingan. Agar integratsiya kerak bo'lsa — bu yangi katta ish |
-| **13** | Bayram va ko'chirilgan dam olish kunlarini kim va qachon kiritadi? | Do'kon egasi | Hozir: qo'lda, admin panel orqali. Avtomatlashtirish uchun ishonchli manba yo'q |
-| **14** | Slot TTL (mijoz to'lovni tugatmasa, qancha vaqtdan keyin bo'shaydi)? | `docs/06` bilan kelishilishi kerak | **Rezerv TTL bilan bir xil bo'lishi shart.** Ikki xil qiymat — nomuvofiqlik manbai |
-| **15** | Mijoz slotni o'zgartira oladimi? Necha marta? Qachongacha (yetkazishdan 24 soat oldin?) | Do'kon egasi | Hozir ko'rsatilmagan. Slot `booked` hisobiga ta'sir qiladi |
+| №      | Savol                                                                                                                                  | Kimga                              | Nega muhim                                                                                                                                                                                |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**  | **Do'kon kuniga nechta buyurtma yetkazadi? Necha kuryer bor? Bitta kuryer bir slotda nechta manzilga yetib boradi?**                   | Do'kon egasi                       | Bu — bu hujjatdagi eng muhim noma'lum. Slot `capacity`, marshrut optimizatsiyasi kerakligi, batch picking foydasi — hammasi shunga bog'liq. Bu raqamsiz §2 va §5 dagi qarorlar **taxmin** |
+| **2**  | Xarita API: Yandex, Google, OSM yoki hech biri? Narx, limit, O'zbekiston qamrovi sifati?                                               | Loyiha egasi + o'lchov             | Geokodlash va masofa matritsasi shunga bog'liq. Hozircha "hech biri" tanlangan                                                                                                            |
+| **3**  | Kuryer nima bilan ishlaydi — Telegram bot yoki PWA? Offline rejim kerakmi?                                                             | Do'kon egasi                       | Telegram bot taklif qilingan (kanon §6 da bor), lekin bu tasdiqlanmagan. PWA — `apps/courier` yangi ilova, kanon §6 ni kengaytiradi                                                       |
+| **4**  | Oversized tovar (3 m trek, 15 kg qandil) qanday belgilanadi — qo'lda bayroq yoki `weight`/`dimensions` dan avtomatik? Chegara qayerda? | Do'kon egasi                       | Avtomatik to'g'riroq, lekin chegara koeffitsiyentlari noma'lum                                                                                                                            |
+| **5**  | Ombor rejasi qanday? `location` formati ("A-12-3")? Omborchi qanday yo'l bilan yuradi?                                                 | Do'kon egasi                       | Picking list tartibi shunga bog'liq. Hozirgi sodda tartib faraz asosida                                                                                                                   |
+| **6**  | Buyurtmalar orasida SKU takrorlanishi qanchalik yuqori?                                                                                | O'lchov (real ma'lumot kerak)      | Batch picking foydasi shunga bog'liq. MVP da batch yo'q                                                                                                                                   |
+| **7**  | **Kuryer singan tovar uchun moddiy javobgar bo'ladimi? Qanday hujjat bilan?**                                                          | ⚖️ **Yurist**                      | Mehnat kodeksi moddiy javobgarlik cheklovlari + shartnoma turi. Kanon §10: yuridik maslahat berilmaydi                                                                                    |
+| **8**  | `InstallationCrew` — kanon §8 entity ro'yxatiga qo'shiladimi?                                                                          | Kanon egasi                        | `InstallationJob` kimgadir tayinlanishi kerak. `Courier` ni ishlatish — semantik xato                                                                                                     |
+| **9**  | Usta kelib narxni oshirsa, mijoz rozi bo'lmasa — kim yo'l xarajatini to'laydi?                                                         | Do'kon egasi                       | Biznes siyosati. Tizim buni faqat qayd qiladi                                                                                                                                             |
+| **10** | **Eskiz.uz API:** auth usuli, endpoint, yetkazish statusi (webhook yoki polling?), narx, limit, shablon tasdiqlash muddati?            | Rasmiy hujjat                      | Kanon §10: API detallari to'qib chiqarilmaydi. Adapter shunga qarab yoziladi                                                                                                              |
+| **11** | Qaytarishda yetkazib berish narxi mijozga qaytariladimi? Shikast va "fikr o'zgardi" holatlarida farq bormi?                            | ⚖️ **Yurist** + do'kon egasi       | Iste'molchi huquqlari qonunchiligi + biznes siyosati                                                                                                                                      |
+| **12** | Viloyatlarga yetkazish o'zimizmi yoki transport kompaniyasi orqalimi? Agar kompaniya bo'lsa — qaysi? Uning API si bormi?               | Do'kon egasi                       | `slotsEnabled=false` deb faraz qilingan. Agar integratsiya kerak bo'lsa — bu yangi katta ish                                                                                              |
+| **13** | Bayram va ko'chirilgan dam olish kunlarini kim va qachon kiritadi?                                                                     | Do'kon egasi                       | Hozir: qo'lda, admin panel orqali. Avtomatlashtirish uchun ishonchli manba yo'q                                                                                                           |
+| **14** | Slot TTL (mijoz to'lovni tugatmasa, qancha vaqtdan keyin bo'shaydi)?                                                                   | `docs/06` bilan kelishilishi kerak | **Rezerv TTL bilan bir xil bo'lishi shart.** Ikki xil qiymat — nomuvofiqlik manbai                                                                                                        |
+| **15** | Mijoz slotni o'zgartira oladimi? Necha marta? Qachongacha (yetkazishdan 24 soat oldin?)                                                | Do'kon egasi                       | Hozir ko'rsatilmagan. Slot `booked` hisobiga ta'sir qiladi                                                                                                                                |
 
 ---
 
 ## 12. Bog'liq hujjatlar
 
-| Hujjat | Bog'lanish |
-|---|---|
-| `docs/07-order-and-checkout.md` | `Order` holat mashinasi, saga. `Shipment` — saga qadami |
+| Hujjat                                  | Bog'lanish                                                                                                                 |
+| --------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `docs/07-order-and-checkout.md`         | `Order` holat mashinasi, saga. `Shipment` — saga qadami                                                                    |
 | `docs/06-inventory-and-reservations.md` | **Rezerv race condition — slot bilan bir xil pattern.** TTL qiymati. `StockMovement` qaytarishda. `location` picking uchun |
-| `docs/08-payments-and-installments.md` | `Refund` qaytarishda. Rassrochka qayta hisobi. Fiskal chek |
-| `docs/10-crm-pos-analytics.md` | Qaytarish sabablari statistikasi. Kuryer ko'rsatkichlari |
-| `docs/11-security.md` | Kuryer RBAC (faqat o'z shipment'lari). Manzil — shaxsiy ma'lumot |
-| `docs/05-catalog-and-search.md` | `Product.fragility`, `weight`, `dimensions`. `Category.requiresInstallation` |
+| `docs/08-payments-and-installments.md`  | `Refund` qaytarishda. Rassrochka qayta hisobi. Fiskal chek                                                                 |
+| `docs/10-crm-pos-analytics.md`          | Qaytarish sabablari statistikasi. Kuryer ko'rsatkichlari                                                                   |
+| `docs/11-security.md`                   | Kuryer RBAC (faqat o'z shipment'lari). Manzil — shaxsiy ma'lumot                                                           |
+| `docs/05-catalog-and-search.md`         | `Product.fragility`, `weight`, `dimensions`. `Category.requiresInstallation`                                               |

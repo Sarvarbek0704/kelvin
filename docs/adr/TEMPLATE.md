@@ -42,8 +42,8 @@ Rad etilgan variantlarni **halol** ko'rsating. Ularning ustunligi ham yozilsin â
 Qaysi signal bu qarorni bekor qiladi? Aniq va o'lchanadigan bo'lsin.
 
 | Signal | O'lchov |
-|---|---|
-| | |
+| ------ | ------- |
+|        |         |
 
 ## Havolalar
 

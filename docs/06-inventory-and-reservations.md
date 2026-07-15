@@ -55,10 +55,10 @@ faktlarning natijasi, faktning o'zi emas.
 
 Shuning uchun Kelvin'da qoldiq ikki qatlamda saqlanadi:
 
-| Qatlam | Jadval | Xususiyat | Vazifa |
-|---|---|---|---|
-| **Fakt (ledger)** | `stock_movement` | **Immutable**, append-only | Haqiqat manbai. Hech qachon `UPDATE`/`DELETE` bo'lmaydi |
-| **Proyeksiya (cache)** | `stock_item` | Mutable, `on_hand` + `reserved` | Tez o'qish uchun. Ledger'dan qayta hisoblanishi mumkin |
+| Qatlam                 | Jadval           | Xususiyat                       | Vazifa                                                  |
+| ---------------------- | ---------------- | ------------------------------- | ------------------------------------------------------- |
+| **Fakt (ledger)**      | `stock_movement` | **Immutable**, append-only      | Haqiqat manbai. Hech qachon `UPDATE`/`DELETE` bo'lmaydi |
+| **Proyeksiya (cache)** | `stock_item`     | Mutable, `on_hand` + `reserved` | Tez o'qish uchun. Ledger'dan qayta hisoblanishi mumkin  |
 
 **Invariant (majburiy, test bilan tekshiriladi):**
 
@@ -81,11 +81,11 @@ uchun ledger birlamchi.
 
 CANON §5.2 da "ko'p ombor" qamrovda. Kelvin uchun kamida uch tur kerak:
 
-| Tur (`kind`) | Misol | Sotuvga tayyormi | Izoh |
-|---|---|---|---|
-| `main` | Asosiy ombor | Ha | Buyurtmalarning asosiy manbai |
-| `showroom` | Do'kon zali | Shartli | Ko'rgazma namunasi — sotilishi mumkin, lekin ehtiyotkorlik bilan |
-| `transit` | Tranzit | Yo'q | Ta'minotchidan yo'lda yoki ombordan omborga ko'chirilmoqda |
+| Tur (`kind`) | Misol        | Sotuvga tayyormi | Izoh                                                             |
+| ------------ | ------------ | ---------------- | ---------------------------------------------------------------- |
+| `main`       | Asosiy ombor | Ha               | Buyurtmalarning asosiy manbai                                    |
+| `showroom`   | Do'kon zali  | Shartli          | Ko'rgazma namunasi — sotilishi mumkin, lekin ehtiyotkorlik bilan |
+| `transit`    | Tranzit      | Yo'q             | Ta'minotchidan yo'lda yoki ombordan omborga ko'chirilmoqda       |
 
 Nima uchun `transit` alohida ombor, `stock_item.in_transit` ustuni emas? Chunki
 ko'chirish — ikki qadamli operatsiya: `main` dan chiqdi (`-1`), `transit` ga kirdi
@@ -192,11 +192,11 @@ etilgan so'rov — tuzatib bo'ladigan xato. Har doim ikkinchisini tanlaymiz.
 
 Bu formula soddaligi bilan aldaydi. Har bir hadning aniq ma'nosi:
 
-| Had | Ta'rif | Kim o'zgartiradi | Fizik ma'no |
-|---|---|---|---|
-| `on_hand` | Ombordа **jismonan turgan** dona soni | Faqat `StockMovement` | Qo'lingiz bilan ushlay olasiz |
-| `reserved` | `on_hand` ichidan **va'da qilingan** soni | `StockReservation` | Ushlay olasiz, lekin u sizniki emas |
-| `available` | Yangi mijozga **sotish mumkin** bo'lgan soni | Hisoblanadi, saqlanmaydi | Sotish mumkin |
+| Had         | Ta'rif                                       | Kim o'zgartiradi         | Fizik ma'no                         |
+| ----------- | -------------------------------------------- | ------------------------ | ----------------------------------- |
+| `on_hand`   | Ombordа **jismonan turgan** dona soni        | Faqat `StockMovement`    | Qo'lingiz bilan ushlay olasiz       |
+| `reserved`  | `on_hand` ichidan **va'da qilingan** soni    | `StockReservation`       | Ushlay olasiz, lekin u sizniki emas |
+| `available` | Yangi mijozga **sotish mumkin** bo'lgan soni | Hisoblanadi, saqlanmaydi | Sotish mumkin                       |
 
 Muhim nuqtalar:
 
@@ -227,11 +227,11 @@ Muhim nuqtalar:
 (raqobatchi qoldiqni bilib oladi, mijoz "faqat 1 ta qoldi" ni ko'rib shoshiladi —
 bu ba'zan foydali, ba'zan zararli). Taklif:
 
-| `available` | Storefront'da | Sabab |
-|---|---|---|
-| `0` | "Mavjud emas" + "Kelganda xabar bering" | Aniq bo'lishi kerak |
-| `1..3` | "Kam qoldi" | Shoshilish signali, aniq raqamsiz |
-| `> 3` | "Mavjud" | Aniq raqam kerak emas |
+| `available` | Storefront'da                           | Sabab                             |
+| ----------- | --------------------------------------- | --------------------------------- |
+| `0`         | "Mavjud emas" + "Kelganda xabar bering" | Aniq bo'lishi kerak               |
+| `1..3`      | "Kam qoldi"                             | Shoshilish signali, aniq raqamsiz |
+| `> 3`       | "Mavjud"                                | Aniq raqam kerak emas             |
 
 Aniq raqam ko'rsatish/ko'rsatmaslik — biznes qarori, §11 da ochiq savol.
 
@@ -448,12 +448,12 @@ COMMIT;  -- qulf shu yerda bo'shaydi
 
 **Ishlaydi.** Lekin narxi bor:
 
-| Muammo | Tafsilot |
-|---|---|
+| Muammo               | Tafsilot                                                                                                                                                                                                                                                        |
+| -------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Qulf davomiyligi** | Qulf `COMMIT` gacha ushlab turiladi. Agar tranzaksiya ichida tashqi chaqiruv bo'lsa (Click API, Meilisearch), qulf shu chaqiruv davomida ushlanadi. Tashqi API 3 s javob bersa — qulf 3 s. Bu **falokat**. Qoida: **tranzaksiya ichida tashqi I/O QAT'IY MAN**. |
-| **Throughput** | Bitta ommabop variant → barcha so'rovlar navbatga tushadi. Ular parallel emas, **ketma-ket** bajariladi. Aksiya paytida (eng ko'p yuk bo'lgan paytda) tizim eng sekin ishlaydi. |
-| **Deadlock** | Ikki tranzaksiya ikki qatorni teskari tartibda qulflasa → deadlock (§2.6). |
-| **Kutish zanjiri** | `lock_timeout` qo'yilmasa, so'rov cheksiz kutadi. Connection pool tugaydi. Bu **butun API** ni o'ldiradi, faqat inventory'ni emas. |
+| **Throughput**       | Bitta ommabop variant → barcha so'rovlar navbatga tushadi. Ular parallel emas, **ketma-ket** bajariladi. Aksiya paytida (eng ko'p yuk bo'lgan paytda) tizim eng sekin ishlaydi.                                                                                 |
+| **Deadlock**         | Ikki tranzaksiya ikki qatorni teskari tartibda qulflasa → deadlock (§2.6).                                                                                                                                                                                      |
+| **Kutish zanjiri**   | `lock_timeout` qo'yilmasa, so'rov cheksiz kutadi. Connection pool tugaydi. Bu **butun API** ni o'ldiradi, faqat inventory'ni emas.                                                                                                                              |
 
 Agar pessimistic lock tanlansa, `lock_timeout` **majburiy**:
 
@@ -530,7 +530,7 @@ javob beradi. **Oversell yo'q.** Retry loop **kerak emas** — natija birinchi
 urinishda to'g'ri.
 
 > ⚠️ **Muhim cheklov:** bu xatti-harakat `READ COMMITTED` ga xos. `REPEATABLE
-> READ` yoki `SERIALIZABLE` da PostgreSQL qayta baholamaydi — u
+READ` yoki `SERIALIZABLE` da PostgreSQL qayta baholamaydi — u
 > `serialization_failure` (40001) xatosini beradi va **o'shanda retry kerak
 > bo'ladi.** Kelvin standart `READ COMMITTED` da ishlaydi (Prisma'ning
 > default'i, PostgreSQL'ning default'i), shuning uchun retry'siz yechim
@@ -564,12 +564,12 @@ Yoki Lua script bilan shartli dekrement. **Tez** — bu haqiqat.
 
 **Nima uchun rad etamiz:**
 
-| Muammo | Tafsilot |
-|---|---|
-| **Ikki manba** | Redis'da `5`, PostgreSQL'da `3`. Qaysi biri haqiqat? Ikkisi ham "ha" deydi. Bu — **split-brain**. |
-| **Atomik emas** | `DECR` (Redis) + `INSERT` (PostgreSQL) bitta tranzaksiyada emas. Redis o'tdi, PostgreSQL yiqildi → Redis'da tovar "sotilgan", DB'da yo'q. Kim tuzatadi? Ikki fazali commit → kerak emas darajada murakkab. |
-| **Redis persistence** | RDB snapshot orasida qulash → oxirgi soniyalardagi `DECR` lar yo'qoladi → oversell. AOF `fsync=always` bilan sekinlashadi va PostgreSQL tezligiga yaqinlashadi — ustunlik yo'qoladi. |
-| **Ledger yo'q** | §1.1 dagi butun mantiq (audit, invariant, tiklash) yo'qoladi. |
+| Muammo                | Tafsilot                                                                                                                                                                                                   |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Ikki manba**        | Redis'da `5`, PostgreSQL'da `3`. Qaysi biri haqiqat? Ikkisi ham "ha" deydi. Bu — **split-brain**.                                                                                                          |
+| **Atomik emas**       | `DECR` (Redis) + `INSERT` (PostgreSQL) bitta tranzaksiyada emas. Redis o'tdi, PostgreSQL yiqildi → Redis'da tovar "sotilgan", DB'da yo'q. Kim tuzatadi? Ikki fazali commit → kerak emas darajada murakkab. |
+| **Redis persistence** | RDB snapshot orasida qulash → oxirgi soniyalardagi `DECR` lar yo'qoladi → oversell. AOF `fsync=always` bilan sekinlashadi va PostgreSQL tezligiga yaqinlashadi — ustunlik yo'qoladi.                       |
+| **Ledger yo'q**       | §1.1 dagi butun mantiq (audit, invariant, tiklash) yo'qoladi.                                                                                                                                              |
 
 **Redis qayerda ishlatiladi (CANON §6 ga muvofiq):**
 
@@ -647,16 +647,16 @@ Ikki mexanizm:
 
 ### 2.7 Qaror jadvali
 
-| Mezon | Pessimistic | Optimistic | **Atomik UPDATE** | Redis |
-|---|---|---|---|---|
-| Oversell'dan himoya | ✅ | ✅ | ✅ | ⚠️ (sinxronlik) |
-| Retry kerakmi | Yo'q | **Ha** | Yo'q¹ | Yo'q |
-| Round-trip soni | 2+ | 2+ (×retry) | **1** | 1 |
-| Qulf davomiyligi | Uzun | Yo'q | **Qisqa** | Yo'q |
-| Yuqori raqobatda | Navbat | **Yomon (O(n²))** | Navbat | Tez |
-| Haqiqat manbai | PG | PG | **PG** | ⚠️ Redis |
-| Audit/ledger | ✅ | ✅ | ✅ | ❌ |
-| Kod murakkabligi | O'rta | **Yuqori** | **Past** | Yuqori |
+| Mezon               | Pessimistic | Optimistic        | **Atomik UPDATE** | Redis           |
+| ------------------- | ----------- | ----------------- | ----------------- | --------------- |
+| Oversell'dan himoya | ✅          | ✅                | ✅                | ⚠️ (sinxronlik) |
+| Retry kerakmi       | Yo'q        | **Ha**            | Yo'q¹             | Yo'q            |
+| Round-trip soni     | 2+          | 2+ (×retry)       | **1**             | 1               |
+| Qulf davomiyligi    | Uzun        | Yo'q              | **Qisqa**         | Yo'q            |
+| Yuqori raqobatda    | Navbat      | **Yomon (O(n²))** | Navbat            | Tez             |
+| Haqiqat manbai      | PG          | PG                | **PG**            | ⚠️ Redis        |
+| Audit/ledger        | ✅          | ✅                | ✅                | ❌              |
+| Kod murakkabligi    | O'rta       | **Yuqori**        | **Past**          | Yuqori          |
 
 ¹ `READ COMMITTED` da. Boshqa izolyatsiyada retry kerak (§2.4 dagi ogohlantirish).
 
@@ -674,8 +674,9 @@ kesimini muzlatish kerak.
 ### 3.1 Atomik rezerv (Prisma + raw SQL)
 
 Prisma'ning `update()` metodi `WHERE` da hisoblangan shartni (`on_hand - reserved
->= qty`) qo'llab-quvvatlamaydi. Shuning uchun **`$queryRaw`** ishlatamiz. Bu —
-ataylab qilingan tanlov: bu yerda ORM abstraksiyasi to'g'rilikni buzadi.
+
+> = qty`) qo'llab-quvvatlamaydi. Shuning uchun **`$queryRaw`** ishlatamiz. Bu —
+> ataylab qilingan tanlov: bu yerda ORM abstraksiyasi to'g'rilikni buzadi.
 
 ```typescript
 // apps/api/src/inventory/reservation.service.ts
@@ -749,9 +750,7 @@ export class ReservationService {
           }[] = [];
 
           for (const line of ordered) {
-            const rows = await tx.$queryRaw<
-              { on_hand: number; reserved: number }[]
-            >`
+            const rows = await tx.$queryRaw<{ on_hand: number; reserved: number }[]>`
               UPDATE stock_items
                  SET reserved   = reserved + ${line.quantity},
                      version    = version + 1,
@@ -950,13 +949,13 @@ async release(
 
 Bu — **biznes savoli**, texnik emas. Ikki qutb:
 
-| | **Savatga qo'shilganda** | **Checkout boshlanganda** |
-|---|---|---|
-| Mijoz tajribasi | Savatdagi tovar kafolatlangan | Oxirgi lahzada "tugadi" xatosi |
-| Konversiya | Yuqoriroq (ishonch) | Pastroq (kutilmagan xato) |
-| Tovar aylanmasi | **Yomon** — tashlab ketilgan savatlar tovarni bloklaydi | Yaxshi |
-| Zaifligi | **Hujum:** bot barcha tovarni savatga soladi → do'kon "tugadi" | Kam |
-| TTL boshqaruvi | Uzoq (savat kunlar yashaydi) → murakkab | Qisqa (15 daq) → sodda |
+|                 | **Savatga qo'shilganda**                                       | **Checkout boshlanganda**      |
+| --------------- | -------------------------------------------------------------- | ------------------------------ |
+| Mijoz tajribasi | Savatdagi tovar kafolatlangan                                  | Oxirgi lahzada "tugadi" xatosi |
+| Konversiya      | Yuqoriroq (ishonch)                                            | Pastroq (kutilmagan xato)      |
+| Tovar aylanmasi | **Yomon** — tashlab ketilgan savatlar tovarni bloklaydi        | Yaxshi                         |
+| Zaifligi        | **Hujum:** bot barcha tovarni savatga soladi → do'kon "tugadi" | Kam                            |
+| TTL boshqaruvi  | Uzoq (savat kunlar yashaydi) → murakkab                        | Qisqa (15 daq) → sodda         |
 
 Savatga qo'shishda rezerv qilishning zaifligi jiddiy: savat odatda uzoq yashaydi
 (mijoz haftalarga tashlab ketadi), tashlab ketish darajasi e-commerce'da yuqori,
@@ -983,11 +982,11 @@ moduli). Hozir qamrovda emas.
 
 ### 4.2 TTL — rezerv qancha yashaydi
 
-| Holat | TTL | Sabab |
-|---|---|---|
-| `pending` (checkout boshlandi, to'lov kutilmoqda) | **15 daqiqa** | Click/Payme sahifasida to'lash uchun yetarli vaqt |
-| `pending` → rassrochka arizasi | **Uzunroq** | Ariza ko'rib chiqiladi. Aniq muddat noma'lum — §11 |
-| `confirmed` (to'lov o'tdi) | **TTL yo'q** (`expires_at = null`) | To'langan tovar muddat bilan bo'shatilmaydi |
+| Holat                                             | TTL                                | Sabab                                              |
+| ------------------------------------------------- | ---------------------------------- | -------------------------------------------------- |
+| `pending` (checkout boshlandi, to'lov kutilmoqda) | **15 daqiqa**                      | Click/Payme sahifasida to'lash uchun yetarli vaqt  |
+| `pending` → rassrochka arizasi                    | **Uzunroq**                        | Ariza ko'rib chiqiladi. Aniq muddat noma'lum — §11 |
+| `confirmed` (to'lov o'tdi)                        | **TTL yo'q** (`expires_at = null`) | To'langan tovar muddat bilan bo'shatilmaydi        |
 
 > ⚠️ **15 daqiqa — taxmin, o'lchov emas.** U Click/Payme sessiyasining amaldagi
 > muddatidan **kelib chiqishi** kerak. Rezerv TTL'i to'lov sessiyasi muddatidan
@@ -1038,9 +1037,7 @@ export class ExpireReservationsProcessor {
     let released = 0;
     for (const { id } of expired) {
       // Har biri alohida tranzaksiya: biri yiqilsa, qolganlari bajariladi.
-      await this.prisma.$transaction((tx) =>
-        this.reservations.release(tx, id, 'expired'),
-      );
+      await this.prisma.$transaction((tx) => this.reservations.release(tx, id, 'expired'));
       released++;
     }
     return { released };
@@ -1063,6 +1060,7 @@ gapirsa — himoya yo'q. Ya'ni bu tanlov emas, **majburiyat**.
 qo'yilgan, ya'ni 15:00 o'rniga 15:01 da bo'shashi — biznes uchun ahamiyatsiz.
 
 **Job yiqilishiga qarshi himoya:**
+
 - Job ishlagan vaqti metrika (`inventory_expire_job_last_success_timestamp`).
   5 daqiqadan ortiq ishlamasa → alert (Prometheus, CANON §6).
 - `concurrency: 1` + BullMQ `jobId` — ikki instansiya bir vaqtda ishlamasin.
@@ -1157,12 +1155,12 @@ Mijoz 2 ta so'radi. Qayerdan olamiz?
 
 ### 5.1 Strategiyalar
 
-| Strategiya | Mantiq | Ustunlik | Kamchilik |
-|---|---|---|---|
-| `nearest` | Mijozga eng yaqin ombor | Tez yetkazish, arzon logistika | Ombor bo'linib ketadi |
-| `most_stock` | Eng ko'p qoldiqli ombor | Split kam | Uzoq bo'lishi mumkin |
-| `priority` | `Warehouse.priority` bo'yicha | Sodda, bashoratli | Optimal emas |
-| `split` | Bir necha ombordan bo'lib | Har doim bajariladi | **2 ta yetkazish = 2× narx** |
+| Strategiya   | Mantiq                        | Ustunlik                       | Kamchilik                    |
+| ------------ | ----------------------------- | ------------------------------ | ---------------------------- |
+| `nearest`    | Mijozga eng yaqin ombor       | Tez yetkazish, arzon logistika | Ombor bo'linib ketadi        |
+| `most_stock` | Eng ko'p qoldiqli ombor       | Split kam                      | Uzoq bo'lishi mumkin         |
+| `priority`   | `Warehouse.priority` bo'yicha | Sodda, bashoratli              | Optimal emas                 |
+| `split`      | Bir necha ombordan bo'lib     | Har doim bajariladi            | **2 ta yetkazish = 2× narx** |
 
 ### 5.2 Kelvin qarori: `priority` → keyin `split` (faqat ruxsat bilan)
 
@@ -1244,11 +1242,11 @@ sequenceDiagram
 
 Sanash bir necha soat davom etadi. Sanash paytida sotuv davom etadimi?
 
-| Yondashuv | Tafsilot |
-|---|---|
-| **To'liq to'xtatish** | Ombor "muzlatiladi", sotuv to'xtaydi. Aniq, lekin do'kon yopiladi. |
-| **Davom etadi** | `system_qty` snapshot vaqtida olinadi; sanash paytidagi movement'lar hisobga olinadi: `expected = system_qty + SUM(movements sanash oralig'ida)`. Murakkab, lekin do'kon ishlaydi. |
-| **Sikl sanash** | Kuniga bir necha SKU sanaladi, butun ombor emas. Har SKU uchun muzlatish — daqiqalar. |
+| Yondashuv             | Tafsilot                                                                                                                                                                           |
+| --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **To'liq to'xtatish** | Ombor "muzlatiladi", sotuv to'xtaydi. Aniq, lekin do'kon yopiladi.                                                                                                                 |
+| **Davom etadi**       | `system_qty` snapshot vaqtida olinadi; sanash paytidagi movement'lar hisobga olinadi: `expected = system_qty + SUM(movements sanash oralig'ida)`. Murakkab, lekin do'kon ishlaydi. |
+| **Sikl sanash**       | Kuniga bir necha SKU sanaladi, butun ombor emas. Har SKU uchun muzlatish — daqiqalar.                                                                                              |
 
 **Kelvin qarori: sikl sanash (cycle counting) asosiy usul + yillik to'liq
 inventarizatsiya (to'xtatish bilan, ish kunidan tashqari).**
@@ -1389,16 +1387,16 @@ async receive(
 
 > `INSERT ... ON CONFLICT DO UPDATE` (upsert) — chunki bu variant bu omborda
 > birinchi marta paydo bo'lishi mumkin. Race'siz: `unique (variant_id,
-> warehouse_id)` cheklovi upsert'ni atomik qiladi.
+warehouse_id)` cheklovi upsert'ni atomik qiladi.
 
 ### 7.2 Farqlar
 
-| Holat | Harakat |
-|---|---|
-| Kelgan < buyurtma | `partially_received`. Qolgani kutiladi yoki bekor qilinadi. |
-| Kelgan > buyurtma | **Tasdiq talab qilinadi.** Sabab: ortiqcha tovar uchun to'lov ham ortiq. |
-| Sifatsiz | Omborga kiritilmaydi → `SupplierClaim` (§8.2). |
-| Boshqa tovar keldi | Qabul qilinmaydi. `SupplierClaim`. |
+| Holat              | Harakat                                                                  |
+| ------------------ | ------------------------------------------------------------------------ |
+| Kelgan < buyurtma  | `partially_received`. Qolgani kutiladi yoki bekor qilinadi.              |
+| Kelgan > buyurtma  | **Tasdiq talab qilinadi.** Sabab: ortiqcha tovar uchun to'lov ham ortiq. |
+| Sifatsiz           | Omborga kiritilmaydi → `SupplierClaim` (§8.2).                           |
+| Boshqa tovar keldi | Qabul qilinmaydi. `SupplierClaim`.                                       |
 
 ---
 
@@ -1408,11 +1406,11 @@ CANON §4.5: shisha qandil — mo'rtlik alohida oqim.
 
 ### 8.1 Uch stsenariy
 
-| Qachon sindi | Kim javobgar | Tizimdagi harakat |
-|---|---|---|
-| **Ta'minotchidan siniq keldi** | Ta'minotchi | Omborga kiritilmaydi. `SupplierClaim`. `on_hand` **o'zgarmaydi** (u hech qachon oshmagan). |
-| **Omborda sindi** | Do'kon | `StockMovement(write_off, delta = -N)`. Zarar do'kon hisobiga. |
-| **Yetkazishda sindi** | Kuryer / qadoq | Mijoz qaytaradi → `return_in (+N)` **keyin** `write_off (-N)`. Ikki movement. |
+| Qachon sindi                   | Kim javobgar   | Tizimdagi harakat                                                                          |
+| ------------------------------ | -------------- | ------------------------------------------------------------------------------------------ |
+| **Ta'minotchidan siniq keldi** | Ta'minotchi    | Omborga kiritilmaydi. `SupplierClaim`. `on_hand` **o'zgarmaydi** (u hech qachon oshmagan). |
+| **Omborda sindi**              | Do'kon         | `StockMovement(write_off, delta = -N)`. Zarar do'kon hisobiga.                             |
+| **Yetkazishda sindi**          | Kuryer / qadoq | Mijoz qaytaradi → `return_in (+N)` **keyin** `write_off (-N)`. Ikki movement.              |
 
 **Nima uchun uchinchi holatda ikki movement, bitta emas?** Chunki ikki **fizik**
 fakt sodir bo'ldi: (1) qandil omborga qaytib keldi, (2) u yaroqsiz deb hisobdan
@@ -1447,8 +1445,8 @@ on_hand = 1, reserved = 1  (mijoz to'lagan, jo'natishga tayyor)
 → ❌ CHECK constraint violation: reserved <= on_hand
 ```
 
-Bu — **xato emas, xususiyat**. `CHECK` bizga muhim narsani aytmoqda: *to'langan
-buyurtmaning tovarini shunchaki hisobdan chiqarib bo'lmaydi.* Avval buyurtma
+Bu — **xato emas, xususiyat**. `CHECK` bizga muhim narsani aytmoqda: _to'langan
+buyurtmaning tovarini shunchaki hisobdan chiqarib bo'lmaydi._ Avval buyurtma
 bilan nima qilishni hal qilish kerak.
 
 Shuning uchun `writeOff` avval rezervlarni tekshiradi:
@@ -1536,9 +1534,11 @@ describe('Oversell prevention', () => {
     // ... migratsiya + DI
   }, 120_000);
 
-  afterAll(async () => { await container.stop(); });
+  afterAll(async () => {
+    await container.stop();
+  });
 
-  it('100 ta parallel so\'rov, 1 ta tovar → ANIQ 1 tasi muvaffaqiyatli', async () => {
+  it("100 ta parallel so'rov, 1 ta tovar → ANIQ 1 tasi muvaffaqiyatli", async () => {
     const { variantId, warehouseId } = await seedStock({ onHand: 1 });
 
     // Promise.all — real parallellik. Har so'rov alohida connection oladi.
@@ -1562,8 +1562,8 @@ describe('Oversell prevention', () => {
     const item = await prisma.stockItem.findUniqueOrThrow({
       where: { variantId_warehouseId: { variantId, warehouseId } },
     });
-    expect(item.onHand).toBe(1);    // hali jo'natilmagan
-    expect(item.reserved).toBe(1);  // 100 emas, 1
+    expect(item.onHand).toBe(1); // hali jo'natilmagan
+    expect(item.reserved).toBe(1); // 100 emas, 1
 
     const reservations = await prisma.stockReservation.count({
       where: { variantId, status: 'pending' },
@@ -1571,13 +1571,13 @@ describe('Oversell prevention', () => {
     expect(reservations).toBe(1);
   });
 
-  it('on_hand = 7, 100 ta parallel so\'rov (har biri 1 ta) → aniq 7 tasi', async () => {
+  it("on_hand = 7, 100 ta parallel so'rov (har biri 1 ta) → aniq 7 tasi", async () => {
     const { variantId, warehouseId } = await seedStock({ onHand: 7 });
     const results = await Promise.all(/* 100 ta reserve */);
     expect(results.filter((r) => r.ok)).toHaveLength(7);
   });
 
-  it('turli miqdorlar: on_hand = 10, so\'rovlar [3,3,3,3,3] → 3 tasi o\'tadi', async () => {
+  it("turli miqdorlar: on_hand = 10, so'rovlar [3,3,3,3,3] → 3 tasi o'tadi", async () => {
     // 3+3+3 = 9 <= 10, to'rtinchisi uchun 1 qoladi → o'tmaydi
     const results = await Promise.all(/* 5 ta reserve, har biri qty 3 */);
     expect(results.filter((r) => r.ok)).toHaveLength(3);
@@ -1650,7 +1650,9 @@ describe('Inventory invariants (property-based)', () => {
     );
   });
 
-  it('INVARIANT 3: reserved <= on_hand', async () => { /* ... */ });
+  it('INVARIANT 3: reserved <= on_hand', async () => {
+    /* ... */
+  });
 
   it('INVARIANT 4: reserved == SUM(aktiv rezervlar)', async () => {
     // stock_items.reserved denormalizatsiyasi to'g'riligi (§1.1)
@@ -1677,8 +1679,8 @@ describe('Inventory invariants (property-based)', () => {
 ```
 
 **Nima uchun `applyOpIgnoringBusinessErrors`?** Chunki "qoldiq yetmadi" — **xato
-emas, to'g'ri javob**. Property test tekshiradi: *rad etilgan operatsiyadan
-keyin ham invariant saqlanadimi?* Aynan shu yerda bug'lar yashiringan bo'ladi
+emas, to'g'ri javob**. Property test tekshiradi: _rad etilgan operatsiyadan
+keyin ham invariant saqlanadimi?_ Aynan shu yerda bug'lar yashiringan bo'ladi
 — rad etish yo'lida qisman o'zgarish qolib ketishi mumkin (masalan, `reserved`
 oshdi, lekin rezerv yozuvi yaratilmadi).
 
@@ -1707,7 +1709,7 @@ tiklanadi, lekin **sabab topilgandan keyin**.
 ### 9.4 Deadlock testi
 
 ```typescript
-it('teskari tartibli ko\'p mahsulotli rezerv deadlock bermaydi', async () => {
+it("teskari tartibli ko'p mahsulotli rezerv deadlock bermaydi", async () => {
   const a = await seedStock({ onHand: 50 });
   const b = await seedStock({ onHand: 50 });
 
@@ -1738,9 +1740,7 @@ it('teskari tartibli ko\'p mahsulotli rezerv deadlock bermaydi', async () => {
   const results = await Promise.all([...forward, ...backward]);
 
   // Deadlock BO'LMASLIGI kerak (40P01 xatosi otilmasin)
-  const deadlocks = results.filter(
-    (r) => !r.ok && (r as any).reason === 'deadlock',
-  );
+  const deadlocks = results.filter((r) => !r.ok && (r as any).reason === 'deadlock');
   expect(deadlocks).toHaveLength(0);
 
   // Va natija to'g'ri: 50 ta o'tdi (har biri a dan 1, b dan 1)
@@ -1755,13 +1755,13 @@ it('teskari tartibli ko\'p mahsulotli rezerv deadlock bermaydi', async () => {
 ### 9.5 TTL testi
 
 ```typescript
-it('muddati tugagan rezerv tovarni bo\'shatadi', async () => {
+it("muddati tugagan rezerv tovarni bo'shatadi", async () => {
   const { variantId, warehouseId } = await seedStock({ onHand: 1 });
-  const r1 = await service.reserve({ /* ttlSeconds: 1 */ });
+  const r1 = await service.reserve({/* ttlSeconds: 1 */});
   expect(r1.ok).toBe(true);
 
   // Ikkinchi mijoz — hozir olmaydi
-  expect((await service.reserve({ /* ... */ })).ok).toBe(false);
+  expect((await service.reserve({/* ... */})).ok).toBe(false);
 
   // Vaqtni "oldinga suramiz" — real sleep emas, expires_at ni o'zgartiramiz.
   // Sabab: real sleep testni sekin va flaky qiladi.
@@ -1772,7 +1772,7 @@ it('muddati tugagan rezerv tovarni bo\'shatadi', async () => {
   await expireProcessor.handle();
 
   // Endi olishi kerak
-  expect((await service.reserve({ /* ... */ })).ok).toBe(true);
+  expect((await service.reserve({/* ... */})).ok).toBe(true);
 
   const expired = await prisma.stockReservation.findUniqueOrThrow({
     where: { id: r1.reservationIds[0] },
@@ -1783,16 +1783,16 @@ it('muddati tugagan rezerv tovarni bo\'shatadi', async () => {
 
 ### 9.6 Test qamrovi jadvali
 
-| Test | Tur | Nima kafolatlaydi |
-|---|---|---|
-| 100 parallel → 1 | Concurrency (Testcontainers) | Oversell yo'q |
-| on_hand = 7 → 7 | Concurrency | Chegara to'g'ri |
-| Invariant 1-5 | Property (fast-check) | Ma'lumot hech qachon buzilmaydi |
-| Deadlock | Concurrency | Tartib qoidasi ishlaydi |
-| TTL | Integration | Bo'shatish ishlaydi |
-| Idempotentlik | Integration | Takroriy so'rov ikki rezerv yaratmaydi |
-| `writeOff` + reserved | Integration | `CHECK` to'g'ri UX ga majburlaydi |
-| Reconciliation | Integration | Drift aniqlanadi |
+| Test                  | Tur                          | Nima kafolatlaydi                      |
+| --------------------- | ---------------------------- | -------------------------------------- |
+| 100 parallel → 1      | Concurrency (Testcontainers) | Oversell yo'q                          |
+| on_hand = 7 → 7       | Concurrency                  | Chegara to'g'ri                        |
+| Invariant 1-5         | Property (fast-check)        | Ma'lumot hech qachon buzilmaydi        |
+| Deadlock              | Concurrency                  | Tartib qoidasi ishlaydi                |
+| TTL                   | Integration                  | Bo'shatish ishlaydi                    |
+| Idempotentlik         | Integration                  | Takroriy so'rov ikki rezerv yaratmaydi |
+| `writeOff` + reserved | Integration                  | `CHECK` to'g'ri UX ga majburlaydi      |
+| Reconciliation        | Integration                  | Drift aniqlanadi                       |
 
 ---
 
@@ -1843,35 +1843,35 @@ Modul quyidagilar bajarilganda "tayyor" hisoblanadi:
 
 ## 11. Ochiq savollar
 
-| # | Savol | Kim hal qiladi | Nima uchun hozir javob yo'q |
-|---|---|---|---|
-| 1 | Rezerv TTL aniq necha daqiqa? | Backend + biznes | Click/Payme sessiya muddatidan kelib chiqishi kerak. Provayder hujjati tekshirilmagan (CANON §6 — API detallari noma'lum). |
-| 2 | Rassrochka arizasi ko'rib chiqilayotganda rezerv qancha turadi? | Biznes + provayder | Ariza qancha ko'riladi — noma'lum. Uzum Nasiya/Alif API hujjati kerak (CANON §6). |
-| 3 | Storefront'da aniq qoldiq raqami ko'rsatiladimi? | Biznes | "Faqat 2 ta qoldi" konversiyani oshiradi, lekin raqobatchiga ma'lumot beradi. |
-| 4 | Ko'rgazmadagi (showroom) namuna sotiladimi? | Biznes | Sotilsa — ko'rgazma bo'sh qoladi. Sotilmasa — qoldiq muzlaydi. |
-| 5 | Split shipment default holatda ruxsatmi? Qo'shimcha yetkazish narxini kim to'laydi? | Biznes | Ikki jo'natish = ikki xarajat + mo'rt tovar uchun ikki karra xavf (CANON §4.5). |
-| 6 | Inventarizatsiya tuzatishi uchun ikkinchi tasdiq chegarasi (tannarx bo'yicha)? | Biznes + buxgalteriya | Chegara qiymati o'zbek buxgalteriya amaliyotiga bog'liq. |
-| 7 | Sikl sanash chastotasi — ABC guruhlari bo'yicha qanday? | Operatsiya | Real SKU soni va omborchi resursi noma'lum. O'lchov bilan aniqlanadi. |
-| 8 | Kanonda yo'q entity'lar: `SupplierClaim` va `InventoryLine`. Ular kerakmi? | Arxitektura | CANON §8 ro'yxatida ikkalasi ham **YO'Q**, lekin bu hujjatda ishlatilgan — bu kanondan chetlanish va uni yashirmayapmiz. `SupplierClaim` (§7.1, §8.1) — ta'minotchi da'vosi; `InventoryLine` (§6.1) — inventarizatsiya qatori (`Inventory` bor, uning qatori yo'q). Har biri uchun uch yo'l: (a) `procurement`/`inventory` ichki jadvali sifatida rasmiylashtirish, (b) kanonga qo'shish, (c) mavjud entity bilan modellashtirish. **Hal qilinishi shart** (`docs/07` §13.13 da bir xil holat). |
-| 9 | 1C bilan qoldiq sinxronizatsiyasi — qaysi tomon haqiqat manbai? | Biznes + integratsiya | CANON §6: 1C talabi tasdiqlanmagan. Agar 1C ham qoldiq yozsa — ikki manba muammosi (§2.5 dagi bilan bir xil), bu jiddiy arxitektura qarori. |
-| 10 | `transit` ombordagi tovar storefront'da "yo'lda, N kunda keladi" deb ko'rsatiladimi? | Biznes | Preorder oqimi degani — bu qamrovni kengaytiradi. |
-| 11 | Yetkazishda singan tovar uchun kuryer javobgarligi qanday rasmiylashtiriladi? | Biznes + yurist | CANON §10: yuridik maslahat yozilmaydi. |
-| 12 | `showroom` ombori uchun `isSellable` — statik yoki tovar turiga qarabmi? | Biznes | Qandil namunasi sotilmasin, lekin lampochka sotilsin — bunday nyuans bo'lishi mumkin. |
+| #   | Savol                                                                                | Kim hal qiladi        | Nima uchun hozir javob yo'q                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------ | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Rezerv TTL aniq necha daqiqa?                                                        | Backend + biznes      | Click/Payme sessiya muddatidan kelib chiqishi kerak. Provayder hujjati tekshirilmagan (CANON §6 — API detallari noma'lum).                                                                                                                                                                                                                                                                                                                                                                      |
+| 2   | Rassrochka arizasi ko'rib chiqilayotganda rezerv qancha turadi?                      | Biznes + provayder    | Ariza qancha ko'riladi — noma'lum. Uzum Nasiya/Alif API hujjati kerak (CANON §6).                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 3   | Storefront'da aniq qoldiq raqami ko'rsatiladimi?                                     | Biznes                | "Faqat 2 ta qoldi" konversiyani oshiradi, lekin raqobatchiga ma'lumot beradi.                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 4   | Ko'rgazmadagi (showroom) namuna sotiladimi?                                          | Biznes                | Sotilsa — ko'rgazma bo'sh qoladi. Sotilmasa — qoldiq muzlaydi.                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| 5   | Split shipment default holatda ruxsatmi? Qo'shimcha yetkazish narxini kim to'laydi?  | Biznes                | Ikki jo'natish = ikki xarajat + mo'rt tovar uchun ikki karra xavf (CANON §4.5).                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| 6   | Inventarizatsiya tuzatishi uchun ikkinchi tasdiq chegarasi (tannarx bo'yicha)?       | Biznes + buxgalteriya | Chegara qiymati o'zbek buxgalteriya amaliyotiga bog'liq.                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| 7   | Sikl sanash chastotasi — ABC guruhlari bo'yicha qanday?                              | Operatsiya            | Real SKU soni va omborchi resursi noma'lum. O'lchov bilan aniqlanadi.                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| 8   | Kanonda yo'q entity'lar: `SupplierClaim` va `InventoryLine`. Ular kerakmi?           | Arxitektura           | CANON §8 ro'yxatida ikkalasi ham **YO'Q**, lekin bu hujjatda ishlatilgan — bu kanondan chetlanish va uni yashirmayapmiz. `SupplierClaim` (§7.1, §8.1) — ta'minotchi da'vosi; `InventoryLine` (§6.1) — inventarizatsiya qatori (`Inventory` bor, uning qatori yo'q). Har biri uchun uch yo'l: (a) `procurement`/`inventory` ichki jadvali sifatida rasmiylashtirish, (b) kanonga qo'shish, (c) mavjud entity bilan modellashtirish. **Hal qilinishi shart** (`docs/07` §13.13 da bir xil holat). |
+| 9   | 1C bilan qoldiq sinxronizatsiyasi — qaysi tomon haqiqat manbai?                      | Biznes + integratsiya | CANON §6: 1C talabi tasdiqlanmagan. Agar 1C ham qoldiq yozsa — ikki manba muammosi (§2.5 dagi bilan bir xil), bu jiddiy arxitektura qarori.                                                                                                                                                                                                                                                                                                                                                     |
+| 10  | `transit` ombordagi tovar storefront'da "yo'lda, N kunda keladi" deb ko'rsatiladimi? | Biznes                | Preorder oqimi degani — bu qamrovni kengaytiradi.                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| 11  | Yetkazishda singan tovar uchun kuryer javobgarligi qanday rasmiylashtiriladi?        | Biznes + yurist       | CANON §10: yuridik maslahat yozilmaydi.                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| 12  | `showroom` ombori uchun `isSellable` — statik yoki tovar turiga qarabmi?             | Biznes                | Qandil namunasi sotilmasin, lekin lampochka sotilsin — bunday nyuans bo'lishi mumkin.                                                                                                                                                                                                                                                                                                                                                                                                           |
 
 ---
 
 ## 12. Bog'liqliklar
 
-| Modul | Bog'liqlik yo'nalishi | Nima |
-|---|---|---|
-| `order` | `order` → `inventory` | Checkout rezerv chaqiradi, jo'natish `consume` chaqiradi. Saga: `docs/07` §3 |
-| `payment` | `payment` → `inventory` (event orqali) | To'lov webhook → rezerv `confirmed`. Outbox (CANON §8) |
-| `procurement` | `procurement` → `inventory` | PO qabuli → `purchase_receipt` movement (§7) |
-| `delivery` | `delivery` → `inventory` | Jo'natma yaratilganda `consume`. Qaytarish → `return_in` |
-| `catalog` | `inventory` → `catalog` | `ProductVariant` ga FK |
-| `search` | `inventory` → `search` (event) | `available` o'zgarsa Meilisearch indeksi yangilanadi (CANON §6) |
-| `analytics` | `analytics` → `inventory` | `stock_movements` + `unit_cost` → ABC tahlil, aylanma |
-| `notification` | `inventory` → `notification` | `reorder_point` ga yetdi → menejerga Telegram |
+| Modul          | Bog'liqlik yo'nalishi                  | Nima                                                                         |
+| -------------- | -------------------------------------- | ---------------------------------------------------------------------------- |
+| `order`        | `order` → `inventory`                  | Checkout rezerv chaqiradi, jo'natish `consume` chaqiradi. Saga: `docs/07` §3 |
+| `payment`      | `payment` → `inventory` (event orqali) | To'lov webhook → rezerv `confirmed`. Outbox (CANON §8)                       |
+| `procurement`  | `procurement` → `inventory`            | PO qabuli → `purchase_receipt` movement (§7)                                 |
+| `delivery`     | `delivery` → `inventory`               | Jo'natma yaratilganda `consume`. Qaytarish → `return_in`                     |
+| `catalog`      | `inventory` → `catalog`                | `ProductVariant` ga FK                                                       |
+| `search`       | `inventory` → `search` (event)         | `available` o'zgarsa Meilisearch indeksi yangilanadi (CANON §6)              |
+| `analytics`    | `analytics` → `inventory`              | `stock_movements` + `unit_cost` → ABC tahlil, aylanma                        |
+| `notification` | `inventory` → `notification`           | `reorder_point` ga yetdi → menejerga Telegram                                |
 
 **Muhim:** `inventory` boshqa modullarga **to'g'ridan-to'g'ri bog'lanmaydi**. U
 event chiqaradi (outbox orqali), boshqalar tinglaydi. Sabab: `inventory` —

@@ -45,13 +45,13 @@ Qulf yo'q. Retry yo'q. Bitta so'rov.
 
 ### Alternativalar
 
-| Variant | Nega rad etildi |
-|---|---|
-| **`SELECT` + tekshirish + `UPDATE`** | Aynan yuqoridagi race. Buzuq |
+| Variant                                      | Nega rad etildi                                                                                                                                                     |
+| -------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **`SELECT` + tekshirish + `UPDATE`**         | Aynan yuqoridagi race. Buzuq                                                                                                                                        |
 | **Pessimistic lock** (`SELECT … FOR UPDATE`) | Ishlaydi, lekin qulf tranzaksiya oxirigacha ushlanadi. Mashhur tovar (aksiyadagi qandil) uchun barcha so'rov navbatga tushadi → throughput yiqiladi. Deadlock xavfi |
-| **Optimistic lock** (`version`) | Ishlaydi, lekin **retry sikli** kerak. Yuqori raqobatda ko'p urinish → CPU isrofi va kechikish |
-| **Redis'da hisoblagich** | Tez, lekin Redis va PostgreSQL orasida ikkilangan haqiqat. Redis yo'qolsa qoldiq buziladi. Qoldiq — **real tovar**, efemer emas |
-| **Serializable izolyatsiya** | To'g'ri, lekin serialization failure → retry, va butun tranzaksiya qayta bajariladi. Qimmat |
+| **Optimistic lock** (`version`)              | Ishlaydi, lekin **retry sikli** kerak. Yuqori raqobatda ko'p urinish → CPU isrofi va kechikish                                                                      |
+| **Redis'da hisoblagich**                     | Tez, lekin Redis va PostgreSQL orasida ikkilangan haqiqat. Redis yo'qolsa qoldiq buziladi. Qoldiq — **real tovar**, efemer emas                                     |
+| **Serializable izolyatsiya**                 | To'g'ri, lekin serialization failure → retry, va butun tranzaksiya qayta bajariladi. Qimmat                                                                         |
 
 ### Nega atomik UPDATE g'olib
 
@@ -77,6 +77,7 @@ Ya'ni B ning `WHERE (on_hand - reserved) >= 1` sharti A commit qilgandan keyin q
 **Oqibat:** agar kimdir kelajakda tranzaksiya izolyatsiyasini oshirsa, bu yechim **jimgina buziladi** — xato bermaydi, lekin retry qilinmagani uchun so'rov muvaffaqiyatsiz bo'ladi.
 
 **Yumshatish:**
+
 1. Izolyatsiya darajasi kodda ochiq belgilanadi va kommentda sababi yoziladi
 2. Concurrency testi izolyatsiya o'zgarsa yiqiladi
 3. Bu ADR shu testda havola qilinadi
@@ -105,11 +106,13 @@ for (const item of sorted) {
 ## Oqibatlar
 
 **Ijobiy:**
+
 - Oversell **tuzilmaviy jihatdan imkonsiz**
 - Retry mantiqi yo'q — kod oddiy
 - Yuqori throughput
 
 **Salbiy:**
+
 - **PostgreSQL'ga bog'liq.** `EvalPlanQual` — PostgreSQL xususiyati. MySQL'da xatti-harakat farq qiladi. Bazani almashtirish bu yechimni qayta ko'rib chiqishni talab qiladi
 - Izolyatsiya darajasiga sezgir (yuqorida)
 - `SELECT` bilan "mavjud" deb ko'rsatilgan tovar checkout'da "tugagan" bo'lishi mumkin. Bu **to'g'ri** xatti-harakat, lekin UX'da yaxshi ishlov berilishi kerak
@@ -126,7 +129,7 @@ it('100 parallel rezerv, 1 tovar → aniq 1 muvaffaqiyat', async () => {
   );
 
   const ok = results.filter((r) => r.status === 'fulfilled').length;
-  expect(ok).toBe(1);                     // ANIQ bitta
+  expect(ok).toBe(1); // ANIQ bitta
   expect(await getReserved(variantId)).toBe(1);
 });
 ```

@@ -92,13 +92,13 @@ manzil yozib, keyin "tugadi" eshitishi — eng yomon tajriba.
 
 CANON §7 (`cart` moduli): "savat, mehmon savati, birlashtirish".
 
-| | Mehmon | Ro'yxatdan o'tgan |
-|---|---|---|
-| Savat identifikatori | `cart_token` (cookie, HttpOnly) | `customer_id` |
-| Buyurtma tarixi | Yo'q (faqat havola + SMS) | To'liq |
-| Manzil | Har safar kiritiladi | Saqlangan `Address` |
-| Rassrochka | **Mumkin emas** — shaxs tasdiqlanishi shart | Mumkin |
-| Kuzatuv | Buyurtma raqami + telefon orqali | Kabinetda |
+|                      | Mehmon                                      | Ro'yxatdan o'tgan   |
+| -------------------- | ------------------------------------------- | ------------------- |
+| Savat identifikatori | `cart_token` (cookie, HttpOnly)             | `customer_id`       |
+| Buyurtma tarixi      | Yo'q (faqat havola + SMS)                   | To'liq              |
+| Manzil               | Har safar kiritiladi                        | Saqlangan `Address` |
+| Rassrochka           | **Mumkin emas** — shaxs tasdiqlanishi shart | Mumkin              |
+| Kuzatuv              | Buyurtma raqami + telefon orqali            | Kabinetda           |
 
 **Kelvin qarori: mehmon checkout ruxsat etiladi.** Sabab: majburiy ro'yxatdan
 o'tish konversiyani pasaytiradi, telefon raqami esa baribir olinadi (SMS uchun
@@ -120,11 +120,11 @@ lekin **default: bog'lanmaydi**.
 Mijoz mehmon sifatida savat to'ldirdi, keyin login qildi. Uning akkauntida
 allaqachon savat bor. Nima bo'ladi?
 
-| Strategiya | Natija | Muammo |
-|---|---|---|
-| `replace` | Mehmon savati akkaunt savatini almashtiradi | Eski savat yo'qoladi — mijoz g'azablanadi |
-| `keep_user` | Akkaunt savati qoladi | Hozirgi mehnat yo'qoladi — yanada yomon |
-| `union` | Ikkalasi birlashadi | Miqdorlar qanday qo'shiladi? |
+| Strategiya  | Natija                                      | Muammo                                    |
+| ----------- | ------------------------------------------- | ----------------------------------------- |
+| `replace`   | Mehmon savati akkaunt savatini almashtiradi | Eski savat yo'qoladi — mijoz g'azablanadi |
+| `keep_user` | Akkaunt savati qoladi                       | Hozirgi mehnat yo'qoladi — yanada yomon   |
+| `union`     | Ikkalasi birlashadi                         | Miqdorlar qanday qo'shiladi?              |
 
 **Kelvin qarori: `union`, miqdor uchun `max()` (yig'indi emas).**
 
@@ -223,27 +223,27 @@ stateDiagram-v2
 
 ### 2.2 O'tishlar jadvali
 
-| # | O'tish | Kim boshlaydi | Shart | Yon ta'sir |
-|---|---|---|---|---|
-| 1 | `→ draft` | Mijoz | Savat bo'sh emas, rezerv OK | Rezerv (`pending`, 15 daq), narx snapshot (§5) |
-| 2 | `draft → pending_payment` | Mijoz | Manzil + slot tanlangan | To'lov sessiyasi, `Idempotency-Key` (§4) |
-| 3 | `draft → cancelled` | Mijoz / job | — | Rezerv `released` |
-| 4 | `pending_payment → paid` | **Webhook** | To'lov summasi buyurtma summasiga **teng** | `Payment(succeeded)`, `LedgerEntry`, outbox |
-| 5 | `pending_payment → payment_failed` | Webhook | Provayder rad etdi | Rezerv **saqlanadi** (TTL ichida qayta urinsin) |
-| 6 | `pending_payment → cancelled` | Job | TTL tugadi | Rezerv `expired` |
-| 7 | `payment_failed → pending_payment` | Mijoz | Rezerv hali tirik | Yangi `PaymentAttempt` |
-| 8 | `paid → confirmed` | Tizim (saga) | Rezerv `confirmed` bo'ldi | SMS + Telegram, `Shipment` yaratish |
-| 9 | `paid → manual_review` | Tizim (saga) | Rezerv **yo'q** | Operatorga alert (§3.2) |
-| 10 | `manual_review → confirmed` | Operator | Tovar topildi | Yangi rezerv, SMS |
-| 11 | `manual_review → refunded` | Operator | Tovar yo'q, mijoz rozi | Refund (`docs/08`) |
-| 12 | `confirmed → picking` | Omborchi | — | — |
-| 13 | `picking → packed` | Omborchi | Barcha qatorlar yig'ildi | Rezerv `consumed` → `on_hand` kamayadi (`docs/06` §3.2) |
-| 14 | `packed → shipped` | Kuryer / operator | Kuryer tayinlangan | SMS: "Yo'lda", kuzatuv havolasi |
-| 15 | `shipped → delivered` | Kuryer | Mijoz tasdiqladi | SMS: sharh so'rovi |
-| 16 | `delivered → completed` | **Job** | Qaytarish muddati tugadi | Sotuvchi komissiyasi yopiladi (`crm`) |
-| 17 | `confirmed/picking/packed → cancelled` | Mijoz / operator | Hali jo'natilmagan | Rezerv `released`, **refund** |
-| 18 | `delivered → returned` | Mijoz | Qaytarish muddati ichida | `return_in` movement, refund |
-| 19 | `delivered → partially_returned` | Mijoz | Muddat ichida, bir qism | Qisman `return_in`, qisman refund (§6.2) |
+| #   | O'tish                                 | Kim boshlaydi     | Shart                                      | Yon ta'sir                                              |
+| --- | -------------------------------------- | ----------------- | ------------------------------------------ | ------------------------------------------------------- |
+| 1   | `→ draft`                              | Mijoz             | Savat bo'sh emas, rezerv OK                | Rezerv (`pending`, 15 daq), narx snapshot (§5)          |
+| 2   | `draft → pending_payment`              | Mijoz             | Manzil + slot tanlangan                    | To'lov sessiyasi, `Idempotency-Key` (§4)                |
+| 3   | `draft → cancelled`                    | Mijoz / job       | —                                          | Rezerv `released`                                       |
+| 4   | `pending_payment → paid`               | **Webhook**       | To'lov summasi buyurtma summasiga **teng** | `Payment(succeeded)`, `LedgerEntry`, outbox             |
+| 5   | `pending_payment → payment_failed`     | Webhook           | Provayder rad etdi                         | Rezerv **saqlanadi** (TTL ichida qayta urinsin)         |
+| 6   | `pending_payment → cancelled`          | Job               | TTL tugadi                                 | Rezerv `expired`                                        |
+| 7   | `payment_failed → pending_payment`     | Mijoz             | Rezerv hali tirik                          | Yangi `PaymentAttempt`                                  |
+| 8   | `paid → confirmed`                     | Tizim (saga)      | Rezerv `confirmed` bo'ldi                  | SMS + Telegram, `Shipment` yaratish                     |
+| 9   | `paid → manual_review`                 | Tizim (saga)      | Rezerv **yo'q**                            | Operatorga alert (§3.2)                                 |
+| 10  | `manual_review → confirmed`            | Operator          | Tovar topildi                              | Yangi rezerv, SMS                                       |
+| 11  | `manual_review → refunded`             | Operator          | Tovar yo'q, mijoz rozi                     | Refund (`docs/08`)                                      |
+| 12  | `confirmed → picking`                  | Omborchi          | —                                          | —                                                       |
+| 13  | `picking → packed`                     | Omborchi          | Barcha qatorlar yig'ildi                   | Rezerv `consumed` → `on_hand` kamayadi (`docs/06` §3.2) |
+| 14  | `packed → shipped`                     | Kuryer / operator | Kuryer tayinlangan                         | SMS: "Yo'lda", kuzatuv havolasi                         |
+| 15  | `shipped → delivered`                  | Kuryer            | Mijoz tasdiqladi                           | SMS: sharh so'rovi                                      |
+| 16  | `delivered → completed`                | **Job**           | Qaytarish muddati tugadi                   | Sotuvchi komissiyasi yopiladi (`crm`)                   |
+| 17  | `confirmed/picking/packed → cancelled` | Mijoz / operator  | Hali jo'natilmagan                         | Rezerv `released`, **refund**                           |
+| 18  | `delivered → returned`                 | Mijoz             | Qaytarish muddati ichida                   | `return_in` movement, refund                            |
+| 19  | `delivered → partially_returned`       | Mijoz             | Muddat ichida, bir qism                    | Qisman `return_in`, qisman refund (§6.2)                |
 
 **#13 nozik nuqta:** `on_hand` **`packed`** da kamayadi, `shipped` da emas.
 Sabab: tovar jismonan qutiga solindi va ombordan ajratildi — bu fizik harakat.
@@ -301,14 +301,14 @@ dagi storno mantiqi bilan bir xil).
 
 ### 3.2 Choreography vs Orchestration
 
-| | **Choreography** | **Orchestration** |
-|---|---|---|
-| Mantiq | Har servis event tinglaydi va o'zi qaror qiladi | Markaziy koordinator ketma-ketlikni boshqaradi |
-| Bog'liqlik | Past | Koordinator hammani biladi |
-| Kuzatish | **Qiyin** — oqim kodda yo'q, u event'lar orasida | Oson — oqim bitta joyda |
-| Debug | "Nega bu buyurtma osilib qoldi?" → 5 ta servis logi | Saga holatini o'qiysiz |
-| Kompensatsiya | Har servis o'zinikini biladi | Koordinator biladi |
-| Mos keladi | Oddiy, chiziqli oqim | **Murakkab, shartli oqim** |
+|               | **Choreography**                                    | **Orchestration**                              |
+| ------------- | --------------------------------------------------- | ---------------------------------------------- |
+| Mantiq        | Har servis event tinglaydi va o'zi qaror qiladi     | Markaziy koordinator ketma-ketlikni boshqaradi |
+| Bog'liqlik    | Past                                                | Koordinator hammani biladi                     |
+| Kuzatish      | **Qiyin** — oqim kodda yo'q, u event'lar orasida    | Oson — oqim bitta joyda                        |
+| Debug         | "Nega bu buyurtma osilib qoldi?" → 5 ta servis logi | Saga holatini o'qiysiz                         |
+| Kompensatsiya | Har servis o'zinikini biladi                        | Koordinator biladi                             |
+| Mos keladi    | Oddiy, chiziqli oqim                                | **Murakkab, shartli oqim**                     |
 
 **Kelvin qarori: Orchestration.**
 
@@ -392,7 +392,8 @@ Bu — ataylab qilingan qaror va u intuitivga zid. Sabablar:
 
 Ya'ni: **avtomatik qaror qabul qilib bo'lmaydigan joyda odam qaror qabul
 qilsin.** Tizimning vazifasi — muammoni **ko'rinadigan** qilish (`manual_review`
-+ alert), uni yashirish yoki shoshib hal qilish emas.
+
+- alert), uni yashirish yoki shoshib hal qilish emas.
 
 Bu holat qanchalik tez-tez uchraydi? Rezerv TTL to'lov sessiyasidan uzunroq
 bo'lsa — deyarli hech qachon (`docs/06` §4.2). Ya'ni bu — **oxirgi himoya
@@ -457,11 +458,11 @@ export class OrderSagaOrchestrator {
 
   private buildSteps(): readonly SagaStep<OrderSagaContext>[] {
     return [
-      this.steps.markPaid,          // kompensatsiya: → payment_failed
+      this.steps.markPaid, // kompensatsiya: → payment_failed
       this.steps.confirmReservation, // kompensatsiya: rezervni pending ga qaytarish
-      this.steps.createShipment,     // kompensatsiya: shipment bekor
-      this.steps.markConfirmed,      // kompensatsiya: → paid
-      this.steps.notify,             // kompensatsiya: null (SMS qaytmaydi)
+      this.steps.createShipment, // kompensatsiya: shipment bekor
+      this.steps.markConfirmed, // kompensatsiya: → paid
+      this.steps.notify, // kompensatsiya: null (SMS qaytmaydi)
     ];
   }
 
@@ -534,7 +535,7 @@ export class OrderSagaOrchestrator {
       } catch (e) {
         this.log.error(
           { sagaId, step: step.name, err: e },
-          'Kompensatsiya yiqildi — qo\'lda aralashuv kerak',
+          "Kompensatsiya yiqildi — qo'lda aralashuv kerak",
         );
         await this.markNeedsHuman(sagaId, `compensation_failed:${step.name}`);
         await this.alertOperator(state.orderId, `compensation_failed:${step.name}`);
@@ -618,11 +619,11 @@ async execute(ctx) {
 
 **Idempotentlik uch usuli:**
 
-| Usul | Qayerda | Misol |
-|---|---|---|
-| **Shartli UPDATE** | Holat o'zgarishi | `WHERE status = 'pending'` → 0 qator = allaqachon bajarilgan |
-| **Unique constraint** | Yaratish | `sendOnce(key)` — ikkinchi `INSERT` conflict beradi |
-| **Idempotency key** | Tashqi API | Click'ga `Idempotency-Key` header (§4) |
+| Usul                  | Qayerda          | Misol                                                        |
+| --------------------- | ---------------- | ------------------------------------------------------------ |
+| **Shartli UPDATE**    | Holat o'zgarishi | `WHERE status = 'pending'` → 0 qator = allaqachon bajarilgan |
+| **Unique constraint** | Yaratish         | `sendOnce(key)` — ikkinchi `INSERT` conflict beradi          |
+| **Idempotency key**   | Tashqi API       | Click'ga `Idempotency-Key` header (§4)                       |
 
 **Qoida:** har saga qadami shu uchtadan **kamida bittasini** ishlatishi shart.
 Ishlatmasa — u saga qadami bo'la olmaydi. Bu — kod review'da tekshiriladigan
@@ -710,14 +711,12 @@ export class IdempotencyInterceptor implements NestInterceptor {
 
     if (existing.fingerprint !== fingerprint) {
       // Bir xil key, boshqa tana → mijoz kalitni qayta ishlatyapti. Bu xato.
-      throw new ConflictException(
-        'Idempotency-Key boshqa so\'rov tanasi bilan ishlatilgan',
-      );
+      throw new ConflictException("Idempotency-Key boshqa so'rov tanasi bilan ishlatilgan");
     }
 
     if (existing.status === 'in_progress') {
       // Birinchi so'rov hali ishlayapti. Mijoz kutsin va qayta urinsin.
-      throw new HttpException('So\'rov qayta ishlanmoqda', 409);
+      throw new HttpException("So'rov qayta ishlanmoqda", 409);
     }
 
     return existing.response; // Saqlangan javobni qaytaramiz
@@ -825,10 +824,7 @@ const order = await prisma.order.findUnique({
   where: { id },
   include: { items: { include: { variant: { include: { price: true } } } } },
 });
-const total = order.items.reduce(
-  (sum, i) => sum + i.variant.price.amount * BigInt(i.quantity),
-  0n,
-);
+const total = order.items.reduce((sum, i) => sum + i.variant.price.amount * BigInt(i.quantity), 0n);
 ```
 
 Nima uchun bu falokat:
@@ -1005,15 +1001,15 @@ ko'rsatiladi**: "Narx o'zgardi: 1 200 000 → 1 500 000". Jimgina o'zgartirish
 
 ### 6.1 Bekor qilish
 
-| Holat | Mijoz bekor qila oladimi | Nima bo'ladi |
-|---|---|---|
-| `draft` | ✅ | Rezerv `released`. Pul yo'q. |
-| `pending_payment` | ✅ | Rezerv `released`. Pul yo'q. |
-| `paid`, `confirmed` | ✅ | Rezerv `released` + **to'liq refund** |
-| `picking` | ⚠️ Operator orqali | Yig'ish to'xtatiladi, rezerv `released` + refund |
-| `packed` | ⚠️ Operator orqali | Qadoq ochiladi, `return_in` movement, refund |
-| `shipped` | ❌ | Kuryer yo'lda. Faqat qabul qilmaslik → `returned` |
-| `delivered` | ❌ | Bekor emas — **qaytarish** (§6.2) |
+| Holat               | Mijoz bekor qila oladimi | Nima bo'ladi                                      |
+| ------------------- | ------------------------ | ------------------------------------------------- |
+| `draft`             | ✅                       | Rezerv `released`. Pul yo'q.                      |
+| `pending_payment`   | ✅                       | Rezerv `released`. Pul yo'q.                      |
+| `paid`, `confirmed` | ✅                       | Rezerv `released` + **to'liq refund**             |
+| `picking`           | ⚠️ Operator orqali       | Yig'ish to'xtatiladi, rezerv `released` + refund  |
+| `packed`            | ⚠️ Operator orqali       | Qadoq ochiladi, `return_in` movement, refund      |
+| `shipped`           | ❌                       | Kuryer yo'lda. Faqat qabul qilmaslik → `returned` |
+| `delivered`         | ❌                       | Bekor emas — **qaytarish** (§6.2)                 |
 
 **`packed` dan bekor qilish nozik:** tovar allaqachon `consumed` (`on_hand`
 kamaygan, `docs/06` §3.2, #13). Uni qaytarish uchun **yangi movement** kerak:
@@ -1035,7 +1031,7 @@ await prisma.$transaction(async (tx) => {
   }
   await tx.order.update({ where: { id: order.id }, data: { status: 'cancelled' } });
   await tx.outboxEvent.create({
-    data: { eventType: 'order.cancelled', aggregateId: order.id, /* ... */ },
+    data: { eventType: 'order.cancelled', aggregateId: order.id /* ... */ },
   });
 });
 ```
@@ -1066,12 +1062,12 @@ stateDiagram-v2
 
 **Mo'rt tovar nozikligi (CANON §4.5).** Qandil singan holda qaytdi. Kim sindirdi?
 
-| Holat | Natija | `inventory` harakati |
-|---|---|---|
-| Yetkazishda sindi (qadoq shikastlangan) | To'liq refund | `return_in` (+N) **keyin** `write_off` (-N) — `docs/06` §8.1 |
-| Mijoz o'rnatishda sindirdi | Refund yo'q | Movement yo'q — tovar qaytmaydi |
-| Zavod braki | To'liq refund | `return_in` + `write_off` + `SupplierClaim` |
-| Yaroqli, shunchaki yoqmadi | Refund (agar muddat ichida) | `return_in` (+N) — tovar qayta sotiladi |
+| Holat                                   | Natija                      | `inventory` harakati                                         |
+| --------------------------------------- | --------------------------- | ------------------------------------------------------------ |
+| Yetkazishda sindi (qadoq shikastlangan) | To'liq refund               | `return_in` (+N) **keyin** `write_off` (-N) — `docs/06` §8.1 |
+| Mijoz o'rnatishda sindirdi              | Refund yo'q                 | Movement yo'q — tovar qaytmaydi                              |
+| Zavod braki                             | To'liq refund               | `return_in` + `write_off` + `SupplierClaim`                  |
+| Yaroqli, shunchaki yoqmadi              | Refund (agar muddat ichida) | `return_in` (+N) — tovar qayta sotiladi                      |
 
 **Kim hal qiladi?** Operator, **rasm asosida**. Qaytarish arizasida rasm
 majburiy (`docs/06` §8.2 dagi `photoMediaIds` bilan bir xil mantiq). Avtomatik
@@ -1223,10 +1219,13 @@ export class PricingEngine {
   calculate(cart: Cart, ctx: PricingContext): PricedCart {
     const rules = this.rules
       .filter((r) => r.matches(ctx))
-      .sort((a, b) =>
-        a.stage !== b.stage ? a.stage - b.stage
-        : a.priority !== b.priority ? a.priority - b.priority
-        : a.id.localeCompare(b.id),   // ← determinizm uchun oxirgi tie-break
+      .sort(
+        (a, b) =>
+          a.stage !== b.stage
+            ? a.stage - b.stage
+            : a.priority !== b.priority
+              ? a.priority - b.priority
+              : a.id.localeCompare(b.id), // ← determinizm uchun oxirgi tie-break
       );
 
     let state = PricingState.fromCart(cart);
@@ -1242,7 +1241,7 @@ export class PricingEngine {
       trace.push({
         ruleId: rule.id,
         stage: rule.stage,
-        before,                        // BigInt, tiyin
+        before, // BigInt, tiyin
         after: state.total,
         delta: state.total - before,
       });
@@ -1257,12 +1256,12 @@ export class PricingEngine {
 
 ### 7.3 Ustma-ust tushish qoidalari
 
-| Vaziyat | Qaror | Sabab |
-|---|---|---|
-| Ikki promokod | **Faqat bittasi** (`exclusive`) | Standart amaliyot, suiiste'mol oldini oladi |
-| Promokod + kategoriya aksiyasi | Ikkalasi (turli `stage`) | Aksiya — do'kon taklifi, promokod — marketing |
-| VIP + aksiya | Ikkalasi | VIP — sodiqlik mukofoti |
-| Bundle + mahsulot aksiyasi | **Bundle g'olib** | Bundle narxi allaqachon kelishilgan |
+| Vaziyat                        | Qaror                           | Sabab                                         |
+| ------------------------------ | ------------------------------- | --------------------------------------------- |
+| Ikki promokod                  | **Faqat bittasi** (`exclusive`) | Standart amaliyot, suiiste'mol oldini oladi   |
+| Promokod + kategoriya aksiyasi | Ikkalasi (turli `stage`)        | Aksiya — do'kon taklifi, promokod — marketing |
+| VIP + aksiya                   | Ikkalasi                        | VIP — sodiqlik mukofoti                       |
+| Bundle + mahsulot aksiyasi     | **Bundle g'olib**               | Bundle narxi allaqachon kelishilgan           |
 
 **Chegara: maksimal umumiy chegirma.** Bir necha chegirma qo'shilib narxni
 nolga (yoki manfiyga!) tushirishi mumkin:
@@ -1272,10 +1271,8 @@ nolga (yoki manfiyga!) tushirishi mumkin:
 const MAX_TOTAL_DISCOUNT_PERCENT = 50; // ⚠️ Bu raqam BIZNES tomonidan tasdiqlanishi kerak (§12)
 
 if (state.discountTotal * 100n > state.subtotal * BigInt(MAX_TOTAL_DISCOUNT_PERCENT)) {
-  state = state.capDiscount(
-    (state.subtotal * BigInt(MAX_TOTAL_DISCOUNT_PERCENT)) / 100n,
-  );
-  trace.push({ ruleId: 'MAX_DISCOUNT_CAP', /* ... */ });
+  state = state.capDiscount((state.subtotal * BigInt(MAX_TOTAL_DISCOUNT_PERCENT)) / 100n);
+  trace.push({ ruleId: 'MAX_DISCOUNT_CAP' /* ... */ });
 }
 ```
 
@@ -1294,10 +1291,28 @@ Trace bilan:
 
 ```json
 [
-  { "ruleId": "base",          "stage": 10, "before": "120000000", "after": "120000000", "delta": "0" },
-  { "ruleId": "promo-lyustry", "stage": 40, "before": "120000000", "after": "108000000", "delta": "-12000000" },
-  { "ruleId": "code-KELVIN2024","stage": 60, "before": "108000000", "after": "103000000", "delta": "-5000000" },
-  { "ruleId": "vip-5",         "stage": 50, "before": "103000000", "after": "97850000",  "delta": "-5150000" }
+  { "ruleId": "base", "stage": 10, "before": "120000000", "after": "120000000", "delta": "0" },
+  {
+    "ruleId": "promo-lyustry",
+    "stage": 40,
+    "before": "120000000",
+    "after": "108000000",
+    "delta": "-12000000"
+  },
+  {
+    "ruleId": "code-KELVIN2024",
+    "stage": 60,
+    "before": "108000000",
+    "after": "103000000",
+    "delta": "-5000000"
+  },
+  {
+    "ruleId": "vip-5",
+    "stage": 50,
+    "before": "103000000",
+    "after": "97850000",
+    "delta": "-5150000"
+  }
 ]
 ```
 
@@ -1334,7 +1349,7 @@ belgilanishi kerak:
  */
 function applyPercentDiscount(amount: bigint, percent: number): bigint {
   const basisPoints = BigInt(Math.round(percent * 100)); // 10% → 1000 bp
-  return (amount * basisPoints) / 10_000n;               // truncate
+  return (amount * basisPoints) / 10_000n; // truncate
 }
 ```
 
@@ -1464,10 +1479,21 @@ O'rnatuvchi brigada, jadval, marshrut — `docs/09`.
 // apps/api/src/order/order-state-machine.ts
 
 export type OrderStatus =
-  | 'draft' | 'pending_payment' | 'paid' | 'payment_failed'
-  | 'manual_review' | 'confirmed' | 'picking' | 'packed'
-  | 'shipped' | 'delivered' | 'completed'
-  | 'cancelled' | 'returned' | 'partially_returned' | 'refunded';
+  | 'draft'
+  | 'pending_payment'
+  | 'paid'
+  | 'payment_failed'
+  | 'manual_review'
+  | 'confirmed'
+  | 'picking'
+  | 'packed'
+  | 'shipped'
+  | 'delivered'
+  | 'completed'
+  | 'cancelled'
+  | 'returned'
+  | 'partially_returned'
+  | 'refunded';
 
 export type OrderActor = 'customer' | 'operator' | 'warehouse' | 'courier' | 'system' | 'webhook';
 
@@ -1500,7 +1526,7 @@ export const ORDER_TRANSITIONS = {
   payment_succeeded: {
     from: ['pending_payment'],
     to: 'paid',
-    allowedActors: ['webhook'],  // FAQAT webhook. Mijoz o'zini "to'ladim" deb belgilay olmaydi.
+    allowedActors: ['webhook'], // FAQAT webhook. Mijoz o'zini "to'ladim" deb belgilay olmaydi.
   },
   payment_failed: {
     from: ['pending_payment'],
@@ -1528,19 +1554,19 @@ export const ORDER_TRANSITIONS = {
     allowedActors: ['warehouse'],
     guard: async (order, ctx) => {
       const all = await ctx.warehouse.allLinesPicked(order.id);
-      return all ? { ok: true } : { ok: false, reason: 'Barcha qatorlar yig\'ilmagan' };
+      return all ? { ok: true } : { ok: false, reason: "Barcha qatorlar yig'ilmagan" };
     },
   },
-  ship:    { from: ['packed'],    to: 'shipped',   allowedActors: ['courier', 'operator'] },
-  deliver: { from: ['shipped'],   to: 'delivered', allowedActors: ['courier'] },
+  ship: { from: ['packed'], to: 'shipped', allowedActors: ['courier', 'operator'] },
+  deliver: { from: ['shipped'], to: 'delivered', allowedActors: ['courier'] },
   complete: {
     from: ['delivered'],
     to: 'completed',
     allowedActors: ['system'],
     guard: async (order, ctx) =>
-      (await ctx.orders.canComplete(order))       // §9.2
+      (await ctx.orders.canComplete(order)) // §9.2
         ? { ok: true }
-        : { ok: false, reason: 'Qaytarish muddati yoki o\'rnatish tugamagan' },
+        : { ok: false, reason: "Qaytarish muddati yoki o'rnatish tugamagan" },
   },
   cancel: {
     from: ['draft', 'pending_payment', 'payment_failed', 'paid', 'confirmed', 'picking', 'packed'],
@@ -1548,13 +1574,16 @@ export const ORDER_TRANSITIONS = {
     allowedActors: ['customer', 'operator', 'system'],
     guard: async (order, ctx) => {
       // Mijoz faqat jo'natilmaganini bekor qila oladi
-      if (ctx.actor === 'customer' && !['draft', 'pending_payment', 'payment_failed'].includes(order.status)) {
+      if (
+        ctx.actor === 'customer' &&
+        !['draft', 'pending_payment', 'payment_failed'].includes(order.status)
+      ) {
         return { ok: false, reason: 'Bu bosqichda operator orqali bekor qilinadi' };
       }
       return { ok: true };
     },
   },
-  return_full:    { from: ['delivered'], to: 'returned',           allowedActors: ['operator'] },
+  return_full: { from: ['delivered'], to: 'returned', allowedActors: ['operator'] },
   return_partial: { from: ['delivered'], to: 'partially_returned', allowedActors: ['operator'] },
   refund: {
     from: ['returned', 'partially_returned', 'manual_review'],
@@ -1606,7 +1635,7 @@ export class OrderStateMachine {
          WHERE id = ${orderId}::uuid AND status = ${order.status}::"OrderStatus"
       `;
       if (updated === 0) {
-        return { ok: false as const, reason: 'Buyurtma holati parallel o\'zgardi' };
+        return { ok: false as const, reason: "Buyurtma holati parallel o'zgardi" };
       }
 
       // Tarix — audit uchun majburiy (CANON §8: OrderStatusHistory)
@@ -1651,20 +1680,26 @@ const ALL_STATUSES: OrderStatus[] = [/* ... 15 ta ... */];
 const ALL_EVENTS = Object.keys(ORDER_TRANSITIONS) as OrderEvent[];
 
 describe('OrderStateMachine (property-based)', () => {
-  it('INVARIANT: ruxsat etilmagan o\'tish HECH QACHON bajarilmaydi', async () => {
+  it("INVARIANT: ruxsat etilmagan o'tish HECH QACHON bajarilmaydi", async () => {
     await fc.assert(
       fc.asyncProperty(
         fc.constantFrom(...ALL_STATUSES),
         fc.constantFrom(...ALL_EVENTS),
-        fc.constantFrom<OrderActor>('customer', 'operator', 'warehouse', 'courier', 'system', 'webhook'),
+        fc.constantFrom<OrderActor>(
+          'customer',
+          'operator',
+          'warehouse',
+          'courier',
+          'system',
+          'webhook',
+        ),
         async (status, event, actor) => {
           const order = await seedOrder({ status });
           const spec = ORDER_TRANSITIONS[event];
 
           const result = await sm.transition(order.id, event, { actor, actorId: 'test' });
 
-          const shouldBeAllowed =
-            spec.from.includes(status) && spec.allowedActors.includes(actor);
+          const shouldBeAllowed = spec.from.includes(status) && spec.allowedActors.includes(actor);
 
           if (!shouldBeAllowed) {
             expect(result.ok).toBe(false);
@@ -1680,7 +1715,7 @@ describe('OrderStateMachine (property-based)', () => {
     );
   });
 
-  it('INVARIANT: terminal holatdan chiqish yo\'q', async () => {
+  it("INVARIANT: terminal holatdan chiqish yo'q", async () => {
     const terminal: OrderStatus[] = ['completed', 'cancelled', 'refunded'];
     await fc.assert(
       fc.asyncProperty(
@@ -1696,11 +1731,11 @@ describe('OrderStateMachine (property-based)', () => {
     );
   });
 
-  it('INVARIANT: har o\'tish OrderStatusHistory yozadi', async () => {
+  it("INVARIANT: har o'tish OrderStatusHistory yozadi", async () => {
     // Audit yo'qolmasligi — muvaffaqiyatli o'tish soni == tarix yozuvlari soni
   });
 
-  it('INVARIANT: mijoz jo\'natilgan buyurtmani bekor qila olmaydi', async () => {
+  it("INVARIANT: mijoz jo'natilgan buyurtmani bekor qila olmaydi", async () => {
     for (const status of ['shipped', 'delivered', 'completed'] as const) {
       const order = await seedOrder({ status });
       const r = await sm.transition(order.id, 'cancel', { actor: 'customer', actorId: 'c' });
@@ -1714,11 +1749,10 @@ describe('OrderStateMachine (property-based)', () => {
 
 ```typescript
 describe('OrderSaga kompensatsiya', () => {
-  it('shipment yiqilsa → manual_review, rezerv BO\'SHATILMAYDI', async () => {
+  it("shipment yiqilsa → manual_review, rezerv BO'SHATILMAYDI", async () => {
     const order = await seedPaidOrder();
     // delivery servisini ataylab yiqitamiz
-    jest.spyOn(deliveryService, 'createShipment')
-        .mockRejectedValue(new SlotTakenError());
+    jest.spyOn(deliveryService, 'createShipment').mockRejectedValue(new SlotTakenError());
 
     await saga.run(await startSaga(order.id));
 
@@ -1730,7 +1764,7 @@ describe('OrderSaga kompensatsiya', () => {
     expect(res?.status).toBe('confirmed');
   });
 
-  it('rezerv yo\'qolgan bo\'lsa → qayta rezerv urinishi', async () => {
+  it("rezerv yo'qolgan bo'lsa → qayta rezerv urinishi", async () => {
     const order = await seedPaidOrder();
     // Rezervni "yo'qotamiz" (TTL tugadi ssenariysi)
     await prisma.stockReservation.updateMany({
@@ -1747,10 +1781,11 @@ describe('OrderSaga kompensatsiya', () => {
     expect(after.status).toBe('confirmed');
   });
 
-  it('rezerv yo\'q VA tovar yo\'q → manual_review, AVTOMATIK refund YO\'Q', async () => {
+  it("rezerv yo'q VA tovar yo'q → manual_review, AVTOMATIK refund YO'Q", async () => {
     const order = await seedPaidOrder();
     await prisma.stockReservation.updateMany({
-      where: { orderId: order.id }, data: { status: 'expired' },
+      where: { orderId: order.id },
+      data: { status: 'expired' },
     });
     await setStock({ variantId: order.items[0].variantId, onHand: 0 });
 
@@ -1779,7 +1814,7 @@ describe('OrderSaga kompensatsiya', () => {
 ### 11.3 Idempotentlik testi
 
 ```typescript
-it('bir xil Idempotency-Key bilan 10 ta parallel so\'rov → 1 ta to\'lov sessiyasi', async () => {
+it("bir xil Idempotency-Key bilan 10 ta parallel so'rov → 1 ta to'lov sessiyasi", async () => {
   const order = await seedDraftOrder();
   const key = randomUUID();
 
@@ -1792,9 +1827,7 @@ it('bir xil Idempotency-Key bilan 10 ta parallel so\'rov → 1 ta to\'lov sessiy
     ),
   );
 
-  const created = results.filter(
-    (r) => r.status === 'fulfilled' && r.value.status === 201,
-  );
+  const created = results.filter((r) => r.status === 'fulfilled' && r.value.status === 201);
   expect(created.length).toBeLessThanOrEqual(1);
 
   // Eng muhimi: DB'da bitta
@@ -1810,9 +1843,11 @@ it('takroriy webhook ikki marta paid qilmaydi', async () => {
   await handler.handlePaymentWebhook(payload); // yana
 
   expect(await prisma.paymentAttempt.count({ where: { orderId: order.id } })).toBe(1);
-  expect(await prisma.outboxEvent.count({
-    where: { aggregateId: order.id, eventType: 'order.paid' },
-  })).toBe(1);
+  expect(
+    await prisma.outboxEvent.count({
+      where: { aggregateId: order.id, eventType: 'order.paid' },
+    }),
+  ).toBe(1);
 });
 
 it('kam summali webhook → manual_review, paid EMAS', async () => {
@@ -1827,7 +1862,7 @@ it('kam summali webhook → manual_review, paid EMAS', async () => {
 ### 11.4 Narx snapshot testi
 
 ```typescript
-it('mahsulot narxi o\'zgarsa, eski buyurtma summasi O\'ZGARMAYDI', async () => {
+it("mahsulot narxi o'zgarsa, eski buyurtma summasi O'ZGARMAYDI", async () => {
   const variant = await seedVariant({ price: 120_000_000n }); // 1 200 000 so'm tiyinda
   const order = await createOrder({ variantId: variant.id, quantity: 1 });
   const originalTotal = order.totalAmount;
@@ -1846,7 +1881,7 @@ it('mahsulot narxi o\'zgarsa, eski buyurtma summasi O\'ZGARMAYDI', async () => {
   expect(reloaded.items[0].unitPrice).toBe(120_000_000n);
 });
 
-it('mahsulot o\'chirilsa ham buyurtma to\'liq ochiladi', async () => {
+it("mahsulot o'chirilsa ham buyurtma to'liq ochiladi", async () => {
   const variant = await seedVariant({ name: 'Aurora 8L xrom' });
   const order = await createOrder({ variantId: variant.id, quantity: 1 });
 
@@ -1856,7 +1891,7 @@ it('mahsulot o\'chirilsa ham buyurtma to\'liq ochiladi', async () => {
   });
 
   const reloaded = await orderService.getById(order.id);
-  expect(reloaded.items[0].productName).toBe('Aurora 8L xrom');   // snapshot
+  expect(reloaded.items[0].productName).toBe('Aurora 8L xrom'); // snapshot
   expect(reloaded.items[0].colorTemperature).toBeDefined();
   expect(reloaded.totalAmount).toBeGreaterThan(0n);
 });
@@ -1866,7 +1901,7 @@ it('mahsulot o\'chirilsa ham buyurtma to\'liq ochiladi', async () => {
 
 ```typescript
 it('DETERMINIZM: bir xil savat → bir xil narx (100 marta)', async () => {
-  const cart = await seedComplexCart();  // 4 ta chegirma ustma-ust tushadi
+  const cart = await seedComplexCart(); // 4 ta chegirma ustma-ust tushadi
   const ctx = buildPricingContext({ at: new Date('2026-01-15T10:00:00Z') });
 
   const results = Array.from({ length: 100 }, () => engine.calculate(cart, ctx));
@@ -1879,7 +1914,7 @@ it('DETERMINIZM: bir xil savat → bir xil narx (100 marta)', async () => {
   }
 });
 
-it('DETERMINIZM: qoidalar tartibi o\'zgarsa ham natija bir xil', async () => {
+it("DETERMINIZM: qoidalar tartibi o'zgarsa ham natija bir xil", async () => {
   await fc.assert(
     fc.property(fc.shuffledSubarray(ALL_RULES, { minLength: 5 }), (shuffled) => {
       // Engine ichida saralaydi (§7.2) → kirish tartibi ahamiyatsiz
@@ -1905,18 +1940,18 @@ it('chegirma narxni manfiyga tushira olmaydi', async () => {
 
 ### 11.6 Test qamrovi
 
-| Test | Tur | Nima kafolatlaydi |
-|---|---|---|
-| Holat mashinasi (500 run) | Property | Noto'g'ri o'tish mumkin emas |
-| Terminal holat | Property | Yopilgan buyurtma o'zgarmaydi |
-| Saga kompensatsiya | Integration | Xato bo'lsa tizim izchil qoladi |
-| Saga idempotentlik | Integration | Takroriy event zarar qilmaydi |
-| `Idempotency-Key` | Concurrency | Ikki marta to'lov yo'q |
-| Webhook takrori | Integration | Provayder qayta urinishi xavfsiz |
-| Webhook summasi | Integration | Kam to'lov `paid` qilmaydi |
-| Narx snapshot | Integration | Eski buyurtma buzilmaydi |
-| Pricing determinizm | Property | Bir xil savat → bir xil narx |
-| Cart merge | Unit | Savat yo'qolmaydi |
+| Test                      | Tur         | Nima kafolatlaydi                |
+| ------------------------- | ----------- | -------------------------------- |
+| Holat mashinasi (500 run) | Property    | Noto'g'ri o'tish mumkin emas     |
+| Terminal holat            | Property    | Yopilgan buyurtma o'zgarmaydi    |
+| Saga kompensatsiya        | Integration | Xato bo'lsa tizim izchil qoladi  |
+| Saga idempotentlik        | Integration | Takroriy event zarar qilmaydi    |
+| `Idempotency-Key`         | Concurrency | Ikki marta to'lov yo'q           |
+| Webhook takrori           | Integration | Provayder qayta urinishi xavfsiz |
+| Webhook summasi           | Integration | Kam to'lov `paid` qilmaydi       |
+| Narx snapshot             | Integration | Eski buyurtma buzilmaydi         |
+| Pricing determinizm       | Property    | Bir xil savat → bir xil narx     |
+| Cart merge                | Unit        | Savat yo'qolmaydi                |
 
 ---
 
@@ -1970,37 +2005,37 @@ it('chegirma narxni manfiyga tushira olmaydi', async () => {
 
 ## 13. Ochiq savollar
 
-| # | Savol | Kim hal qiladi | Nima uchun hozir javob yo'q |
-|---|---|---|---|
-| 1 | Click/Payme webhook formati, imzo algoritmi, qayta urinish siyosati? | Backend + provayder | CANON §10: API detallari rasmiy hujjatdan olinishi kerak. §4.3 dagi kod — struktura, aniq maydonlar emas. |
-| 2 | Refund'da provayder komissiyasi qaytadimi? | Biznes + provayder | To'lov shartnomasiga bog'liq. `docs/08`. |
-| 3 | Qaytarish muddati necha kun? | Biznes + yurist | O'zbekiston iste'molchi huquqlari qonuni. CANON §10: yuridik maslahat yozilmaydi. |
-| 4 | Qisman qaytarishda yetkazish narxi qaytadimi? | Biznes | §6.3. Xizmat ko'rsatilgan — lekin siyosat qarori. |
-| 5 | Qisman qaytarishda butun sonli bo'lish qoldig'i (1 tiyin) qayerga ketadi? | Biznes + buxgalteriya | §6.3. Oxirgi qatorga qo'shiladimi yoki mijoz foydasigami — qoida kerak, aks holda test yozilmaydi. |
-| 6 | Foizli chegirma yaxlitlash yo'nalishi: mijoz foydasiga (ceil) yoki do'kon foydasiga (truncate)? | Biznes | §7.5. Hozir truncate taklif qilingan — tasdiqlanishi kerak. |
-| 7 | Maksimal umumiy chegirma foizi (§7.3 da 50% taxmin qilingan)? | Biznes | Raqam to'qib chiqarilmaydi (CANON §2). |
-| 8 | O'rnatish xizmati tarifi qanday hisoblanadi (murakkablik, shift balandligi)? | Biznes | §9.1. Aniq tarif berilishi kerak. |
-| 9 | Mehmon buyurtmasi keyinchalik o'sha telefon bilan ro'yxatdan o'tilsa bog'lanadimi? | Biznes + xavfsizlik | §1.2. Telefon raqami qayta sotiladi → begona odamga ma'lumot ochilishi mumkin. Default: bog'lanmaydi. |
-| 10 | `manual_review` da operator javob berish SLA'si? | Operatsiya | Mijoz to'lagan va kutmoqda — bu vaqt cheklangan bo'lishi kerak. |
-| 11 | `delivered → completed` avtomatik o'tish qancha kundan keyin? | Biznes | Qaytarish muddatiga bog'liq (savol #3). |
-| 12 | Buyurtma raqami formati (mijozga ko'rinadigan)? UUID v7 ko'rsatilmaydi. | Biznes | Qisqa, aytish oson bo'lishi kerak (telefon orqali). CANON §8: PK — UUID v7, lekin bu ichki. |
-| 13 | `SagaState` va `IdempotencyRecord` — CANON §8 entity ro'yxatida **YO'Q**. | Arxitektura | Bu hujjatda ishlatildi — kanondan chetlanish. Yo `order` moduli ichki jadvali sifatida rasmiylashtiriladi, yo kanonga qo'shiladi. **Hal qilinishi shart** (`docs/06` §11.8 dagi `SupplierClaim` bilan bir xil holat). |
-| 14 | 1C ga buyurtma eksport qilinadimi va qaysi holatda? | Biznes + integratsiya | CANON §6: 1C talabi tasdiqlanmagan. |
+| #   | Savol                                                                                           | Kim hal qiladi        | Nima uchun hozir javob yo'q                                                                                                                                                                                           |
+| --- | ----------------------------------------------------------------------------------------------- | --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | Click/Payme webhook formati, imzo algoritmi, qayta urinish siyosati?                            | Backend + provayder   | CANON §10: API detallari rasmiy hujjatdan olinishi kerak. §4.3 dagi kod — struktura, aniq maydonlar emas.                                                                                                             |
+| 2   | Refund'da provayder komissiyasi qaytadimi?                                                      | Biznes + provayder    | To'lov shartnomasiga bog'liq. `docs/08`.                                                                                                                                                                              |
+| 3   | Qaytarish muddati necha kun?                                                                    | Biznes + yurist       | O'zbekiston iste'molchi huquqlari qonuni. CANON §10: yuridik maslahat yozilmaydi.                                                                                                                                     |
+| 4   | Qisman qaytarishda yetkazish narxi qaytadimi?                                                   | Biznes                | §6.3. Xizmat ko'rsatilgan — lekin siyosat qarori.                                                                                                                                                                     |
+| 5   | Qisman qaytarishda butun sonli bo'lish qoldig'i (1 tiyin) qayerga ketadi?                       | Biznes + buxgalteriya | §6.3. Oxirgi qatorga qo'shiladimi yoki mijoz foydasigami — qoida kerak, aks holda test yozilmaydi.                                                                                                                    |
+| 6   | Foizli chegirma yaxlitlash yo'nalishi: mijoz foydasiga (ceil) yoki do'kon foydasiga (truncate)? | Biznes                | §7.5. Hozir truncate taklif qilingan — tasdiqlanishi kerak.                                                                                                                                                           |
+| 7   | Maksimal umumiy chegirma foizi (§7.3 da 50% taxmin qilingan)?                                   | Biznes                | Raqam to'qib chiqarilmaydi (CANON §2).                                                                                                                                                                                |
+| 8   | O'rnatish xizmati tarifi qanday hisoblanadi (murakkablik, shift balandligi)?                    | Biznes                | §9.1. Aniq tarif berilishi kerak.                                                                                                                                                                                     |
+| 9   | Mehmon buyurtmasi keyinchalik o'sha telefon bilan ro'yxatdan o'tilsa bog'lanadimi?              | Biznes + xavfsizlik   | §1.2. Telefon raqami qayta sotiladi → begona odamga ma'lumot ochilishi mumkin. Default: bog'lanmaydi.                                                                                                                 |
+| 10  | `manual_review` da operator javob berish SLA'si?                                                | Operatsiya            | Mijoz to'lagan va kutmoqda — bu vaqt cheklangan bo'lishi kerak.                                                                                                                                                       |
+| 11  | `delivered → completed` avtomatik o'tish qancha kundan keyin?                                   | Biznes                | Qaytarish muddatiga bog'liq (savol #3).                                                                                                                                                                               |
+| 12  | Buyurtma raqami formati (mijozga ko'rinadigan)? UUID v7 ko'rsatilmaydi.                         | Biznes                | Qisqa, aytish oson bo'lishi kerak (telefon orqali). CANON §8: PK — UUID v7, lekin bu ichki.                                                                                                                           |
+| 13  | `SagaState` va `IdempotencyRecord` — CANON §8 entity ro'yxatida **YO'Q**.                       | Arxitektura           | Bu hujjatda ishlatildi — kanondan chetlanish. Yo `order` moduli ichki jadvali sifatida rasmiylashtiriladi, yo kanonga qo'shiladi. **Hal qilinishi shart** (`docs/06` §11.8 dagi `SupplierClaim` bilan bir xil holat). |
+| 14  | 1C ga buyurtma eksport qilinadimi va qaysi holatda?                                             | Biznes + integratsiya | CANON §6: 1C talabi tasdiqlanmagan.                                                                                                                                                                                   |
 
 ---
 
 ## 14. Bog'liqliklar
 
-| Modul | Yo'nalish | Nima |
-|---|---|---|
-| `cart` | `order` → `cart` | Checkout savatdan snapshot oladi (§5.3) |
-| `pricing` | `order` → `pricing` | Narx hisobi — **faqat** snapshot qurishda (§5.3) |
-| `inventory` | `order` → `inventory` | Rezerv, `confirm`, `consume`. `docs/06` |
-| `payment` | `order` ↔ `payment` | Sessiya yaratish; webhook → outbox → saga. `docs/08` |
-| `delivery` | `order` → `delivery` | Slot rezervi (§8), `Shipment`. `docs/09` |
-| `notification` | `order` → `notification` | SMS (Eskiz), Telegram — saga oxirgi qadami |
-| `crm` | `crm` → `order` | Buyurtma tarixi, segment, komissiya |
-| `analytics` | `analytics` → `order` | Voronka, o'rtacha chek, konversiya |
+| Modul          | Yo'nalish                | Nima                                                 |
+| -------------- | ------------------------ | ---------------------------------------------------- |
+| `cart`         | `order` → `cart`         | Checkout savatdan snapshot oladi (§5.3)              |
+| `pricing`      | `order` → `pricing`      | Narx hisobi — **faqat** snapshot qurishda (§5.3)     |
+| `inventory`    | `order` → `inventory`    | Rezerv, `confirm`, `consume`. `docs/06`              |
+| `payment`      | `order` ↔ `payment`      | Sessiya yaratish; webhook → outbox → saga. `docs/08` |
+| `delivery`     | `order` → `delivery`     | Slot rezervi (§8), `Shipment`. `docs/09`             |
+| `notification` | `order` → `notification` | SMS (Eskiz), Telegram — saga oxirgi qadami           |
+| `crm`          | `crm` → `order`          | Buyurtma tarixi, segment, komissiya                  |
+| `analytics`    | `analytics` → `order`    | Voronka, o'rtacha chek, konversiya                   |
 
 **Arxitektura qoidasi:** `order` — orkestrator, ya'ni u boshqa modullarni
 **chaqiradi**. Teskarisi bo'lmasligi kerak: `inventory` yoki `payment`

@@ -35,23 +35,23 @@ erDiagram
     ProductVariant ||--o{ Price : "price (pricing)"
 ```
 
-| Qatlam | Entity | Nima | Misol |
-|---|---|---|---|
-| Taksonomiya | `Category` | Navigatsiya daraxti | Люстры → Хрустальные |
-| Model | `Product` | Bitta sahifa, bitta tavsif | "Aurora qandili" |
-| SKU | `ProductVariant` | Sotiladigan, omborda yotadigan birlik | Aurora / oltin / Ø600 / 8 lampa |
+| Qatlam      | Entity           | Nima                                  | Misol                           |
+| ----------- | ---------------- | ------------------------------------- | ------------------------------- |
+| Taksonomiya | `Category`       | Navigatsiya daraxti                   | Люстры → Хрустальные            |
+| Model       | `Product`        | Bitta sahifa, bitta tavsif            | "Aurora qandili"                |
+| SKU         | `ProductVariant` | Sotiladigan, omborda yotadigan birlik | Aurora / oltin / Ø600 / 8 lampa |
 
 ### 1.1 `Category` — daraxt
 
 11 ta ildiz kategoriya CANON §4 dan (Figma footer'i) — **o'zgarmaydi**. Ostida
 2-3 daraja ichki bo'linish (~50-80 node).
 
-| Kriteriya | Adjacency list | Nested set | Materialized path |
-|---|---|---|---|
-| Subtree | Rekursiv CTE | `BETWEEN` — tez | `LIKE 'x.%'` — tez |
-| Breadcrumb | Rekursiv CTE | 1 so'rov | **Yozuvdan parse — 0 so'rov** |
-| Node qo'shish | O(1) | **O(n)** | O(1) |
-| Murakkablik | Past | **Yuqori** | O'rta |
+| Kriteriya     | Adjacency list | Nested set      | Materialized path             |
+| ------------- | -------------- | --------------- | ----------------------------- |
+| Subtree       | Rekursiv CTE   | `BETWEEN` — tez | `LIKE 'x.%'` — tez            |
+| Breadcrumb    | Rekursiv CTE   | 1 so'rov        | **Yozuvdan parse — 0 so'rov** |
+| Node qo'shish | O(1)           | **O(n)**        | O(1)                          |
+| Murakkablik   | Past           | **Yuqori**      | O'rta                         |
 
 **Qaror: materialized path + `parent_id`.** O'qish yozishdan ~1000× ko'p:
 daraxt kuniga bir-ikki marta o'zgaradi, har sahifada o'qiladi. Breadcrumb
@@ -89,13 +89,13 @@ shtrix-kodi, qoldig'i, narxi (oltin xromdan qimmat), og'irligi.
 - Faqat `ProductVariant`: 24 sahifa, 24 takrorlangan tavsif, sharhlar
   bo'linadi, SEO kannibalizatsiyasi.
 
-| | `Product` | `ProductVariant` |
-|---|---|---|
-| URL | `/lyustry/aurora` | Yo'q (`?variant=`) |
-| Tavsif, sharh | Bu yerda | Yo'q |
-| **Umumiy** atributlar (`socket_type`, `ip_rating`, `cri`) | Bu yerda | Meros |
-| **Farqlovchi** (`color`, `dimensions`, `bulb_count`) | Yo'q | Bu yerda |
-| Narx / qoldiq / shtrix-kod | Yo'q | Bor |
+|                                                           | `Product`         | `ProductVariant`   |
+| --------------------------------------------------------- | ----------------- | ------------------ |
+| URL                                                       | `/lyustry/aurora` | Yo'q (`?variant=`) |
+| Tavsif, sharh                                             | Bu yerda          | Yo'q               |
+| **Umumiy** atributlar (`socket_type`, `ip_rating`, `cri`) | Bu yerda          | Meros              |
+| **Farqlovchi** (`color`, `dimensions`, `bulb_count`)      | Yo'q              | Bu yerda           |
+| Narx / qoldiq / shtrix-kod                                | Yo'q              | Bor                |
 
 **Meros qoidasi:** atribut `Product` da, **agar barcha variantlarda bir xil
 bo'lsa**; aks holda variantga tushadi. Bu mexanik — `variantAxes` ga kiritilgan
@@ -127,7 +127,7 @@ flowchart TD
 **Uch qoida:**
 
 1. **Faqat mavjud kombinatsiya DB da.** Dekart ko'paytmasi — admin UI dagi
-   *taklif*, DB dagi *haqiqat* emas. Ta'minotchi Ø800 ni faqat oltin/xromda
+   _taklif_, DB dagi _haqiqat_ emas. Ta'minotchi Ø800 ni faqat oltin/xromda
    ishlab chiqarsa — qora Ø800 umuman yaratilmaydi. Bu "yo'q mahsulotni sotib
    olish" holatini ildizidan yo'q qiladi.
 2. **O'qlar `Product.variantAxes` (JSONB) da** — matritsaning sxemasi.
@@ -142,18 +142,16 @@ flowchart TD
 
 /** Product.variantAxes JSONB ichidagi struktura */
 export interface VariantAxis {
-  readonly attributeCode: string;          // "color", "bulb_count"
-  readonly valueIds: readonly string[];    // AttributeValue.id; tartib = UI tartibi
+  readonly attributeCode: string; // "color", "bulb_count"
+  readonly valueIds: readonly string[]; // AttributeValue.id; tartib = UI tartibi
 }
 
 export interface AxisCombination {
-  readonly values: Readonly<Record<string, string>>;  // attributeCode -> valueId
+  readonly values: Readonly<Record<string, string>>; // attributeCode -> valueId
 }
 
 /** O'qlardan dekart ko'paytmasi. Faqat REJA — DB ga yozmaydi. */
-export function buildCombinations(
-  axes: readonly VariantAxis[],
-): readonly AxisCombination[] {
+export function buildCombinations(axes: readonly VariantAxis[]): readonly AxisCombination[] {
   if (axes.length === 0) return [];
   return axes.reduce<readonly AxisCombination[]>(
     (acc, axis) =>
@@ -200,12 +198,12 @@ SELECT p.id FROM products p
 
 **Gibrid — ikkiga bo'lamiz:**
 
-| Nima | Qayerda | Nega |
-|---|---|---|
-| Atribut **ta'rifi** (kod, tip, birlik, filtr usuli) | `Attribute` — relyatsion | ~20 yozuv, admin UI shundan generatsiya |
-| Ruxsat etilgan **qiymatlar** | `AttributeValue` — relyatsion | Tarjima, tartib, `skuToken`, FK yaxlitligi |
-| **Haqiqiy qiymatlar** | `Product.attributes` / `ProductVariant.attributes` — **JSONB** | Bitta qatorda, JOIN yo'q, GIN index |
-| **Audit** (kim/qachon o'zgartirdi) | `ProductAttribute` | Kim `ip_rating` ni o'zgartirganini bilish kerak |
+| Nima                                                | Qayerda                                                        | Nega                                            |
+| --------------------------------------------------- | -------------------------------------------------------------- | ----------------------------------------------- |
+| Atribut **ta'rifi** (kod, tip, birlik, filtr usuli) | `Attribute` — relyatsion                                       | ~20 yozuv, admin UI shundan generatsiya         |
+| Ruxsat etilgan **qiymatlar**                        | `AttributeValue` — relyatsion                                  | Tarjima, tartib, `skuToken`, FK yaxlitligi      |
+| **Haqiqiy qiymatlar**                               | `Product.attributes` / `ProductVariant.attributes` — **JSONB** | Bitta qatorda, JOIN yo'q, GIN index             |
+| **Audit** (kim/qachon o'zgartirdi)                  | `ProductAttribute`                                             | Kim `ip_rating` ni o'zgartirganini bilish kerak |
 
 `ProductAttribute` **saqlanadi** (CANON §8 entity), lekin uning roli — **yozuv
 jurnali**, o'qish yo'lidagi jadval emas. JSONB — undan hosil qilingan
@@ -247,22 +245,22 @@ B-tree**. Bu bo'linish §2 dagi "filtr usuli" ustunidan kelib chiqadi.
 
 **Ikkalasiga ham**, `variantId` nullable orqali:
 
-| `variantId` | Ma'no | Misol |
-|---|---|---|
-| `NULL` | Umumiy — barcha variantlarga | O'lchov chizmasi, sertifikat, interyer |
-| To'ldirilgan | Faqat shu variant | Oltin Aurora'ning studiya surati |
+| `variantId`  | Ma'no                        | Misol                                  |
+| ------------ | ---------------------------- | -------------------------------------- |
+| `NULL`       | Umumiy — barcha variantlarga | O'lchov chizmasi, sertifikat, interyer |
+| To'ldirilgan | Faqat shu variant            | Oltin Aurora'ning studiya surati       |
 
 Qandilning "oltin" va "qora" varianti butunlay boshqacha ko'rinadi — rang
 tanlanganda galereya **almashishi shart**. Lekin o'lchov chizmasi bir xil —
 uni 4 marta yuklash ahmoqlik. Galereya = variant rasmlari + umumiylar,
 `position` bo'yicha.
 
-| Tip | Format | Izoh |
-|---|---|---|
-| `IMAGE` | AVIF + WebP + JPEG | BullMQ job (CANON §6) 5 o'lchamda variant hosil qiladi |
-| `SPIN_360` | 24-36 kadr JPEG | `spinSetId` bilan guruhlangan |
-| `VIDEO` | MP4 + poster | **Yoritgich uchun muhim** — statik rasm 3000K/4000K farqini ko'rsatmaydi |
-| `DOCUMENT` | PDF | Sertifikat, yo'riqnoma, datasheet |
+| Tip        | Format             | Izoh                                                                     |
+| ---------- | ------------------ | ------------------------------------------------------------------------ |
+| `IMAGE`    | AVIF + WebP + JPEG | BullMQ job (CANON §6) 5 o'lchamda variant hosil qiladi                   |
+| `SPIN_360` | 24-36 kadr JPEG    | `spinSetId` bilan guruhlangan                                            |
+| `VIDEO`    | MP4 + poster       | **Yoritgich uchun muhim** — statik rasm 3000K/4000K farqini ko'rsatmaydi |
+| `DOCUMENT` | PDF                | Sertifikat, yo'riqnoma, datasheet                                        |
 
 > **Domen qoidasi:** mahsulot rasmi kamera oq balansiga bog'liq — 2700K surati
 > 4000K bilan bir xil chiqishi mumkin. Shuning uchun `color_temperature`
@@ -274,25 +272,25 @@ uni 4 marta yuklash ahmoqlik. Galereya = variant rasmlari + umumiylar,
 
 ### 2.1 Reestr
 
-| # | `code` | `dataType` | Birlik | Qiymatlar | Validatsiya | `filterKind` | UI |
-|---|---|---|---|---|---|---|---|
-| 1 | `luminous_flux` | `INT` | lm | 50 … 20000 | `> 0`, `≤ 50000` | `RANGE` | Slider |
-| 2 | `color_temperature` | `INT` | K | 2700/3000/4000/5000/6500 | Enum a'zosi | `MULTI` | Checkbox + swatch |
-| 3 | `cri` | `INT` | Ra | 70, 80, 90, 95 | `1 … 100` | `RANGE` (min) | "Ra 80+" radio |
-| 4 | `ip_rating` | `ENUM` | — | IP20/44/54/65/67 | `^IP[0-6][0-8]$` | `HIERARCHICAL` | Radio "kamida" |
-| 5 | `socket_type` | `ENUM` | — | E27, E14, GU10, G9, GU5.3, G4, integrated | Enum a'zosi | `MULTI` | Checkbox |
-| 6 | `power` | `DECIMAL(6,2)` | W | 0.5 … 500 | `> 0` | `RANGE` | Slider |
-| 7 | `voltage` | `ENUM` | V | 220, 12, 24 | Enum a'zosi | `MULTI` | Checkbox + ⚠️ |
-| 8 | `dimmable` | `BOOL` | — | ha/yo'q | — | `EXACT` | Toggle |
-| 9 | `beam_angle` | `INT` | ° | 10 … 120 | `1 … 360` | `RANGE` | Slider (spot) |
-| 10 | `bulbs_included` | `BOOL` | — | ha/yo'q | — | `EXACT` | Toggle |
-| 11 | `light_source` | `ENUM` | — | LED, halogen, incandescent, fluorescent | Enum a'zosi | `MULTI` | Checkbox |
-| 12 | `mount_type` | `ENUM` | — | shift, devor, tortma, o'rnatiladigan | Enum a'zosi | `MULTI` | Checkbox |
-| 13 | `material` | `ENUM` | — | shisha, kristall, metall, yog'och, plastik, mato | Enum a'zosi | `MULTI` | Checkbox |
-| 14 | `color` | `ENUM` | — | xrom, oltin, qora, nikel, oq, bronza | Enum a'zosi | `MULTI` | Swatch |
-| 15 | `dimensions` | `TEXT` | mm | `{w,h,d,diameter}` | Har biri `> 0` | `RANGE` | Slider ×2 |
-| 16 | `weight` | `INT` | g | `> 0` | `> 0` | `NONE` | Yashirin (yetkazish uchun) |
-| 17 | `bulb_count` | `INT` | dona | 1 … 24 | `≥ 1` | `RANGE` | Slider |
+| #   | `code`              | `dataType`     | Birlik | Qiymatlar                                        | Validatsiya      | `filterKind`   | UI                         |
+| --- | ------------------- | -------------- | ------ | ------------------------------------------------ | ---------------- | -------------- | -------------------------- |
+| 1   | `luminous_flux`     | `INT`          | lm     | 50 … 20000                                       | `> 0`, `≤ 50000` | `RANGE`        | Slider                     |
+| 2   | `color_temperature` | `INT`          | K      | 2700/3000/4000/5000/6500                         | Enum a'zosi      | `MULTI`        | Checkbox + swatch          |
+| 3   | `cri`               | `INT`          | Ra     | 70, 80, 90, 95                                   | `1 … 100`        | `RANGE` (min)  | "Ra 80+" radio             |
+| 4   | `ip_rating`         | `ENUM`         | —      | IP20/44/54/65/67                                 | `^IP[0-6][0-8]$` | `HIERARCHICAL` | Radio "kamida"             |
+| 5   | `socket_type`       | `ENUM`         | —      | E27, E14, GU10, G9, GU5.3, G4, integrated        | Enum a'zosi      | `MULTI`        | Checkbox                   |
+| 6   | `power`             | `DECIMAL(6,2)` | W      | 0.5 … 500                                        | `> 0`            | `RANGE`        | Slider                     |
+| 7   | `voltage`           | `ENUM`         | V      | 220, 12, 24                                      | Enum a'zosi      | `MULTI`        | Checkbox + ⚠️              |
+| 8   | `dimmable`          | `BOOL`         | —      | ha/yo'q                                          | —                | `EXACT`        | Toggle                     |
+| 9   | `beam_angle`        | `INT`          | °      | 10 … 120                                         | `1 … 360`        | `RANGE`        | Slider (spot)              |
+| 10  | `bulbs_included`    | `BOOL`         | —      | ha/yo'q                                          | —                | `EXACT`        | Toggle                     |
+| 11  | `light_source`      | `ENUM`         | —      | LED, halogen, incandescent, fluorescent          | Enum a'zosi      | `MULTI`        | Checkbox                   |
+| 12  | `mount_type`        | `ENUM`         | —      | shift, devor, tortma, o'rnatiladigan             | Enum a'zosi      | `MULTI`        | Checkbox                   |
+| 13  | `material`          | `ENUM`         | —      | shisha, kristall, metall, yog'och, plastik, mato | Enum a'zosi      | `MULTI`        | Checkbox                   |
+| 14  | `color`             | `ENUM`         | —      | xrom, oltin, qora, nikel, oq, bronza             | Enum a'zosi      | `MULTI`        | Swatch                     |
+| 15  | `dimensions`        | `TEXT`         | mm     | `{w,h,d,diameter}`                               | Har biri `> 0`   | `RANGE`        | Slider ×2                  |
+| 16  | `weight`            | `INT`          | g      | `> 0`                                            | `> 0`            | `NONE`         | Yashirin (yetkazish uchun) |
+| 17  | `bulb_count`        | `INT`          | dona   | 1 … 24                                           | `≥ 1`            | `RANGE`        | Slider                     |
 
 > `bulb_count` CANON §4 jadvalida alohida qator emas, lekin §4.1 dagi matritsa
 > misolida ("2 lampa soni") o'q sifatida ishlatilgan — demak `Attribute`
@@ -337,16 +335,22 @@ Sof raqamli taqqoslash bu yerda **noto'g'ri javob beradi**.
  * amaliyotidan, standart iqtibosi emas (§13 #4).
  */
 const WATER_IMPLIES: Readonly<Record<number, readonly number[]>> = {
-  0: [0],                      4: [4, 3, 2, 1, 0],
-  1: [1, 0],                   5: [5, 4, 3, 2, 1, 0],
-  2: [2, 1, 0],                6: [6, 5, 4, 3, 2, 1, 0],
+  0: [0],
+  4: [4, 3, 2, 1, 0],
+  1: [1, 0],
+  5: [5, 4, 3, 2, 1, 0],
+  2: [2, 1, 0],
+  6: [6, 5, 4, 3, 2, 1, 0],
   3: [3, 2, 1, 0],
   // 7/8 — botirish sinovi. Ular 5/6 (oqim sinovi) ni QAMRAMAYDI.
   7: [7, 4, 3, 2, 1, 0],
   8: [8, 7, 4, 3, 2, 1, 0],
 };
 
-export interface IpRating { readonly solid: number; readonly water: number }
+export interface IpRating {
+  readonly solid: number;
+  readonly water: number;
+}
 
 export function parseIp(code: string): IpRating {
   const m = /^IP([0-6])([0-8])$/.exec(code);
@@ -371,7 +375,7 @@ massiv sifatida yoziladi.
 {
   "ip_rating": "IP65",
   // Hosila: IP65 qanoatlantiradigan BARCHA talablar. Filtr shu maydon bo'yicha.
-  "ip_satisfies": ["IP20", "IP21", "IP22", "IP23", "IP24", "IP44", "IP54", "IP65"]
+  "ip_satisfies": ["IP20", "IP21", "IP22", "IP23", "IP24", "IP44", "IP54", "IP65"],
 }
 ```
 
@@ -431,26 +435,26 @@ qilingan SQL. Yozish mumkin. **Saqlash — og'riq.**
 
 ### 3.2 PostgreSQL vs Meilisearch
 
-| Kriteriya | PostgreSQL (GIN + JSONB + pg_trgm) | Meilisearch |
-|---|---|---|
-| **Facet count** | Qo'lda: dinamik `FILTER` SQL har atribut uchun | `facets: [...]` — **tayyor** |
-| **Facet stats** (slider min/max) | `min()`/`max()` + yana so'rov | `facetStats` — tayyor |
-| **Typo tolerance** | `pg_trgm` — sozlanadi, qo'pol | **Nativ**, so'z uzunligiga moslashadi |
-| **Prefix (as-you-type)** | `LIKE 'abc%'` / trgm — sekin | Nativ, dizayndan |
-| **Sinonim** | `tsquery` + dict fayl (deploy kerak) | API orqali, runtime'da |
-| **Ranking** | `ts_rank` — biznes signali qo'shish qiyin | Sozlanadigan qoida ro'yxati |
-| **Diapazon** | ✅ B-tree + generated column | ✅ nativ |
-| **Ierarxik (IP)** | Materializatsiya kerak | Materializatsiya kerak (**bir xil**) |
-| **Tranzaksiya** | ✅ ACID | ❌ Eventual |
-| **Haqiqat manbai** | ✅ | ❌ Hech qachon |
-| **Infra** | Allaqachon bor | **+1 servis**, RAM, monitoring, backup |
-| **Sinxronizatsiya** | Kerak emas | **Kerak — asosiy narx** |
-| **Ko'p tillilik** | `tsvector` tilga bog'liq; **o'zbek uchun tayyor konfiguratsiya yo'q** | Til-agnostik tokenizatsiya |
+| Kriteriya                        | PostgreSQL (GIN + JSONB + pg_trgm)                                    | Meilisearch                            |
+| -------------------------------- | --------------------------------------------------------------------- | -------------------------------------- |
+| **Facet count**                  | Qo'lda: dinamik `FILTER` SQL har atribut uchun                        | `facets: [...]` — **tayyor**           |
+| **Facet stats** (slider min/max) | `min()`/`max()` + yana so'rov                                         | `facetStats` — tayyor                  |
+| **Typo tolerance**               | `pg_trgm` — sozlanadi, qo'pol                                         | **Nativ**, so'z uzunligiga moslashadi  |
+| **Prefix (as-you-type)**         | `LIKE 'abc%'` / trgm — sekin                                          | Nativ, dizayndan                       |
+| **Sinonim**                      | `tsquery` + dict fayl (deploy kerak)                                  | API orqali, runtime'da                 |
+| **Ranking**                      | `ts_rank` — biznes signali qo'shish qiyin                             | Sozlanadigan qoida ro'yxati            |
+| **Diapazon**                     | ✅ B-tree + generated column                                          | ✅ nativ                               |
+| **Ierarxik (IP)**                | Materializatsiya kerak                                                | Materializatsiya kerak (**bir xil**)   |
+| **Tranzaksiya**                  | ✅ ACID                                                               | ❌ Eventual                            |
+| **Haqiqat manbai**               | ✅                                                                    | ❌ Hech qachon                         |
+| **Infra**                        | Allaqachon bor                                                        | **+1 servis**, RAM, monitoring, backup |
+| **Sinxronizatsiya**              | Kerak emas                                                            | **Kerak — asosiy narx**                |
+| **Ko'p tillilik**                | `tsvector` tilga bog'liq; **o'zbek uchun tayyor konfiguratsiya yo'q** | Til-agnostik tokenizatsiya             |
 
 **Qaror: Meilisearch (CANON §6).**
 
 1. **Facet count tayyor.** §3.1 dagi butun muammo — bitta parametr. Bu bizga
-   *yozilmagan kod* beradi, va yozilmagan kodda bug yo'q.
+   _yozilmagan kod_ beradi, va yozilmagan kodda bug yo'q.
 2. **O'zbek tili.** PG FTS til konfiguratsiyasiga tayanadi
    (`to_tsvector('russian', ...)`); o'zbek uchun **standart konfiguratsiya yo'q**
    — stemmer, stop-word yo'q, `simple` ga tushamiz. Meilisearch til
@@ -521,15 +525,15 @@ ishlasa, eski holat yangisining ustiga yozilishi mumkin. Yechim: BullMQ
 parallel. (Muqobil — dokumentda `version` tekshiruvi; **birinchisi tanlanadi**,
 oddiyroq.)
 
-| Xavf | Sabab | Ushlash | Tuzatish |
-|---|---|---|---|
-| Index eski | Worker o'chgan, navbat to'lgan | Outbox lag metrikasi + alert | Worker tiklanadi, outbox o'zi tugatadi |
-| O'chirilgan mahsulot index'da | `deleted` event yo'qolgan | Tunlik `search:drift-check` — ID to'plamlarini solishtiradi | Farqni tuzatadi + `WARN` |
-| Narx noto'g'ri | Race yoki bug | Xuddi shu job — namuna bo'yicha `updated_at` | Reindex |
-| Index butunlay yo'q | Volume yo'qolgan | Health check | `search:full-reindex` — **CI da test qilinadi** |
+| Xavf                          | Sabab                          | Ushlash                                                     | Tuzatish                                        |
+| ----------------------------- | ------------------------------ | ----------------------------------------------------------- | ----------------------------------------------- |
+| Index eski                    | Worker o'chgan, navbat to'lgan | Outbox lag metrikasi + alert                                | Worker tiklanadi, outbox o'zi tugatadi          |
+| O'chirilgan mahsulot index'da | `deleted` event yo'qolgan      | Tunlik `search:drift-check` — ID to'plamlarini solishtiradi | Farqni tuzatadi + `WARN`                        |
+| Narx noto'g'ri                | Race yoki bug                  | Xuddi shu job — namuna bo'yicha `updated_at`                | Reindex                                         |
+| Index butunlay yo'q           | Volume yo'qolgan               | Health check                                                | `search:full-reindex` — **CI da test qilinadi** |
 
 > Drift detektori — **paranoyya emas, zarurat.** Eventual consistency'ning
-> ta'rifi bo'yicha nomuvofiqlik *bo'ladi*. Savol — uni biz topamizmi yoki mijoz.
+> ta'rifi bo'yicha nomuvofiqlik _bo'ladi_. Savol — uni biz topamizmi yoki mijoz.
 
 ### 3.4 Fallback
 
@@ -556,13 +560,13 @@ Filtr URL'da bo'lishi shart: ulashish, "orqaga" tugmasi, sahifa yangilash, SEO.
 /lyustry?ct=3000,4000&socket=e27&flux=2000-4000&ip=ip44&dim=1&sort=popular&page=2
 ```
 
-| Param | Format | Izoh |
-|---|---|---|
-| `ct`, `socket` | Vergul bilan | `MULTI` → OR |
-| `flux` | `min-max` | `RANGE` |
-| `ip` | Bitta qiymat | `HIERARCHICAL` → "kamida" |
-| `dim` | `1`/`0` | `BOOL` |
-| `sort` | Enum | `relevance` \| `price_asc` \| `price_desc` \| `popular` \| `new` |
+| Param          | Format       | Izoh                                                             |
+| -------------- | ------------ | ---------------------------------------------------------------- |
+| `ct`, `socket` | Vergul bilan | `MULTI` → OR                                                     |
+| `flux`         | `min-max`    | `RANGE`                                                          |
+| `ip`           | Bitta qiymat | `HIERARCHICAL` → "kamida"                                        |
+| `dim`          | `1`/`0`      | `BOOL`                                                           |
+| `sort`         | Enum         | `relevance` \| `price_asc` \| `price_desc` \| `popular` \| `new` |
 
 **Qoidalar:** qisqa kalitlar (`ct`, `flux`), atribut `code` emas — xarita
 `Attribute.urlKey` da; qiymatlar **tartiblangan** (`?ct=4000,3000` va
@@ -577,15 +581,20 @@ import { z } from 'zod';
 export const searchUrlStateSchema = z.object({
   categorySlug: z.string().min(1).optional(),
   q: z.string().trim().min(1).max(120).optional(),
-  filters: z.record(z.string(), z.union([
-    z.array(z.string()),                            // MULTI
-    z.object({ min: z.number(), max: z.number() }), // RANGE
-    z.boolean(),                                    // EXACT
-    z.string(),                                     // HIERARCHICAL
-  ])).default({}),
+  filters: z
+    .record(
+      z.string(),
+      z.union([
+        z.array(z.string()), // MULTI
+        z.object({ min: z.number(), max: z.number() }), // RANGE
+        z.boolean(), // EXACT
+        z.string(), // HIERARCHICAL
+      ]),
+    )
+    .default({}),
   sort: z.enum(['relevance', 'price_asc', 'price_desc', 'popular', 'new']).default('relevance'),
   page: z.number().int().min(1).default(1),
-  perPage: z.number().int().min(12).max(96).default(24),
+  perPage: z.number().int().min(12).max(96).default(24), // §9 byudjeti
 });
 
 export type SearchUrlState = z.infer<typeof searchUrlStateSchema>;
@@ -610,9 +619,25 @@ export const typoTolerance = {
   minWordSizeForTypos: { oneTypo: 4, twoTypos: 8 },
   // Bu so'zlarda typo YO'Q — ular texnik kodlar.
   disableOnWords: [
-    'e27', 'e14', 'gu10', 'g9', 'gu5.3', 'g4',
-    'ip20', 'ip44', 'ip54', 'ip65', 'ip67',
-    '2700k', '3000k', '4000k', '5000k', '6500k', '12v', '24v', '220v',
+    'e27',
+    'e14',
+    'gu10',
+    'g9',
+    'gu5.3',
+    'g4',
+    'ip20',
+    'ip44',
+    'ip54',
+    'ip65',
+    'ip67',
+    '2700k',
+    '3000k',
+    '4000k',
+    '5000k',
+    '6500k',
+    '12v',
+    '24v',
+    '220v',
   ],
   disableOnAttributes: ['sku', 'barcode', 'socket_type', 'ip_rating'],
 } as const;
@@ -649,70 +674,75 @@ flowchart LR
     N --> D
 ```
 
-| Yondashuv | Muammo |
-|---|---|
+| Yondashuv                                                              | Muammo                                                                  |
+| ---------------------------------------------------------------------- | ----------------------------------------------------------------------- |
 | **So'rovni kengaytirish** — so'rovni barcha variantlarga aylantirib OR | So'rov paytida narx; typo tolerance kengaytmalar ustida noaniq ishlaydi |
-| **Dokumentni kengaytirish** ✅ | Index ~2-3× katta. **Lekin so'rov paytida narx yo'q.** |
+| **Dokumentni kengaytirish** ✅                                         | Index ~2-3× katta. **Lekin so'rov paytida narx yo'q.**                  |
 
 **Dokumentni kengaytirish tanlanadi:** indexlash offline (BullMQ), qidiruv
 online. Narxni offline tomonga surish — har doim to'g'ri almashuv.
 
+Xaritalar (`translit.data.ts`): `UZ_LAT_TO_CYR` va `RU_CYR_TO_LAT` — juftliklar
+ro'yxati, `applyMap` ketma-ket almashtiradi. **TARTIB MUHIM: ko'p belgili
+grafemalar BIRINCHI** (`o'`→`ў`, `g'`→`ғ`, `sh`→`ш`, `ch`→`ч`, `ng`→`нг`), aks
+holda `sh` → `сҳ` bo'lib ketadi. ⚠️ Jadvallar to'liq emas va tekshirilishi
+kerak (§13 #3).
+
 ```typescript
 // apps/api/src/search/normalization/translit.ts
-
-/**
- * TARTIB MUHIM: ko'p belgili grafemalar BIRINCHI, aks holda "sh" -> "сҳ".
- * ⚠️ Jadval TO'LIQ EMAS va TEKSHIRILISHI KERAK (§13 #3) — o'zbek lotinidagi
- * ba'zi grafemalar kontekstga bog'liq. To'liq xarita: `translit.data.ts`.
- */
-const UZ_LAT_TO_CYR: readonly (readonly [string, string])[] = [
-  ["o'", 'ў'], ["g'", 'ғ'], ['sh', 'ш'], ['ch', 'ч'], ['ng', 'нг'],
-  ['ya', 'я'], ['yo', 'ё'], ['yu', 'ю'], ['ts', 'ц'],
-  ['q', 'қ'], ['h', 'ҳ'], ['x', 'х'], ['j', 'ж'], /* … bir belgililar */
-];
-
-const RU_CYR_TO_LAT: readonly (readonly [string, string])[] = [
-  ['щ', 'sch'], ['ш', 'sh'], ['ч', 'ch'], ['ж', 'zh'], ['ц', 'ts'],
-  ['ю', 'yu'], ['я', 'ya'], ['ё', 'yo'], ['ъ', ''], ['ь', ''], /* … */
-];
-
-const applyMap = (s: string, map: readonly (readonly [string, string])[]): string =>
-  map.reduce((out, [from, to]) => out.split(from).join(to), s.toLowerCase());
 
 export const uzLatinToCyrillic = (s: string) => applyMap(s, UZ_LAT_TO_CYR);
 export const ruCyrillicToLatin = (s: string) => applyMap(s, RU_CYR_TO_LAT);
 
 /** "қандил" -> "кандил": o'zbek kirill belgilarini "oddiy" ruscha shaklga */
 export const foldUzbekCyrillic = (s: string): string =>
-  s.toLowerCase().split('қ').join('к').split('ғ').join('г')
-   .split('ҳ').join('х').split('ў').join('у');
+  s
+    .toLowerCase()
+    .split('қ')
+    .join('к')
+    .split('ғ')
+    .join('г')
+    .split('ҳ')
+    .join('х')
+    .split('ў')
+    .join('у');
 
 /** Indexlash paytida chaqiriladi, so'rov paytida EMAS. */
 export function expandWritingVariants(text: string): readonly string[] {
   const base = text.trim().toLowerCase();
   if (base.length === 0) return [];
-  return [...new Set([
-    base,
-    uzLatinToCyrillic(base),
-    ruCyrillicToLatin(base),
-    foldUzbekCyrillic(base),
-    foldUzbekCyrillic(uzLatinToCyrillic(base)),
-    base.split("'").join('').split('ʻ').join(''),  // mijoz apostrof yozmaydi
-  ])].filter((v) => v.length > 0);
+  return [
+    ...new Set([
+      base,
+      uzLatinToCyrillic(base),
+      ruCyrillicToLatin(base),
+      foldUzbekCyrillic(base),
+      foldUzbekCyrillic(uzLatinToCyrillic(base)),
+      base.split("'").join('').split('ʻ').join(''), // mijoz apostrof yozmaydi
+    ]),
+  ].filter((v) => v.length > 0);
 }
 
 /** So'rov tomonida — faqat minimal normalizatsiya (apostrof variantlari). */
 export const normalizeQuery = (q: string): string =>
-  q.trim().toLowerCase().replace(/[‘’ʻʼ`]/g, "'").replace(/\s+/g, ' ');
+  q
+    .trim()
+    .toLowerCase()
+    .replace(/[‘’ʻʼ`]/g, "'")
+    .replace(/\s+/g, ' ');
 ```
 
 ```typescript
 // Tartib vaznni belgilaydi: birinchisidagi moslik yuqoriroq baholanadi.
 export const searchableAttributes = [
-  'name_uz', 'name_ru', 'sku', 'brand',
-  'category_name_uz', 'category_name_ru',
-  'searchable_tokens',   // ataylab past: to'g'ridan-to'g'ri moslik
-  'description_uz',      // transliteratsiya orqali mosligdan yuqori turishi kerak
+  'name_uz',
+  'name_ru',
+  'sku',
+  'brand',
+  'category_name_uz',
+  'category_name_ru',
+  'searchable_tokens', // ataylab past: to'g'ridan-to'g'ri moslik
+  'description_uz', // transliteratsiya orqali mosligdan yuqori turishi kerak
   'description_ru',
 ] as const;
 ```
@@ -726,16 +756,16 @@ CANON §4 kategoriyalari ruscha, mijoz o'zbekcha yozadi — sinonimlar ko'prik q
 ```typescript
 /** Meilisearch sinonimlari IKKI TOMONLAMA EMAS — ikkalasini ham yozish shart. */
 export const productSynonyms: Readonly<Record<string, readonly string[]>> = {
-  'qandil':     ['люстра', 'lyustra', 'қандил', 'chandelier'],
-  'люстра':     ['qandil', 'lyustra', 'қандил'],
-  'chiroq':     ['светильник', 'svetilnik', 'чироқ', 'лампа'],
-  'светильник': ['chiroq', 'svetilnik', 'лампа', 'чироқ'],
-  'bra':        ['бра', "devor chirog'i", 'настенный светильник'],
-  'spot':       ['спот', 'точечный светильник'],
-  'trek':       ['трек', 'трековый', 'track'],
-  'lenta':      ['лента', 'led lenta', 'светодиодная лента'],
-  'torsher':    ['торшер', 'floor lamp', 'poldagi chiroq'],
-  'sokol':      ['цоколь', 'патрон', 'socket'],
+  qandil: ['люстра', 'lyustra', 'қандил', 'chandelier'],
+  люстра: ['qandil', 'lyustra', 'қандил'],
+  chiroq: ['светильник', 'svetilnik', 'чироқ', 'лампа'],
+  светильник: ['chiroq', 'svetilnik', 'лампа', 'чироқ'],
+  bra: ['бра', "devor chirog'i", 'настенный светильник'],
+  spot: ['спот', 'точечный светильник'],
+  trek: ['трек', 'трековый', 'track'],
+  lenta: ['лента', 'led lenta', 'светодиодная лента'],
+  torsher: ['торшер', 'floor lamp', 'poldagi chiroq'],
+  sokol: ['цоколь', 'патрон', 'socket'],
   /* … to'liq ro'yxat admin panelida boshqariladi */
 };
 ```
@@ -751,20 +781,22 @@ export const productSynonyms: Readonly<Record<string, readonly string[]>> = {
 ```typescript
 // Tartib MUHIM — yuqoridan pastga qo'llaniladi
 export const rankingRules = [
-  'words', 'typo', 'proximity',
-  'attribute',        // searchableAttributes tartibi (name_uz > tokens)
-  'sort',             // foydalanuvchi tanlovi
+  'words',
+  'typo',
+  'proximity',
+  'attribute', // searchableAttributes tartibi (name_uz > tokens)
+  'sort', // foydalanuvchi tanlovi
   'exactness',
-  'in_stock:desc',    // mavjud mahsulot yuqorida
-  'popularity:desc',  // oxirgi ajratuvchi
+  'in_stock:desc', // mavjud mahsulot yuqorida
+  'popularity:desc', // oxirgi ajratuvchi
 ] as const;
 ```
 
-| # | Signal | Nega bu tartibda |
-|---|---|---|
-| 1 | **Moslik** | "GU10" qidirilsa, mashhur E27 qandil chiqmasligi kerak |
-| 2 | **Mavjudlik** | Sotib bo'lmaydigan mahsulot yuqorida — mijozni aldash |
-| 3 | **Mashhurlik** | Teng mosliklar orasida ajratuvchi |
+| #   | Signal         | Nega bu tartibda                                       |
+| --- | -------------- | ------------------------------------------------------ |
+| 1   | **Moslik**     | "GU10" qidirilsa, mashhur E27 qandil chiqmasligi kerak |
+| 2   | **Mavjudlik**  | Sotib bo'lmaydigan mahsulot yuqorida — mijozni aldash  |
+| 3   | **Mashhurlik** | Teng mosliklar orasida ajratuvchi                      |
 
 **`in_stock` nega `rankingRules` da, `filter` da emas:** tugagan mahsulotni
 butunlay yashirish noto'g'ri — mijoz aynan shuni qidirayotgan bo'lishi mumkin,
@@ -816,6 +848,7 @@ lyumen → mos mahsulotlar**.
 > do'konning javobgarligi.
 >
 > **Tekshirilishi kerak:**
+>
 > - **O'zbekiston qurilish normalari (QMQ / ShNQ)** — turar-joy va jamoat
 >   binolarini yoritish. **Aniq raqami va tahriri noma'lum → §13 #1.**
 > - **EN 12464-1** — "Lighting of work places" (xalqaro/EU), ish joylari uchun lyuks.
@@ -834,12 +867,12 @@ Lekin bu ideal holat; real hisobda ikki koeffitsiyent:
 Φ_kerak = (E_norma × A) / (U × MF)
 ```
 
-| Belgi | Nima | Nimaga bog'liq |
-|---|---|---|
-| `E_norma` | Talab qilinadigan yoritilganlik (lk) | **Xona turi** — normadan |
-| `A` | Maydon (m²) | Foydalanuvchi kiritadi |
-| `U` | Foydalanish koeffitsiyenti | Shift balandligi, xona shakli, aks ettirish |
-| `MF` | Xizmat koeffitsiyenti | Changlanish, LED degradatsiyasi, tozalash davri |
+| Belgi     | Nima                                 | Nimaga bog'liq                                  |
+| --------- | ------------------------------------ | ----------------------------------------------- |
+| `E_norma` | Talab qilinadigan yoritilganlik (lk) | **Xona turi** — normadan                        |
+| `A`       | Maydon (m²)                          | Foydalanuvchi kiritadi                          |
+| `U`       | Foydalanish koeffitsiyenti           | Shift balandligi, xona shakli, aks ettirish     |
+| `MF`      | Xizmat koeffitsiyenti                | Changlanish, LED degradatsiyasi, tozalash davri |
 
 > ⚠️ **`U` va `MF` uchun ham aniq qiymatlar berilmaydi** (§13 #2). To'liq lumen
 > method shift balandligi va aks ettirish koeffitsiyentlarini talab qiladi — bu
@@ -880,18 +913,18 @@ enum RoomType {
 
 export interface CalculatorInput {
   readonly roomType: RoomType;
-  readonly areaM2: number;                  // 1 … 500
-  readonly ceilingHeightM?: number;         // kelajakda U ni aniqlashtirish uchun
-  readonly preferenceAdjustPct?: number;    // -20 … +20
+  readonly areaM2: number; // 1 … 500
+  readonly ceilingHeightM?: number; // kelajakda U ni aniqlashtirish uchun
+  readonly preferenceAdjustPct?: number; // -20 … +20
 }
 
 export interface CalculatorResult {
   readonly requiredLumen: number;
-  readonly lumenRange: { readonly min: number; readonly max: number };  // ±15%
-  readonly normSource: string;              // mijozga KO'RSATILADI (shaffoflik)
+  readonly lumenRange: { readonly min: number; readonly max: number }; // ±15%
+  readonly normSource: string; // mijozga KO'RSATILADI (shaffoflik)
   readonly illuminanceLux: number;
-  readonly breakdown: readonly string[];    // "qanday chiqdi" tugmasi ostida
-  readonly disclaimer: string;              // ⚠️ har doim
+  readonly breakdown: readonly string[]; // "qanday chiqdi" tugmasi ostida
+  readonly disclaimer: string; // ⚠️ har doim
 }
 
 export class NormsNotConfiguredError extends Error {
@@ -900,8 +933,6 @@ export class NormsNotConfiguredError extends Error {
 
 @Injectable()
 export class LightingCalculatorService {
-  constructor(private readonly norms: RoomNormRepository) {}
-
   async calculate(input: CalculatorInput): Promise<CalculatorResult> {
     const norm = await this.norms.findByRoomType(input.roomType);
 
@@ -910,22 +941,15 @@ export class LightingCalculatorService {
       throw new NormsNotConfiguredError(input.roomType);
     }
 
-    const ideal = norm.illuminanceLux * input.areaM2;   // Φ = E × A
+    const ideal = norm.illuminanceLux * input.areaM2; // Φ = E × A
     const u = norm.utilisationPct / 100;
     const mf = norm.maintenancePct / 100;
-    const base = ideal / (u * mf);                      // Φ / (U × MF)
+    const base = ideal / (u * mf); // Φ / (U × MF)
     const required = Math.round(base * (1 + (input.preferenceAdjustPct ?? 0) / 100));
 
-    return {
-      requiredLumen: required,
-      lumenRange: { min: Math.round(required * 0.85), max: Math.round(required * 1.15) },
-      normSource: norm.sourceRef,
-      illuminanceLux: norm.illuminanceLux,
-      breakdown: buildBreakdown(norm, input, ideal, u, mf, base),
-      disclaimer:
-        "Bu — taxminiy hisob. Aniq loyiha uchun yoritish mutaxassisiga murojaat " +
-        "qiling. Hisob xona shakli, devor rangi va mebel joylashuvini hisobga olmaydi.",
-    };
+    // normSource va disclaimer HAR DOIM qaytariladi (shaffoflik),
+    // breakdown — hisobning har qadami.
+    return buildResult(required, norm, input, { ideal, u, mf, base });
   }
 }
 ```
@@ -964,20 +988,20 @@ flowchart LR
 
 Mijoz "trek" olsa — kamida 4 xil mahsulot oladi. Mos kelmasa — ishlamaydi.
 
-| Nomuvofiqlik | Misol | Oqibat |
-|---|---|---|
-| Trek standarti | 1-fazali spot 3-fazali trekka | O'rnashmaydi / noto'g'ri faza |
-| Kuchlanish | 220V spot 48V trekka | **Ishlamaydi yoki yonadi** |
-| Konnektor tipi | X brend konnektori Y brend shinasiga | O'rnashmaydi |
-| Quvvat byudjeti | 100W blokka 10×12W spot | **Ortiqcha yuk — xavf** |
+| Nomuvofiqlik    | Misol                                | Oqibat                        |
+| --------------- | ------------------------------------ | ----------------------------- |
+| Trek standarti  | 1-fazali spot 3-fazali trekka        | O'rnashmaydi / noto'g'ri faza |
+| Kuchlanish      | 220V spot 48V trekka                 | **Ishlamaydi yoki yonadi**    |
+| Konnektor tipi  | X brend konnektori Y brend shinasiga | O'rnashmaydi                  |
+| Quvvat byudjeti | 100W blokka 10×12W spot              | **Ortiqcha yuk — xavf**       |
 
 ### 6.2 Model: atribut tengligi + istisno jadvali
 
-| Yondashuv | Muammo |
-|---|---|
+| Yondashuv                                                     | Muammo                                                                 |
+| ------------------------------------------------------------- | ---------------------------------------------------------------------- |
 | **Har juftlik uchun yozuv** — 200 spot × 30 trek = 6000 qator | Admin qo'lda to'ldirmaydi; yangi spot → 30 yozuv. **Saqlab bo'lmaydi** |
-| **Sof graf** (node=mahsulot, qirra=moslik) | Bir xil muammo, boshqa nom bilan |
-| **Atributga asoslangan qoida** ✅ | Yangi spot → 1 atribut, moslik avtomatik |
+| **Sof graf** (node=mahsulot, qirra=moslik)                    | Bir xil muammo, boshqa nom bilan                                       |
+| **Atributga asoslangan qoida** ✅                             | Yangi spot → 1 atribut, moslik avtomatik                               |
 
 **Asosiy g'oya:** moslik — grafning qirralari emas, **atributlarning mosligi**.
 Ikki komponent mos, agar `track_system` va `voltage` teng bo'lsa. Bu **6000
@@ -1013,13 +1037,13 @@ enum RuleEffect { ALLOW DENY }
 
 `Attribute` jadvaliga qo'shiladigan qatorlar (§2.1 reestrining davomi):
 
-| `code` | `dataType` | Qiymatlar | Kimga |
-|---|---|---|---|
-| `track_system` | `ENUM` | `single_phase_220`, `three_phase_220`, `magnetic_48v_slim`, `magnetic_48v_wide`, `low_voltage_24` | Trek, spot, konnektor, blok |
-| `track_role` | `ENUM` | `rail`, `connector`, `power_supply`, `fixture`, `end_cap`, `adapter` | Barchasi |
-| `track_length_mm` | `INT` | 500 … 3000 | `rail` |
-| `connector_shape` | `ENUM` | `straight`, `l_corner`, `t_shape`, `x_cross`, `flexible` | `connector` |
-| `power_supply_watt` | `INT` | 50 … 500 | `power_supply` |
+| `code`              | `dataType` | Qiymatlar                                                                                         | Kimga                       |
+| ------------------- | ---------- | ------------------------------------------------------------------------------------------------- | --------------------------- |
+| `track_system`      | `ENUM`     | `single_phase_220`, `three_phase_220`, `magnetic_48v_slim`, `magnetic_48v_wide`, `low_voltage_24` | Trek, spot, konnektor, blok |
+| `track_role`        | `ENUM`     | `rail`, `connector`, `power_supply`, `fixture`, `end_cap`, `adapter`                              | Barchasi                    |
+| `track_length_mm`   | `INT`      | 500 … 3000                                                                                        | `rail`                      |
+| `connector_shape`   | `ENUM`     | `straight`, `l_corner`, `t_shape`, `x_cross`, `flexible`                                          | `connector`                 |
+| `power_supply_watt` | `INT`      | 50 … 500                                                                                          | `power_supply`              |
 
 ### 6.4 "Bu spot bu trekka mos keladimi?"
 
@@ -1028,7 +1052,11 @@ enum RuleEffect { ALLOW DENY }
 
 export type CompatibilityVerdict =
   | { readonly kind: 'compatible' }
-  | { readonly kind: 'compatible_with_adapter'; readonly adapterProductId: string; readonly reasonUz: string }
+  | {
+      readonly kind: 'compatible_with_adapter';
+      readonly adapterProductId: string;
+      readonly reasonUz: string;
+    }
   | { readonly kind: 'incompatible'; readonly reasonUz: string; readonly reasonRu: string };
 
 @Injectable()
@@ -1042,31 +1070,17 @@ export class CompatibilityService {
     }
     if (rule?.effect === 'ALLOW') {
       return rule.requiredAdapterProductId
-        ? { kind: 'compatible_with_adapter',
-            adapterProductId: rule.requiredAdapterProductId, reasonUz: rule.reasonUz }
+        ? {
+            kind: 'compatible_with_adapter',
+            adapterProductId: rule.requiredAdapterProductId,
+            reasonUz: rule.reasonUz,
+          }
         : { kind: 'compatible' };
     }
 
-    // 2) Atributga asoslangan asosiy qoida: track_system va voltage tengligi
-    const [src, tgt] = await Promise.all([
-      this.products.getAttributes(sourceId),
-      this.products.getAttributes(targetId),
-    ]);
-    if (src.track_system !== tgt.track_system) {
-      return {
-        kind: 'incompatible',
-        reasonUz: `Trek standarti mos emas: ${src.track_system} ≠ ${tgt.track_system}`,
-        reasonRu: `Несовместимый стандарт трека: ${src.track_system} ≠ ${tgt.track_system}`,
-      };
-    }
-    if (src.voltage !== tgt.voltage) {
-      return {
-        kind: 'incompatible',
-        reasonUz: `Kuchlanish mos emas: ${src.voltage}V ≠ ${tgt.voltage}V`,
-        reasonRu: `Несовместимое напряжение: ${src.voltage}V ≠ ${tgt.voltage}V`,
-      };
-    }
-    return { kind: 'compatible' };
+    // 2) Asosiy qoida: track_system va voltage TENGLIGI.
+    //    Farq bo'lsa -> incompatible, sabab ikki tilda (qaysi maydon, qaysi qiymatlar).
+    return this.compareAttributes(sourceId, targetId);
   }
 }
 ```
@@ -1082,7 +1096,7 @@ bunda `supplied` = `power_supply` rolidagi elementlar yig'indisi, `consumed` =
 export interface PowerBudget {
   readonly suppliedWatt: number;
   readonly consumedWatt: number;
-  readonly headroomPct: number;   // manfiy = ORTIQCHA YUK
+  readonly headroomPct: number; // manfiy = ORTIQCHA YUK
   readonly status: 'ok' | 'tight' | 'overloaded' | 'no_supply';
 }
 
@@ -1094,12 +1108,12 @@ export interface PowerBudget {
 const RECOMMENDED_HEADROOM_PCT = 20;
 ```
 
-| Status | Savatga qo'shish | Xabar |
-|---|---|---|
-| `ok` | ✅ | — |
-| `tight` (`headroom < 20%`) | ✅ | ⚠️ "Zaxira kam. Kuchliroq ta'minot bloki tavsiya etiladi." |
-| `overloaded` (`headroom < 0`) | ❌ **Bloklanadi** | 🛑 "Blok quvvati yetmaydi: {consumed}W > {supplied}W" |
-| `no_supply` | ⚠️ Ruxsat | ⚠️ "Ta'minot bloki tanlanmagan — tizim ishlamaydi." |
+| Status                        | Savatga qo'shish  | Xabar                                                      |
+| ----------------------------- | ----------------- | ---------------------------------------------------------- |
+| `ok`                          | ✅                | —                                                          |
+| `tight` (`headroom < 20%`)    | ✅                | ⚠️ "Zaxira kam. Kuchliroq ta'minot bloki tavsiya etiladi." |
+| `overloaded` (`headroom < 0`) | ❌ **Bloklanadi** | 🛑 "Blok quvvati yetmaydi: {consumed}W > {supplied}W"      |
+| `no_supply`                   | ⚠️ Ruxsat         | ⚠️ "Ta'minot bloki tanlanmagan — tizim ishlamaydi."        |
 
 > `overloaded` **qattiq bloklanadi** — bu xavfsizlik masalasi, konversiya emas.
 
@@ -1148,14 +1162,14 @@ export const MAX_COMPARISON_ITEMS = 4;
 
 **`bestVariantId` — nozik joy.** "Yaxshiroq" har doim aniq emas:
 
-| Atribut | Aniqmi | Izoh |
-|---|---|---|
-| `luminous_flux` | ❌ | Ko'proq lyumen yaxshi emas — yotoqxonaga 5000 lm ortiqcha |
-| `power` | ❌ | Kam vatt = kam elektr, lekin kam yorug'lik ham |
-| `color_temperature` | ❌ | Did masalasi |
-| `cri` | ✅ | Yuqori Ra — har doim yaxshi |
-| `ip_rating` | ✅ | Yuqori himoya — hech qachon zarar emas |
-| **`lm_per_watt`** | ✅ | **Haqiqiy sifat ko'rsatkichi** |
+| Atribut             | Aniqmi | Izoh                                                      |
+| ------------------- | ------ | --------------------------------------------------------- |
+| `luminous_flux`     | ❌     | Ko'proq lyumen yaxshi emas — yotoqxonaga 5000 lm ortiqcha |
+| `power`             | ❌     | Kam vatt = kam elektr, lekin kam yorug'lik ham            |
+| `color_temperature` | ❌     | Did masalasi                                              |
+| `cri`               | ✅     | Yuqori Ra — har doim yaxshi                               |
+| `ip_rating`         | ✅     | Yuqori himoya — hech qachon zarar emas                    |
+| **`lm_per_watt`**   | ✅     | **Haqiqiy sifat ko'rsatkichi**                            |
 
 `bestVariantId` **faqat monoton yaxshilanadigan** atributlarda to'ldiriladi
 (`cri`, `ip_rating`, `lm_per_watt`), boshqalarida `null`.
@@ -1176,23 +1190,23 @@ Barchasi `packages/contracts` da — `storefront`, `admin`, `api` uchun umumiy.
 // packages/contracts/src/search/query.ts
 
 export type FilterValue =
-  | { readonly kind: 'multi';        readonly values: readonly string[] }
-  | { readonly kind: 'range';        readonly min: number | null; readonly max: number | null }
-  | { readonly kind: 'exact';        readonly value: string | number | boolean }
+  | { readonly kind: 'multi'; readonly values: readonly string[] }
+  | { readonly kind: 'range'; readonly min: number | null; readonly max: number | null }
+  | { readonly kind: 'exact'; readonly value: string | number | boolean }
   | { readonly kind: 'hierarchical'; readonly atLeast: string };
 
 export type SortOption = 'relevance' | 'price_asc' | 'price_desc' | 'popular' | 'new' | 'rating';
 
 export interface SearchQuery {
-  readonly q?: string;                 // bo'sh bo'lsa — kategoriya ko'rinishi
-  readonly categoryPath?: string;      // "lyustry" -> butun subtree
-  readonly filters: Readonly<Record<string, FilterValue>>;   // Attribute.code -> filtr
+  readonly q?: string; // bo'sh bo'lsa — kategoriya ko'rinishi
+  readonly categoryPath?: string; // "lyustry" -> butun subtree
+  readonly filters: Readonly<Record<string, FilterValue>>; // Attribute.code -> filtr
   readonly sort: SortOption;
   readonly page: number;
   readonly perPage: number;
   readonly facets?: readonly string[]; // bo'sh = kategoriya konfiguratsiyasidan
   readonly locale: 'uz' | 'ru';
-  readonly inStockOnly?: boolean;      // foydalanuvchining ongli tanlovi (§4.4)
+  readonly inStockOnly?: boolean; // foydalanuvchining ongli tanlovi (§4.4)
 }
 ```
 
@@ -1200,13 +1214,13 @@ export interface SearchQuery {
 // packages/contracts/src/search/result.ts
 
 export interface FacetValue {
-  readonly value: string;        // filtrda ishlatiladi: "3000"
-  readonly labelUz: string;      // ko'rsatiladi: "3000K (issiq oq)"
+  readonly value: string; // filtrda ishlatiladi: "3000"
+  readonly labelUz: string; // ko'rsatiladi: "3000K (issiq oq)"
   readonly labelRu: string;
   /** Shu qiymat tanlansa nechta natija. 0 = o'chirilgan checkbox. */
   readonly count: number;
   readonly selected: boolean;
-  readonly swatchHex?: string;   // color, color_temperature uchun
+  readonly swatchHex?: string; // color, color_temperature uchun
 }
 
 export interface Facet {
@@ -1237,7 +1251,7 @@ export interface SearchHit {
   readonly inStock: boolean;
   readonly rating: number | null;
   readonly reviewCount: number;
-  readonly keyAttributes: Readonly<Record<string, string>>;  // kartochkadagilar
+  readonly keyAttributes: Readonly<Record<string, string>>; // kartochkadagilar
   readonly highlightedName?: string;
 }
 
@@ -1249,8 +1263,8 @@ export interface SearchResult {
   readonly totalPages: number;
   readonly facets: readonly Facet[];
   readonly tookMs: number;
-  readonly engine: 'meilisearch' | 'postgres';  // fallback holatini bilish (§3.4)
-  readonly didYouMean: string | null;           // 0 natija bo'lganda
+  readonly engine: 'meilisearch' | 'postgres'; // fallback holatini bilish (§3.4)
+  readonly didYouMean: string | null; // 0 natija bo'lganda
 }
 ```
 
@@ -1265,10 +1279,10 @@ export type FilterKind = 'EXACT' | 'RANGE' | 'MULTI' | 'HIERARCHICAL' | 'NONE';
 export interface AttributeValue {
   readonly id: string;
   readonly attributeCode: string;
-  readonly value: string;             // normallashtirilgan: "3000", "IP44", "e27"
+  readonly value: string; // normallashtirilgan: "3000", "IP44", "e27"
   readonly labelUz: string;
   readonly labelRu: string;
-  readonly skuToken: string | null;   // SKU generatsiyasi: "GLD"
+  readonly skuToken: string | null; // SKU generatsiyasi: "GLD"
   readonly swatchHex: string | null;
   readonly position: number;
 }
@@ -1347,17 +1361,17 @@ export interface SearchIndexPort {
 
 /** Index'ga yoziladigan denormallashtirilgan dokument */
 export interface SearchDocument {
-  readonly id: string;              // "{productId}:{variantId}" — Meili primary key
+  readonly id: string; // "{productId}:{variantId}" — Meili primary key
   readonly productId: string;
   readonly variantId: string;
   readonly nameUz: string;
   readonly nameRu: string;
   readonly sku: string;
   readonly brand: string | null;
-  readonly searchableTokens: readonly string[];   // §4.2 transliteratsiya
+  readonly searchableTokens: readonly string[]; // §4.2 transliteratsiya
   readonly categoryPath: string;
-  readonly attributes: AttributeMap;              // tekis — Meili filterable uchun
-  readonly ipSatisfies: readonly string[];        // §2.2 materializatsiya
+  readonly attributes: AttributeMap; // tekis — Meili filterable uchun
+  readonly ipSatisfies: readonly string[]; // §2.2 materializatsiya
   /** ⚠️ Meilisearch BigInt bilmaydi -> Number, tiyinda.
    *  UZS uchun Number.MAX_SAFE_INTEGER (~9×10^15 tiyin) yetarli. */
   readonly priceMinor: number;
@@ -1365,7 +1379,7 @@ export interface SearchDocument {
   readonly popularity: number;
   readonly rating: number | null;
   readonly createdAtEpoch: number;
-  readonly version: number;                       // §3.3 tartib nazorati
+  readonly version: number; // §3.3 tartib nazorati
 }
 ```
 
@@ -1386,14 +1400,14 @@ o'tadi (`suggest` esa `[]` qaytaradi — taklif kritik emas).
 > testidan keyin **o'zgarishi mumkin va ehtimol o'zgaradi**. Maqsadga
 > erishilmasa — bu muvaffaqiyatsizlik emas, **o'lchov natijasi**.
 
-| Operatsiya | p50 maqsad | p95 maqsad | Izoh |
-|---|---|---|---|
-| `POST /search` (facet bilan) | < 80 ms | **< 200 ms** | Server ichida, tarmoqsiz |
-| `GET /categories/:slug` | < 20 ms | < 60 ms | Redis cache'dan |
-| `GET /products/:slug` | < 50 ms | < 150 ms | Variant + media + narx |
-| `GET /search/suggest` | < 30 ms | < 80 ms | As-you-type — tezlik hal qiluvchi |
-| Index lag (outbox → Meili) | < 2 s | < 10 s | |
-| To'liq reindex (10k SKU) | — | < 5 min | Falokatdan tiklanish oynasi |
+| Operatsiya                   | p50 maqsad | p95 maqsad   | Izoh                              |
+| ---------------------------- | ---------- | ------------ | --------------------------------- |
+| `POST /search` (facet bilan) | < 80 ms    | **< 200 ms** | Server ichida, tarmoqsiz          |
+| `GET /categories/:slug`      | < 20 ms    | < 60 ms      | Redis cache'dan                   |
+| `GET /products/:slug`        | < 50 ms    | < 150 ms     | Variant + media + narx            |
+| `GET /search/suggest`        | < 30 ms    | < 80 ms      | As-you-type — tezlik hal qiluvchi |
+| Index lag (outbox → Meili)   | < 2 s      | < 10 s       |                                   |
+| To'liq reindex (10k SKU)     | —          | < 5 min      | Falokatdan tiklanish oynasi       |
 
 **Byudjet qanday ushlanadi:** facet soni ≤ 12/so'rov (17 atributning hammasi
 bir vaqtda kerak emas — `CategoryAttributeConfig` tanlaydi); `maxTotalHits =
@@ -1423,16 +1437,16 @@ search_index_drift_total{kind}                                  # counter
 indexlansa: crawl budget foydasiz sahifalarga ketadi; index bloat; o'z
 sahifalarimiz bir-biri bilan raqobatlashadi (kannibalizatsiya).
 
-| Sahifa | Misol | Index | Nega |
-|---|---|---|---|
-| Kategoriya | `/lyustry` | ✅ | Asosiy kirish nuqtasi |
-| Ichki kategoriya | `/lyustry/hrustalnye` | ✅ | Aniq qidiruv niyati |
-| **Bitta** oq ro'yxatdagi filtr | `/lyustry?ct=3000` | ✅ | "Issiq oq qandil" — real qidiruv |
-| Ikki+ filtr | `?ct=3000&socket=e27` | ❌ `noindex` | Qidiruv niyati yo'q |
-| Diapazon | `?flux=2000-4000` | ❌ `noindex` | Cheksiz kombinatsiya |
-| Saralash | `?sort=price_asc` | ❌ `noindex` + canonical | Bir xil kontent |
-| Pagination | `?page=2` | ✅ o'z canonical'i bilan | Kontent boshqa |
-| Matn qidiruvi | `?q=люстра` | ❌ `noindex` | Cheksiz, sifatsiz |
+| Sahifa                         | Misol                 | Index                    | Nega                             |
+| ------------------------------ | --------------------- | ------------------------ | -------------------------------- |
+| Kategoriya                     | `/lyustry`            | ✅                       | Asosiy kirish nuqtasi            |
+| Ichki kategoriya               | `/lyustry/hrustalnye` | ✅                       | Aniq qidiruv niyati              |
+| **Bitta** oq ro'yxatdagi filtr | `/lyustry?ct=3000`    | ✅                       | "Issiq oq qandil" — real qidiruv |
+| Ikki+ filtr                    | `?ct=3000&socket=e27` | ❌ `noindex`             | Qidiruv niyati yo'q              |
+| Diapazon                       | `?flux=2000-4000`     | ❌ `noindex`             | Cheksiz kombinatsiya             |
+| Saralash                       | `?sort=price_asc`     | ❌ `noindex` + canonical | Bir xil kontent                  |
+| Pagination                     | `?page=2`             | ✅ o'z canonical'i bilan | Kontent boshqa                   |
+| Matn qidiruvi                  | `?q=люстра`           | ❌ `noindex`             | Cheksiz, sifatsiz                |
 
 Oq ro'yxat **kategoriyaga bog'liq** (`CategoryAttributeConfig.seoIndexable`):
 Люстры → `ct`, `material`, `bulb_count` ("kristall qandil", "8 lampali
@@ -1637,35 +1651,35 @@ qoldirishini rasman aytgan.
 
 ## 12. Bog'liqliklar
 
-| Modul / hujjat | Bog'liqlik |
-|---|---|
-| [`03-data-model.md`](./03-data-model.md) | `Category`, `Product`, `ProductVariant`, `Attribute`, `AttributeValue`, `ProductAttribute`, `Media`, `Bundle`, `CompatibilityRule`, `RoomNorm` — to'liq Prisma sxemasi |
-| [`06-inventory-and-reservations.md`](./06-inventory-and-reservations.md) | `SearchDocument.inStock` manbai. **Muhim:** index'dagi `inStock` faqat filtr/ranking uchun; rezerv har doim PostgreSQL'da lock bilan |
-| [`13-frontend-spec.md`](./13-frontend-spec.md) | Filtr paneli, galereya, taqqoslash jadvali, kalkulyator UI; URL holati (§3.5) shu yerda ishlatiladi |
-| `pricing` | `SearchDocument.priceMinor` manbai. Index'dagi narx — ko'rsatkich; haqiqiysi savatda qayta hisoblanadi |
-| `review` | `rating`, `reviewCount` — index'da denormallashtirilgan |
-| `analytics` | `SearchLogEntry`, `popularity` hisobi |
-| `admin` | Atribut, kategoriya, sinonim, `RoomNorm`, `CompatibilityRule` boshqaruvi |
+| Modul / hujjat                                                           | Bog'liqlik                                                                                                                                                             |
+| ------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`03-data-model.md`](./03-data-model.md)                                 | `Category`, `Product`, `ProductVariant`, `Attribute`, `AttributeValue`, `ProductAttribute`, `Media`, `Bundle`, `CompatibilityRule`, `RoomNorm` — to'liq Prisma sxemasi |
+| [`06-inventory-and-reservations.md`](./06-inventory-and-reservations.md) | `SearchDocument.inStock` manbai. **Muhim:** index'dagi `inStock` faqat filtr/ranking uchun; rezerv har doim PostgreSQL'da lock bilan                                   |
+| [`13-frontend-spec.md`](./13-frontend-spec.md)                           | Filtr paneli, galereya, taqqoslash jadvali, kalkulyator UI; URL holati (§3.5) shu yerda ishlatiladi                                                                    |
+| `pricing`                                                                | `SearchDocument.priceMinor` manbai. Index'dagi narx — ko'rsatkich; haqiqiysi savatda qayta hisoblanadi                                                                 |
+| `review`                                                                 | `rating`, `reviewCount` — index'da denormallashtirilgan                                                                                                                |
+| `analytics`                                                              | `SearchLogEntry`, `popularity` hisobi                                                                                                                                  |
+| `admin`                                                                  | Atribut, kategoriya, sinonim, `RoomNorm`, `CompatibilityRule` boshqaruvi                                                                                               |
 
 ---
 
 ## 13. Ochiq savollar
 
-| # | Savol | Nega ochiq | Kim hal qiladi | Bloklaydimi |
-|---|---|---|---|---|
-| 1 | **Yoritish normalari (lyuks).** Qaysi hujjat amalda: QMQ mi, ShNQ mi? Aniq raqami va tahriri? EN 12464-1 ga tayanish mumkinmi? | Bu hujjatda **ataylab to'qib chiqarilmadi** | Loyiha egasi + yoritish muhandisi | ✅ **Kalkulyatorni bloklaydi** (§5) |
-| 2 | **`U` va `MF` koeffitsiyentlari.** Xona turi bo'yicha konservativ qiymatlar qayerdan? | To'liq lumen method mijozdan olinmaydigan ma'lumot talab qiladi | Yoritish muhandisi | ✅ Kalkulyatorni bloklaydi |
-| 3 | **O'zbek lotin↔kirill jadvali** (§4.2) to'g'rimi? Ko'p belgili grafemalar (`o'`, `g'`, `sh`, `ch`, `ng`) to'g'ri qayta ishlanyaptimi? | Kod'dagi jadval — ishchi taxmin, til mutaxassisi tasdiqlamagan | Til mutaxassisi / o'zbek NLP manbai | ❌ Ishlaydi, sifat past bo'lishi mumkin |
-| 4 | **IP suv qisman tartibi** (`WATER_IMPLIES`) IEC 60529 ga aynan mosmi? x8 x7 ni qamraydimi? | Jadval sanoat amaliyotidan, standart iqtibosi emas | IEC 60529 matni | ❌ Konservativ (kam natija), noto'g'ri emas |
-| 5 | **Trek quvvat zaxirasi 20%** to'g'rimi? Ishlab chiqaruvchiga bog'liqmi? | Sanoat amaliyoti, tasdiqlangan norma emas | Elektrik / ishlab chiqaruvchi hujjati | ❌ `tight` chegarasi noto'g'ri bo'lishi mumkin |
-| 6 | **1C integratsiyasi** (CANON §6). Bo'lsa — SKU va kategoriyani kim boshqaradi: 1C mi, Kelvin mi? | Ikki tomonlama sinxronizatsiyada konflikt hal qilish qoidasi kerak. **Butun katalog modeliga ta'sir qiladi** | Loyiha egasi | ⚠️ Katta refaktoring keltirib chiqarishi mumkin |
-| 7 | **Real katalog hajmi.** Nechta SKU? Bu Meilisearch qarorini (§3.2) tasdiqlaydimi? | ADR **o'lchov** talab qiladi (CANON §9.1), ma'lumot yo'q | Loyiha egasi | ❌ Qaror qoladi, ADR keyin yopiladi |
-| 8 | **Brend — alohida entity kerakmi?** Hozir `Product.brand` — matn maydoni | CANON §8 da `Brand` yo'q. "Brend bo'yicha filtr" kerak bo'lsa normalizatsiya zarur | Loyiha egasi | ❌ `ENUM` atribut sifatida ham ishlaydi |
-| 9 | **Ta'minotchi ma'lumot formati.** Atributlar Excel'da keladimi? Qanday ustunlar? | Import quvuri shunga bog'liq. 17 atributni qo'lda kiritish real emas | Loyiha egasi + ta'minotchi | ⚠️ Kontent to'ldirishni bloklaydi |
-| 10 | **`color_temperature` swatch ranglari.** 2700K ni qaysi hex bilan? | Fizik xarita (Planck egri chizig'i → sRGB) bormi yoki dizayn qarorimi? | Dizayner + fizik manba | ❌ Kosmetik |
-| 11 | **Yandex.Metrika kerakmi?** §10.1 oq ro'yxati faqat Google'ni nazarda tutgan | O'zbekistonda Yandex ulushi sezilarli; ikki tizim indexlash siyosati farq qiladi | Loyiha egasi | ❌ |
-| 12 | **Mahsulot bir nechta kategoriyada bo'lishi kerakmi?** (§1.1 da "yo'q" deb qaror qilindi) | "Trek spot" — `Споты` da ham, `Трековые светильники` da ham mantiqiy | Loyiha egasi | ⚠️ Model o'zgarishi (`categoryId` → M2M) |
+| #   | Savol                                                                                                                                 | Nega ochiq                                                                                                   | Kim hal qiladi                        | Bloklaydimi                                     |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ | ------------------------------------- | ----------------------------------------------- |
+| 1   | **Yoritish normalari (lyuks).** Qaysi hujjat amalda: QMQ mi, ShNQ mi? Aniq raqami va tahriri? EN 12464-1 ga tayanish mumkinmi?        | Bu hujjatda **ataylab to'qib chiqarilmadi**                                                                  | Loyiha egasi + yoritish muhandisi     | ✅ **Kalkulyatorni bloklaydi** (§5)             |
+| 2   | **`U` va `MF` koeffitsiyentlari.** Xona turi bo'yicha konservativ qiymatlar qayerdan?                                                 | To'liq lumen method mijozdan olinmaydigan ma'lumot talab qiladi                                              | Yoritish muhandisi                    | ✅ Kalkulyatorni bloklaydi                      |
+| 3   | **O'zbek lotin↔kirill jadvali** (§4.2) to'g'rimi? Ko'p belgili grafemalar (`o'`, `g'`, `sh`, `ch`, `ng`) to'g'ri qayta ishlanyaptimi? | Kod'dagi jadval — ishchi taxmin, til mutaxassisi tasdiqlamagan                                               | Til mutaxassisi / o'zbek NLP manbai   | ❌ Ishlaydi, sifat past bo'lishi mumkin         |
+| 4   | **IP suv qisman tartibi** (`WATER_IMPLIES`) IEC 60529 ga aynan mosmi? x8 x7 ni qamraydimi?                                            | Jadval sanoat amaliyotidan, standart iqtibosi emas                                                           | IEC 60529 matni                       | ❌ Konservativ (kam natija), noto'g'ri emas     |
+| 5   | **Trek quvvat zaxirasi 20%** to'g'rimi? Ishlab chiqaruvchiga bog'liqmi?                                                               | Sanoat amaliyoti, tasdiqlangan norma emas                                                                    | Elektrik / ishlab chiqaruvchi hujjati | ❌ `tight` chegarasi noto'g'ri bo'lishi mumkin  |
+| 6   | **1C integratsiyasi** (CANON §6). Bo'lsa — SKU va kategoriyani kim boshqaradi: 1C mi, Kelvin mi?                                      | Ikki tomonlama sinxronizatsiyada konflikt hal qilish qoidasi kerak. **Butun katalog modeliga ta'sir qiladi** | Loyiha egasi                          | ⚠️ Katta refaktoring keltirib chiqarishi mumkin |
+| 7   | **Real katalog hajmi.** Nechta SKU? Bu Meilisearch qarorini (§3.2) tasdiqlaydimi?                                                     | ADR **o'lchov** talab qiladi (CANON §9.1), ma'lumot yo'q                                                     | Loyiha egasi                          | ❌ Qaror qoladi, ADR keyin yopiladi             |
+| 8   | **Brend — alohida entity kerakmi?** Hozir `Product.brand` — matn maydoni                                                              | CANON §8 da `Brand` yo'q. "Brend bo'yicha filtr" kerak bo'lsa normalizatsiya zarur                           | Loyiha egasi                          | ❌ `ENUM` atribut sifatida ham ishlaydi         |
+| 9   | **Ta'minotchi ma'lumot formati.** Atributlar Excel'da keladimi? Qanday ustunlar?                                                      | Import quvuri shunga bog'liq. 17 atributni qo'lda kiritish real emas                                         | Loyiha egasi + ta'minotchi            | ⚠️ Kontent to'ldirishni bloklaydi               |
+| 10  | **`color_temperature` swatch ranglari.** 2700K ni qaysi hex bilan?                                                                    | Fizik xarita (Planck egri chizig'i → sRGB) bormi yoki dizayn qarorimi?                                       | Dizayner + fizik manba                | ❌ Kosmetik                                     |
+| 11  | **Yandex.Metrika kerakmi?** §10.1 oq ro'yxati faqat Google'ni nazarda tutgan                                                          | O'zbekistonda Yandex ulushi sezilarli; ikki tizim indexlash siyosati farq qiladi                             | Loyiha egasi                          | ❌                                              |
+| 12  | **Mahsulot bir nechta kategoriyada bo'lishi kerakmi?** (§1.1 da "yo'q" deb qaror qilindi)                                             | "Trek spot" — `Споты` da ham, `Трековые светильники` da ham mantiqiy                                         | Loyiha egasi                          | ⚠️ Model o'zgarishi (`categoryId` → M2M)        |
 
 ---
 
-*Hujjat versiyasi: 1.0 · Modul: `catalog`, `search` · Kanon: KELVIN_CANON.md §4, §6, §7, §8, §9*
+_Hujjat versiyasi: 1.0 · Modul: `catalog`, `search` · Kanon: KELVIN_CANON.md §4, §6, §7, §8, §9_

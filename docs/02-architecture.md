@@ -133,25 +133,25 @@ Bu `pnpm --filter @kelvin/api arch:check` bilan CI'da tekshiriladi. Buzilsa — 
 
 ## 5. Modul xaritasi
 
-| # | Modul | Mas'uliyat | Nozik joyi |
-|---|---|---|---|
-| 1 | `identity` | auth, RBAC, sessiya | Refresh rotation, IDOR |
-| 2 | `catalog` | mahsulot, variant, atribut, media | Variant matritsasi portlashi |
-| 3 | `search` | faceted qidiruv | PostgreSQL ↔ Meilisearch sinxronligi |
-| 4 | `cart` | savat, mehmon savati | Login'da birlashtirish konflikti |
-| 5 | `pricing` | narx, chegirma, aksiya | **Determinizm** — bir xil savat → bir xil narx |
-| 6 | `order` | checkout, holat mashinasi, saga | **Saga kompensatsiyasi** |
-| 7 | `inventory` | qoldiq, rezerv | **← ENG NOZIK: oversell** |
-| 8 | `payment` | Click/Payme, ledger, refund | Idempotentlik, webhook |
-| 9 | `installment` | rassrochka | **← yuridik bloker**, pul matematikasi |
-| 10 | `delivery` | zona, slot, kuryer, o'rnatish | Slot race condition |
-| 11 | `procurement` | ta'minotchi, xarid, kirim | Tannarx (FIFO?) |
-| 12 | `crm` | mijoz, lid, voronka, RFM | Shaxsiy ma'lumot |
-| 13 | `pos` | offline kassa, smena | Onlayn bilan bir xil ledger |
-| 14 | `review` | sharh, savol-javob | Moderatsiya |
-| 15 | `content` | blog, sahifa, banner | SEO |
-| 16 | `analytics` | hisobot, ABC | Og'ir so'rov |
-| 17 | `admin` | audit log, feature flag | Immutable audit |
+| #   | Modul         | Mas'uliyat                        | Nozik joyi                                     |
+| --- | ------------- | --------------------------------- | ---------------------------------------------- |
+| 1   | `identity`    | auth, RBAC, sessiya               | Refresh rotation, IDOR                         |
+| 2   | `catalog`     | mahsulot, variant, atribut, media | Variant matritsasi portlashi                   |
+| 3   | `search`      | faceted qidiruv                   | PostgreSQL ↔ Meilisearch sinxronligi           |
+| 4   | `cart`        | savat, mehmon savati              | Login'da birlashtirish konflikti               |
+| 5   | `pricing`     | narx, chegirma, aksiya            | **Determinizm** — bir xil savat → bir xil narx |
+| 6   | `order`       | checkout, holat mashinasi, saga   | **Saga kompensatsiyasi**                       |
+| 7   | `inventory`   | qoldiq, rezerv                    | **← ENG NOZIK: oversell**                      |
+| 8   | `payment`     | Click/Payme, ledger, refund       | Idempotentlik, webhook                         |
+| 9   | `installment` | rassrochka                        | **← yuridik bloker**, pul matematikasi         |
+| 10  | `delivery`    | zona, slot, kuryer, o'rnatish     | Slot race condition                            |
+| 11  | `procurement` | ta'minotchi, xarid, kirim         | Tannarx (FIFO?)                                |
+| 12  | `crm`         | mijoz, lid, voronka, RFM          | Shaxsiy ma'lumot                               |
+| 13  | `pos`         | offline kassa, smena              | Onlayn bilan bir xil ledger                    |
+| 14  | `review`      | sharh, savol-javob                | Moderatsiya                                    |
+| 15  | `content`     | blog, sahifa, banner              | SEO                                            |
+| 16  | `analytics`   | hisobot, ABC                      | Og'ir so'rov                                   |
+| 17  | `admin`       | audit log, feature flag           | Immutable audit                                |
 
 ---
 
@@ -181,7 +181,7 @@ export const INVENTORY_PORT = Symbol('INVENTORY_PORT');
 await prisma.$transaction(async (tx) => {
   await tx.payment.update({ data: { status: 'PAID' } });
 });
-eventEmitter.emit('PaymentCompleted');  // ← process yiqilsa?
+eventEmitter.emit('PaymentCompleted'); // ← process yiqilsa?
 // To'lov PAID, lekin buyurtma tasdiqlanmadi. Mijoz to'ladi, tovar yo'q.
 ```
 
@@ -199,15 +199,15 @@ Batafsil: [ADR-0004](./adr/0004-transactional-outbox.md).
 
 **Qaysi event outbox talab qiladi:**
 
-| Event | Outbox? | Sabab |
-|---|---|---|
-| `PaymentCompleted` | **Ha** | Pul |
-| `OrderPlaced` | **Ha** | Rezervni consume qiladi |
-| `RefundIssued` | **Ha** | Pul |
-| `StockAdjusted` | **Ha** | Qoldiq — real tovar |
-| `InstallmentOverdue` | **Ha** | Mijoz huquqi |
-| `ProductUpdated` | Yo'q | Search reindex — yo'qolsa keyingi safar |
-| `ReviewPosted` | Yo'q | Moderatsiya baribir qo'lda |
+| Event                | Outbox? | Sabab                                   |
+| -------------------- | ------- | --------------------------------------- |
+| `PaymentCompleted`   | **Ha**  | Pul                                     |
+| `OrderPlaced`        | **Ha**  | Rezervni consume qiladi                 |
+| `RefundIssued`       | **Ha**  | Pul                                     |
+| `StockAdjusted`      | **Ha**  | Qoldiq — real tovar                     |
+| `InstallmentOverdue` | **Ha**  | Mijoz huquqi                            |
+| `ProductUpdated`     | Yo'q    | Search reindex — yo'qolsa keyingi safar |
+| `ReviewPosted`       | Yo'q    | Moderatsiya baribir qo'lda              |
 
 **Mezon:** event yo'qolsa **pul, real tovar yoki mijoz huquqi** zarar ko'radimi?
 
@@ -269,13 +269,13 @@ Pul, qoldiq, buyurtma — hammasi shu yerda. Tranzaksiya majburiy.
 
 ### 8.2. Redis — faqat efemer
 
-| Ishlatiladi | Ishlatilmaydi |
-|---|---|
-| Cache (katalog, narx) | **Qoldiq** — bu haqiqat, PostgreSQL'da |
-| BullMQ navbat | Pul |
-| Rate limit hisoblagichi | Buyurtma |
-| Sessiya | Audit log |
-| Mehmon savati (qisqa TTL) | |
+| Ishlatiladi               | Ishlatilmaydi                          |
+| ------------------------- | -------------------------------------- |
+| Cache (katalog, narx)     | **Qoldiq** — bu haqiqat, PostgreSQL'da |
+| BullMQ navbat             | Pul                                    |
+| Rate limit hisoblagichi   | Buyurtma                               |
+| Sessiya                   | Audit log                              |
+| Mehmon savati (qisqa TTL) |                                        |
 
 ⚠️ **Qoldiq Redis'da SAQLANMAYDI.** Bu Farzin'dan farq: u yerda o'yin taymeri Redis'da edi, chunki u efemer. Bu yerda qoldiq — real tovar. Redis yo'qolsa qoldiq yo'qolmasligi kerak.
 
@@ -314,13 +314,13 @@ Domen xatosi va texnik xato aralashmaydi. RFC 9457 (Problem Details):
 
 ⚠️ **Bu bitta do'kon.** Quyidagi jadval "kerak bo'lsa yo'l bor" degani, "shu yo'ldan yuramiz" degani emas.
 
-| Bosqich | Signal | Chora |
-|---|---|---|
-| 1 | — | Bitta VPS + Docker Compose. **Bu yetarli** |
-| 2 | CPU > 70% | API instance qo'shish |
-| 3 | Rasm bandwidth | CDN |
-| 4 | Qidiruv sekin | Meilisearch resurslarini oshirish |
-| 5 | Hisobot bazani sekinlashtiradi | Read replica |
+| Bosqich | Signal                         | Chora                                      |
+| ------- | ------------------------------ | ------------------------------------------ |
+| 1       | —                              | Bitta VPS + Docker Compose. **Bu yetarli** |
+| 2       | CPU > 70%                      | API instance qo'shish                      |
+| 3       | Rasm bandwidth                 | CDN                                        |
+| 4       | Qidiruv sekin                  | Meilisearch resurslarini oshirish          |
+| 5       | Hisobot bazani sekinlashtiradi | Read replica                               |
 
 **2-bosqichdan narisiga yetish ehtimoli past.** Kubernetes bu loyihaga **kerak emas** — [12-infrastructure.md §5](./12-infrastructure.md).
 

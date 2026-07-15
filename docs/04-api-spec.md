@@ -4,6 +4,7 @@
 > **Model:** bitta do'kon (single-tenant). **Kanon:** `KELVIN_CANON.md`.
 
 **Bog'liq hujjatlar:**
+
 - [`docs/01-product-spec.md`](./01-product-spec.md) — personalar, user story, RBAC matritsasi
 - [`docs/02-architecture.md`](./02-architecture.md) — modul chegaralari, saga, outbox
 - [`docs/05-catalog-and-search.md`](./05-catalog-and-search.md) — facet modeli, search engine
@@ -22,13 +23,13 @@ ishlatiladiganlar, yoki noto'g'ri loyihalansa qimmatga tushadiganlar.
 
 **Mijozlar (API iste'molchilari):**
 
-| Mijoz | Nima | Auth |
-|---|---|---|
-| `apps/storefront` | Mavjud React 19 + Vite (kanon §3) | Cookie refresh + xotiradagi access |
-| `apps/admin` | Yangi React + shadcn/ui | Bir xil |
-| Kuryer PWA | Storefront ichida alohida route (§01-spec OS8) | Bir xil |
-| Click / Payme / Uzum | **Webhook yuboradi** | Imzo (§11) |
-| 1C | ⚠️ Kerakmi — noma'lum (§15-OS13) | — |
+| Mijoz                | Nima                                           | Auth                               |
+| -------------------- | ---------------------------------------------- | ---------------------------------- |
+| `apps/storefront`    | Mavjud React 19 + Vite (kanon §3)              | Cookie refresh + xotiradagi access |
+| `apps/admin`         | Yangi React + shadcn/ui                        | Bir xil                            |
+| Kuryer PWA           | Storefront ichida alohida route (§01-spec OS8) | Bir xil                            |
+| Click / Payme / Uzum | **Webhook yuboradi**                           | Imzo (§11)                         |
+| 1C                   | ⚠️ Kerakmi — noma'lum (§15-OS13)               | —                                  |
 
 ---
 
@@ -36,22 +37,22 @@ ishlatiladiganlar, yoki noto'g'ri loyihalansa qimmatga tushadiganlar.
 
 ### 1.1 Taqqoslash
 
-| Mezon | REST + OpenAPI 3.1 | GraphQL |
-|---|---|---|
-| **Mijozlar soni va turi** | 2–3 ta, **hammasi bizniki** | Ko'p, oldindan noma'lum mijozlar uchun kuchli |
-| **Over-fetching** | Muammo bo'lishi mumkin | Hal qiladi |
-| **Kelvin'da over-fetching real muammomi?** | Mijoz bizniki → endpoint'ni aynan ehtiyojga moslash mumkin | Muammo bo'lmasa — yechim keraksiz |
-| **HTTP keshi** | Tabiiy (`GET` + `ETag` + CDN) | Og'riqli (hamma narsa `POST /graphql`) |
-| **Kelvin uchun kesh muhimmi?** | **Ha** — katalog og'ir o'qish yuki | — |
-| **NestJS bilan integratsiya** | Birinchi darajali, Swagger dekoratorlari | Bor, lekin ko'proq sozlash |
-| **Webhook (Click/Payme)** | Tabiiy: oddiy HTTP POST endpoint | GraphQL bunga mos emas — baribir REST kerak |
-| **Rate limiting** | Endpoint bo'yicha aniq (§8) | Query murakkabligi bo'yicha — o'zi alohida muammo |
-| **N+1 riski** | Server nazorat qiladi | DataLoader kerak, aks holda resolver'lar DB ni yiqitadi |
-| **Idempotentlik** | HTTP semantikasi bilan tabiiy (§7) | Mutation'da qo'lda |
-| **Fayl yuklash (media)** | `multipart/form-data` — standart | Spetsifikatsiyadan tashqari, kutubxonaga bog'liq |
-| **Tip generatsiyasi** | `openapi-typescript` (§13) | `graphql-codegen` — ham yaxshi |
-| **Jamoa** | Bitta dasturchi | Ikkalasi ham o'rganiladi, lekin GraphQL'da xato qilish oson |
-| **Kuzatuv (tracing)** | Endpoint = span, tabiiy | Bitta endpoint, ichida hamma narsa |
+| Mezon                                      | REST + OpenAPI 3.1                                         | GraphQL                                                     |
+| ------------------------------------------ | ---------------------------------------------------------- | ----------------------------------------------------------- |
+| **Mijozlar soni va turi**                  | 2–3 ta, **hammasi bizniki**                                | Ko'p, oldindan noma'lum mijozlar uchun kuchli               |
+| **Over-fetching**                          | Muammo bo'lishi mumkin                                     | Hal qiladi                                                  |
+| **Kelvin'da over-fetching real muammomi?** | Mijoz bizniki → endpoint'ni aynan ehtiyojga moslash mumkin | Muammo bo'lmasa — yechim keraksiz                           |
+| **HTTP keshi**                             | Tabiiy (`GET` + `ETag` + CDN)                              | Og'riqli (hamma narsa `POST /graphql`)                      |
+| **Kelvin uchun kesh muhimmi?**             | **Ha** — katalog og'ir o'qish yuki                         | —                                                           |
+| **NestJS bilan integratsiya**              | Birinchi darajali, Swagger dekoratorlari                   | Bor, lekin ko'proq sozlash                                  |
+| **Webhook (Click/Payme)**                  | Tabiiy: oddiy HTTP POST endpoint                           | GraphQL bunga mos emas — baribir REST kerak                 |
+| **Rate limiting**                          | Endpoint bo'yicha aniq (§8)                                | Query murakkabligi bo'yicha — o'zi alohida muammo           |
+| **N+1 riski**                              | Server nazorat qiladi                                      | DataLoader kerak, aks holda resolver'lar DB ni yiqitadi     |
+| **Idempotentlik**                          | HTTP semantikasi bilan tabiiy (§7)                         | Mutation'da qo'lda                                          |
+| **Fayl yuklash (media)**                   | `multipart/form-data` — standart                           | Spetsifikatsiyadan tashqari, kutubxonaga bog'liq            |
+| **Tip generatsiyasi**                      | `openapi-typescript` (§13)                                 | `graphql-codegen` — ham yaxshi                              |
+| **Jamoa**                                  | Bitta dasturchi                                            | Ikkalasi ham o'rganiladi, lekin GraphQL'da xato qilish oson |
+| **Kuzatuv (tracing)**                      | Endpoint = span, tabiiy                                    | Bitta endpoint, ichida hamma narsa                          |
 
 ### 1.2 Qaror
 
@@ -103,13 +104,13 @@ https://api.kelvin.uz/api/v1/products
 
 ### 2.2 Resurs nomlari
 
-| Qoida | To'g'ri | Noto'g'ri |
-|---|---|---|
-| Ko'plik | `/products` | `/product` |
-| kebab-case | `/purchase-orders` | `/purchaseOrders`, `/purchase_orders` |
-| Ot, fe'l emas | `POST /orders` | `POST /createOrder` |
-| Ichma-ich — 2 darajadan oshmaydi | `/orders/:id/items` | `/customers/:id/orders/:oid/items/:iid` |
-| Identifikator — UUID v7 | `/products/018f3a...` | `/products/42` |
+| Qoida                            | To'g'ri               | Noto'g'ri                               |
+| -------------------------------- | --------------------- | --------------------------------------- |
+| Ko'plik                          | `/products`           | `/product`                              |
+| kebab-case                       | `/purchase-orders`    | `/purchaseOrders`, `/purchase_orders`   |
+| Ot, fe'l emas                    | `POST /orders`        | `POST /createOrder`                     |
+| Ichma-ich — 2 darajadan oshmaydi | `/orders/:id/items`   | `/customers/:id/orders/:oid/items/:iid` |
+| Identifikator — UUID v7          | `/products/018f3a...` | `/products/42`                          |
 
 **Fe'l qachon ruxsat etiladi:** resurs modeli tabiiy ifodalay olmaydigan **holat o'tishi**
 uchun sub-resurs sifatida:
@@ -128,13 +129,13 @@ noto'g'ri bo'lardi: bekor qilish — bu maydonni yozish emas, balki **biznes tra
 
 ### 2.3 HTTP metodlari
 
-| Metod | Ma'no | Idempotent | Kelvin'da |
-|---|---|---|---|
-| `GET` | O'qish | Ha | Hamma joyda. **Hech qachon holat o'zgartirmaydi** (§14) |
-| `POST` | Yaratish yoki holat o'tishi | Yo'q → `Idempotency-Key` bilan ha (§7) | Asosiy yozish metodi |
-| `PATCH` | Qisman yangilash | Yo'q | Yagona yangilash metodi |
-| `DELETE` | O'chirish | Ha | Ko'pincha **soft delete** (`deleted_at`, kanon §8) |
-| `PUT` | To'liq almashtirish | Ha | **Ishlatilmaydi** (§14) |
+| Metod    | Ma'no                       | Idempotent                             | Kelvin'da                                               |
+| -------- | --------------------------- | -------------------------------------- | ------------------------------------------------------- |
+| `GET`    | O'qish                      | Ha                                     | Hamma joyda. **Hech qachon holat o'zgartirmaydi** (§14) |
+| `POST`   | Yaratish yoki holat o'tishi | Yo'q → `Idempotency-Key` bilan ha (§7) | Asosiy yozish metodi                                    |
+| `PATCH`  | Qisman yangilash            | Yo'q                                   | Yagona yangilash metodi                                 |
+| `DELETE` | O'chirish                   | Ha                                     | Ko'pincha **soft delete** (`deleted_at`, kanon §8)      |
+| `PUT`    | To'liq almashtirish         | Ha                                     | **Ishlatilmaydi** (§14)                                 |
 
 ### 2.4 Javob formati — konvert YO'Q
 
@@ -184,15 +185,15 @@ Bu konvert emas — `pageInfo` **resursning bir qismi** (kolleksiya sahifasi).
 
 ### 2.5 Ma'lumot tiplari
 
-| Tur | Format | Misol | Nega |
-|---|---|---|---|
-| ID | UUID v7 string | `"018f3a2c-7b1e-7000-..."` | Kanon §8. Vaqt bo'yicha tartiblangan → cursor (§6) |
-| **Pul** | **`string`**, tiyinda | `"1250000"` = 12 500 so'm | **JSON `number` — 2^53 chegarasi va float xatosi. Kanon §8: `BigInt`, tiyin, float HECH QACHON** |
-| Valyuta | ISO 4217 | `"UZS"` | Kanon §8: alohida ustun |
-| Vaqt | ISO 8601 UTC | `"2026-07-15T09:30:00.000Z"` | Kanon §8: `Timestamptz(3)`, UTC |
-| Enum | `SCREAMING_SNAKE_CASE` | `"PENDING_PAYMENT"` | Tarjima qilinmaydi (§12) |
-| Maydon nomi | `camelCase` | `luminousFlux` | JS mijozlari uchun tabiiy |
-| Bo'sh qiymat | `null` yoki maydon yo'q | | `exactOptionalPropertyTypes` (kanon §6) |
+| Tur          | Format                  | Misol                        | Nega                                                                                             |
+| ------------ | ----------------------- | ---------------------------- | ------------------------------------------------------------------------------------------------ |
+| ID           | UUID v7 string          | `"018f3a2c-7b1e-7000-..."`   | Kanon §8. Vaqt bo'yicha tartiblangan → cursor (§6)                                               |
+| **Pul**      | **`string`**, tiyinda   | `"1250000"` = 12 500 so'm    | **JSON `number` — 2^53 chegarasi va float xatosi. Kanon §8: `BigInt`, tiyin, float HECH QACHON** |
+| Valyuta      | ISO 4217                | `"UZS"`                      | Kanon §8: alohida ustun                                                                          |
+| Vaqt         | ISO 8601 UTC            | `"2026-07-15T09:30:00.000Z"` | Kanon §8: `Timestamptz(3)`, UTC                                                                  |
+| Enum         | `SCREAMING_SNAKE_CASE`  | `"PENDING_PAYMENT"`          | Tarjima qilinmaydi (§12)                                                                         |
+| Maydon nomi  | `camelCase`             | `luminousFlux`               | JS mijozlari uchun tabiiy                                                                        |
+| Bo'sh qiymat | `null` yoki maydon yo'q |                              | `exactOptionalPropertyTypes` (kanon §6)                                                          |
 
 **Pul — eng ko'p xato qilinadigan joy:**
 
@@ -336,6 +337,7 @@ export interface FieldError {
 ```
 
 **Qat'iy qoidalar 500 uchun:**
+
 - Stack trace, SQL, Prisma xato matni, jadval/ustun nomi, fayl yo'li, ichki xost —
   **hech qachon** javobda bo'lmaydi. Bular hujum uchun razvedka.
 - `traceId` **har doim** bor. Foydalanuvchi shuni aytadi → biz logdan topamiz.
@@ -424,40 +426,40 @@ export type ErrorCode = (typeof ERROR_CODES)[number];
 
 ## 4. Status kodlari
 
-| Kod | Qachon | Kelvin misoli |
-|---|---|---|
-| `200` | Muvaffaqiyatli o'qish/yangilash | `GET /products` |
-| `201` | Yaratildi + `Location` | `POST /orders` |
-| `202` | Qabul qilindi, asinxron | `POST /reports` (BullMQ) |
-| `204` | Muvaffaqiyat, tana yo'q | `DELETE /carts/:id/items/:itemId` |
-| `304` | O'zgarmagan (`ETag`) | `GET /products/:id` |
-| `400` | **So'rov shakli buzuq** | JSON parse xatosi, noto'g'ri cursor |
-| `401` | Kim ekanliging noma'lum | Token yo'q / muddati tugagan |
-| `403` | Kim ekanliging ma'lum, **lekin ruxsat yo'q** | `SALES` refund qilmoqchi |
-| `404` | Resurs yo'q **yoki senga ko'rinmaydi** | Boshqaning buyurtmasi |
-| `409` | Holat ziddiyati | Oversell, noto'g'ri o'tish |
-| `410` | Resurs bor edi, endi yo'q | Muddati o'tgan to'lov sessiyasi |
-| `413` | Juda katta | 10 MB dan katta rasm |
-| `415` | Qo'llab-quvvatlanmaydigan tur | `Content-Type: text/xml` |
-| `422` | **Shakl to'g'ri, mazmun noto'g'ri** | `quantity: -1` |
-| `429` | Rate limit (§8) | Login brute-force |
-| `500` | Ichki xato | Kutilmagan istisno |
-| `502` | Tashqi tizim xatosi | Click javob bermadi |
-| `503` | Vaqtincha ishlamayapti | Texnik ish |
+| Kod   | Qachon                                       | Kelvin misoli                       |
+| ----- | -------------------------------------------- | ----------------------------------- |
+| `200` | Muvaffaqiyatli o'qish/yangilash              | `GET /products`                     |
+| `201` | Yaratildi + `Location`                       | `POST /orders`                      |
+| `202` | Qabul qilindi, asinxron                      | `POST /reports` (BullMQ)            |
+| `204` | Muvaffaqiyat, tana yo'q                      | `DELETE /carts/:id/items/:itemId`   |
+| `304` | O'zgarmagan (`ETag`)                         | `GET /products/:id`                 |
+| `400` | **So'rov shakli buzuq**                      | JSON parse xatosi, noto'g'ri cursor |
+| `401` | Kim ekanliging noma'lum                      | Token yo'q / muddati tugagan        |
+| `403` | Kim ekanliging ma'lum, **lekin ruxsat yo'q** | `SALES` refund qilmoqchi            |
+| `404` | Resurs yo'q **yoki senga ko'rinmaydi**       | Boshqaning buyurtmasi               |
+| `409` | Holat ziddiyati                              | Oversell, noto'g'ri o'tish          |
+| `410` | Resurs bor edi, endi yo'q                    | Muddati o'tgan to'lov sessiyasi     |
+| `413` | Juda katta                                   | 10 MB dan katta rasm                |
+| `415` | Qo'llab-quvvatlanmaydigan tur                | `Content-Type: text/xml`            |
+| `422` | **Shakl to'g'ri, mazmun noto'g'ri**          | `quantity: -1`                      |
+| `429` | Rate limit (§8)                              | Login brute-force                   |
+| `500` | Ichki xato                                   | Kutilmagan istisno                  |
+| `502` | Tashqi tizim xatosi                          | Click javob bermadi                 |
+| `503` | Vaqtincha ishlamayapti                       | Texnik ish                          |
 
 ### 4.1 `400` vs `422` — farq
 
 Bu chalkashlik keng tarqalgan. Chegaraga aniq:
 
-| | `400 Bad Request` | `422 Unprocessable Content` |
-|---|---|---|
-| Ma'no | **Server so'rovni o'qiy olmadi** | **O'qidi, tushundi, lekin bajara olmaydi** |
-| Bosqich | Parsing / deserializatsiya | Validatsiya / biznes qoidasi |
-| Misol | `{"items": [` — buzuq JSON | `{"items": []}` — bo'sh savat |
-| Misol | `?limit=abc` — son kutilgan | `?limit=5000` — maksimum 100 |
-| Misol | `Content-Type` noto'g'ri | `quantity: -1` |
-| Misol | Cursor dekodlanmadi | `phone: "12345"` — format noto'g'ri |
-| `errors` bo'ladimi | **Yo'q** — maydonga bo'lish mumkin emas | **Ha** — har maydon uchun |
+|                    | `400 Bad Request`                       | `422 Unprocessable Content`                |
+| ------------------ | --------------------------------------- | ------------------------------------------ |
+| Ma'no              | **Server so'rovni o'qiy olmadi**        | **O'qidi, tushundi, lekin bajara olmaydi** |
+| Bosqich            | Parsing / deserializatsiya              | Validatsiya / biznes qoidasi               |
+| Misol              | `{"items": [` — buzuq JSON              | `{"items": []}` — bo'sh savat              |
+| Misol              | `?limit=abc` — son kutilgan             | `?limit=5000` — maksimum 100               |
+| Misol              | `Content-Type` noto'g'ri                | `quantity: -1`                             |
+| Misol              | Cursor dekodlanmadi                     | `phone: "12345"` — format noto'g'ri        |
+| `errors` bo'ladimi | **Yo'q** — maydonga bo'lish mumkin emas | **Ha** — har maydon uchun                  |
 
 **Sodda mezon:** so'rov obyektga aylandimi? Yo'q → `400`. Ha, lekin qiymat noto'g'ri
 → `422`.
@@ -472,13 +474,13 @@ Bu **xavfsizlik qarori**, uslub emas.
 
 **Qoida:**
 
-| Vaziyat | Kod | Nega |
-|---|---|---|
-| `SALES` `POST /payments/:id/refund` chaqirdi | **`403`** | Amal taqiqlangan. Resurs mavjudligi allaqachon ma'lum — u o'z ish doirasida |
-| `CUSTOMER` **boshqaning** buyurtmasini so'radi | **`404`** | `403` desak — "bunday buyurtma **bor**" deb aytgan bo'lamiz |
-| `COURIER` unga tayinlanmagan yetkazishni so'radi | **`404`** | Bir xil mantiq |
-| Autentifikatsiya yo'q, `/admin/*` | **`401`** | Avval kim ekanligi aniqlansin |
-| Buyurtma haqiqatan mavjud emas | **`404`** | — |
+| Vaziyat                                          | Kod       | Nega                                                                        |
+| ------------------------------------------------ | --------- | --------------------------------------------------------------------------- |
+| `SALES` `POST /payments/:id/refund` chaqirdi     | **`403`** | Amal taqiqlangan. Resurs mavjudligi allaqachon ma'lum — u o'z ish doirasida |
+| `CUSTOMER` **boshqaning** buyurtmasini so'radi   | **`404`** | `403` desak — "bunday buyurtma **bor**" deb aytgan bo'lamiz                 |
+| `COURIER` unga tayinlanmagan yetkazishni so'radi | **`404`** | Bir xil mantiq                                                              |
+| Autentifikatsiya yo'q, `/admin/*`                | **`401`** | Avval kim ekanligi aniqlansin                                               |
+| Buyurtma haqiqatan mavjud emas                   | **`404`** | —                                                                           |
 
 **Nega `403` ma'lumot sizdiradi:**
 
@@ -541,14 +543,14 @@ To'liq model → [`docs/11-security.md`](./11-security.md). Bu yerda **API shart
 
 ### 5.1 Ikki token
 
-| | Access token | Refresh token |
-|---|---|---|
-| Format | **JWT** (imzolangan) | **Opaque** (tasodifiy string, DB da hash) |
-| Umr | **~15 daqiqa** | **~30 kun** |
-| Qayerda qaytadi | **Javob tanasida** | **`Set-Cookie`** |
-| Mijozda saqlanadi | **FAQAT XOTIRADA** (JS o'zgaruvchisi / Zustand) | httpOnly cookie — **JS ko'ra olmaydi** |
-| Yuboriladi | `Authorization: Bearer <token>` | Avtomatik, faqat `/api/v1/auth/refresh` ga |
-| Bekor qilinadimi | Yo'q (qisqa umr — narxi shu) | **Ha**, DB da |
+|                   | Access token                                    | Refresh token                              |
+| ----------------- | ----------------------------------------------- | ------------------------------------------ |
+| Format            | **JWT** (imzolangan)                            | **Opaque** (tasodifiy string, DB da hash)  |
+| Umr               | **~15 daqiqa**                                  | **~30 kun**                                |
+| Qayerda qaytadi   | **Javob tanasida**                              | **`Set-Cookie`**                           |
+| Mijozda saqlanadi | **FAQAT XOTIRADA** (JS o'zgaruvchisi / Zustand) | httpOnly cookie — **JS ko'ra olmaydi**     |
+| Yuboriladi        | `Authorization: Bearer <token>`                 | Avtomatik, faqat `/api/v1/auth/refresh` ga |
+| Bekor qilinadimi  | Yo'q (qisqa umr — narxi shu)                    | **Ha**, DB da                              |
 
 ### 5.2 Nega access token localStorage'da EMAS
 
@@ -579,14 +581,14 @@ so'rovlarida u umuman tarmoqqa chiqmaydi.
 
 ### 5.3 Endpoint'lar
 
-| Metod | Yo'l | Izoh |
-|---|---|---|
+| Metod  | Yo'l                       | Izoh                                              |
+| ------ | -------------------------- | ------------------------------------------------- |
 | `POST` | `/api/v1/auth/otp/request` | Telefon → SMS kod (Eskiz). Rate limit qattiq (§8) |
-| `POST` | `/api/v1/auth/otp/verify` | Kod → access (body) + refresh (cookie) |
-| `POST` | `/api/v1/auth/refresh` | **Rotation** — eski bekor, yangi juftlik |
-| `POST` | `/api/v1/auth/logout` | Refresh bekor qilinadi + cookie tozalanadi |
-| `POST` | `/api/v1/auth/logout-all` | Foydalanuvchining **barcha** sessiyalari |
-| `GET` | `/api/v1/auth/me` | Joriy foydalanuvchi + roli + ruxsatlari |
+| `POST` | `/api/v1/auth/otp/verify`  | Kod → access (body) + refresh (cookie)            |
+| `POST` | `/api/v1/auth/refresh`     | **Rotation** — eski bekor, yangi juftlik          |
+| `POST` | `/api/v1/auth/logout`      | Refresh bekor qilinadi + cookie tozalanadi        |
+| `POST` | `/api/v1/auth/logout-all`  | Foydalanuvchining **barcha** sessiyalari          |
+| `GET`  | `/api/v1/auth/me`          | Joriy foydalanuvchi + roli + ruxsatlari           |
 
 **`POST /auth/otp/verify` javobi:**
 
@@ -676,6 +678,7 @@ Kanon §8: PK — **UUID v7**. UUID v7 ichida **millisekundli timestamp** bor va
 **leksikografik tartibda o'sadi**.
 
 Ya'ni:
+
 - `ORDER BY id` == `ORDER BY created_at` (amalda)
 - `id` — noyob → **tie-break kerak emas**
 - Cursor = oxirgi `id` — qo'shimcha maydon shart emas
@@ -691,10 +694,10 @@ soddalashtirdi.**
 GET /api/v1/products?limit=20&cursor=eyJpZCI6IjAxOGYzYTJjIn0
 ```
 
-| Parametr | Tur | Default | Maks |
-|---|---|---|---|
-| `limit` | int | 20 | **100** (oshsa `422`) |
-| `cursor` | opaque base64url | — | Dekodlanmasa `400 INVALID_CURSOR` |
+| Parametr | Tur              | Default | Maks                              |
+| -------- | ---------------- | ------- | --------------------------------- |
+| `limit`  | int              | 20      | **100** (oshsa `422`)             |
+| `cursor` | opaque base64url | —       | Dekodlanmasa `400 INVALID_CURSOR` |
 
 ```json
 {
@@ -773,6 +776,7 @@ GET /api/v1/admin/orders?page=5&perPage=50&sort=-createdAt
 ```
 
 **Nega istisno:**
+
 1. Admin real **"5-sahifaga o'tish"** va **"jami: 1 248"** ni xohlaydi. Cursor bunga
    mos emas.
 2. Admin foydalanuvchilari — o'nlab, storefront'da minglab bo'lishi mumkin.
@@ -780,6 +784,7 @@ GET /api/v1/admin/orders?page=5&perPage=50&sort=-createdAt
 3. Admin jadvallari **filtrlangan** (holat, sana) → asosiy to'plam kichik.
 
 **Cheklovlar:**
+
 - `perPage` maks **100**
 - `page` maks **500** (undan narisi → filtrni toraytirish taklif qilinadi)
 - `totalCount` beriladi, lekin **keshlangan** (⚠️ TTL o'lchov bilan)
@@ -794,6 +799,7 @@ GET /api/v1/admin/orders?page=5&perPage=50&sort=-createdAt
 Mijoz `POST /orders` yubordi. Tarmoq uzildi. Javob kelmadi. **Buyurtma yaratildimi?**
 
 Mijoz bilmaydi. Ikki variant, ikkalasi ham yomon:
+
 - Takrorlamasa → mijoz buyurtmasiz qoladi
 - Takrorlasa → **ikkita buyurtma**, ikki marta to'lov
 
@@ -832,15 +838,15 @@ Shuning uchun ziddiyat aniq bildiriladi.
 
 ### 7.3 Qayerda MAJBURIY
 
-| Endpoint | Nega | Kalitsiz |
-|---|---|---|
-| `POST /orders` | Ikkilangan buyurtma → ikki marta yetkazish, ikki marta to'lov | **`400`** |
-| `POST /payments` | **Ikki marta pul yechish** | **`400`** |
-| `POST /checkout/reserve` | Ikkilangan rezerv → soxta oversell | **`400`** |
-| `POST /stock/movements` | Qoldiq ikki marta o'zgaradi → hisob buziladi | **`400`** |
-| `POST /payments/:id/refund` | **Ikki marta qaytarish** | **`400`** |
-| `POST /pos/transactions` | Ikkilangan chek | **`400`** |
-| `POST /purchase-orders/:id/receive` | Kirim ikki marta | **`400`** |
+| Endpoint                            | Nega                                                          | Kalitsiz  |
+| ----------------------------------- | ------------------------------------------------------------- | --------- |
+| `POST /orders`                      | Ikkilangan buyurtma → ikki marta yetkazish, ikki marta to'lov | **`400`** |
+| `POST /payments`                    | **Ikki marta pul yechish**                                    | **`400`** |
+| `POST /checkout/reserve`            | Ikkilangan rezerv → soxta oversell                            | **`400`** |
+| `POST /stock/movements`             | Qoldiq ikki marta o'zgaradi → hisob buziladi                  | **`400`** |
+| `POST /payments/:id/refund`         | **Ikki marta qaytarish**                                      | **`400`** |
+| `POST /pos/transactions`            | Ikkilangan chek                                               | **`400`** |
+| `POST /purchase-orders/:id/receive` | Kirim ikki marta                                              | **`400`** |
 
 **Kalitsiz `400`, `422` emas** — chunki bu header yo'qligi, ya'ni so'rov shakli
 noto'g'ri (§4.1). Bu **mijozning bug'i**, foydalanuvchining xatosi emas.
@@ -889,23 +895,23 @@ login 60 marta chaqirilishi — **hujum**.
 
 ### 8.2 Jadval
 
-| Endpoint | Limit | Oyna | Kalit | Nega |
-|---|---|---|---|---|
-| `POST /auth/otp/request` | **3** | 1 daq | telefon | **Har SMS pul turadi** (Eskiz). Bu to'g'ridan-to'g'ri xarajat hujumi |
-| `POST /auth/otp/request` | **10** | 1 soat | telefon | Kunlik suiiste'mol |
-| `POST /auth/otp/request` | **20** | 1 soat | IP | Ko'p raqamga hujum |
-| `POST /auth/otp/verify` | **5** | 15 daq | telefon | Brute-force. 6 xonali kod = 10^6 — cheklovsiz topiladi |
-| `POST /auth/refresh` | **20** | 1 daq | IP | Normal ishda 15 daq'da 1 marta |
-| `GET /search`, `GET /products` | **60** | 1 daq | IP / user | Filtr o'zgartirish tez-tez — bu normal |
-| `GET /search/suggest` | **120** | 1 daq | IP | Har harfda chaqiriladi |
-| `POST /checkout/reserve` | **10** | 1 daq | user | Rezerv qimmat: lock oladi |
-| `POST /orders` | **5** | 1 daq | user | Odam daqiqada 5 buyurtma qilmaydi |
-| `POST /payments` | **5** | 1 daq | user | — |
-| `POST /reviews` | **5** | 1 soat | user | Spam |
-| `POST /questions` | **10** | 1 soat | user | Spam |
-| `POST /webhooks/*` | **300** | 1 daq | provayder IP | **Yuqori** — provayder retry qiladi, bloklash **pul yo'qotish** |
-| `/api/v1/admin/*` | **300** | 1 daq | user | Admin ko'p so'rov yuboradi |
-| Boshqalari (default) | **100** | 1 daq | IP / user | — |
+| Endpoint                       | Limit   | Oyna   | Kalit        | Nega                                                                 |
+| ------------------------------ | ------- | ------ | ------------ | -------------------------------------------------------------------- |
+| `POST /auth/otp/request`       | **3**   | 1 daq  | telefon      | **Har SMS pul turadi** (Eskiz). Bu to'g'ridan-to'g'ri xarajat hujumi |
+| `POST /auth/otp/request`       | **10**  | 1 soat | telefon      | Kunlik suiiste'mol                                                   |
+| `POST /auth/otp/request`       | **20**  | 1 soat | IP           | Ko'p raqamga hujum                                                   |
+| `POST /auth/otp/verify`        | **5**   | 15 daq | telefon      | Brute-force. 6 xonali kod = 10^6 — cheklovsiz topiladi               |
+| `POST /auth/refresh`           | **20**  | 1 daq  | IP           | Normal ishda 15 daq'da 1 marta                                       |
+| `GET /search`, `GET /products` | **60**  | 1 daq  | IP / user    | Filtr o'zgartirish tez-tez — bu normal                               |
+| `GET /search/suggest`          | **120** | 1 daq  | IP           | Har harfda chaqiriladi                                               |
+| `POST /checkout/reserve`       | **10**  | 1 daq  | user         | Rezerv qimmat: lock oladi                                            |
+| `POST /orders`                 | **5**   | 1 daq  | user         | Odam daqiqada 5 buyurtma qilmaydi                                    |
+| `POST /payments`               | **5**   | 1 daq  | user         | —                                                                    |
+| `POST /reviews`                | **5**   | 1 soat | user         | Spam                                                                 |
+| `POST /questions`              | **10**  | 1 soat | user         | Spam                                                                 |
+| `POST /webhooks/*`             | **300** | 1 daq  | provayder IP | **Yuqori** — provayder retry qiladi, bloklash **pul yo'qotish**      |
+| `/api/v1/admin/*`              | **300** | 1 daq  | user         | Admin ko'p so'rov yuboradi                                           |
+| Boshqalari (default)           | **100** | 1 daq  | IP / user    | —                                                                    |
 
 **⚠️ Bu qiymatlar — boshlang'ich taxmin, o'lchangan emas.** Real trafik ko'rilgach
 sozlanadi. Ular ikki prinsipdan kelib chiqqan: (a) **pul turadigan** amal qattiq
@@ -970,15 +976,15 @@ GET /api/v1/products
   &limit=20
 ```
 
-| Operator | Ma'no | Misol |
-|---|---|---|
-| `[eq]` | Teng (default) | `dimmable[eq]=true` |
-| `[ne]` | Teng emas | `socketType[ne]=E14` |
-| `[gt]` `[gte]` | Katta / katta-teng | `cri[gte]=90` |
-| `[lt]` `[lte]` | Kichik / kichik-teng | `priceMinor[lte]=5000000` |
-| `[in]` | Ro'yxatda (vergul) | `colorTemperature[in]=2700,3000` |
-| `[nin]` | Ro'yxatda emas | `brand[nin]=X,Y` |
-| `[contains]` | Matn ichida | `name[contains]=qandil` |
+| Operator       | Ma'no                | Misol                            |
+| -------------- | -------------------- | -------------------------------- |
+| `[eq]`         | Teng (default)       | `dimmable[eq]=true`              |
+| `[ne]`         | Teng emas            | `socketType[ne]=E14`             |
+| `[gt]` `[gte]` | Katta / katta-teng   | `cri[gte]=90`                    |
+| `[lt]` `[lte]` | Kichik / kichik-teng | `priceMinor[lte]=5000000`        |
+| `[in]`         | Ro'yxatda (vergul)   | `colorTemperature[in]=2700,3000` |
+| `[nin]`        | Ro'yxatda emas       | `brand[nin]=X,Y`                 |
+| `[contains]`   | Matn ichida          | `name[contains]=qandil`          |
 
 **Saralash:** `sort=-createdAt,priceMinor` — `-` = kamayish, bir necha maydon vergul bilan.
 
@@ -1047,17 +1053,17 @@ export const productSortSchema = z
   .string()
   .transform((raw) => raw.split(','))
   .pipe(
-    z.array(
-      z
-        .string()
-        .refine(
+    z
+      .array(
+        z.string().refine(
           (token) => {
             const field = token.startsWith('-') ? token.slice(1) : token;
             return (PRODUCT_SORTABLE as readonly string[]).includes(field);
           },
           { message: 'UNSUPPORTED_SORT_FIELD' },
         ),
-    ).max(3), // 3 dan ortiq saralash — indeks ishlamay qoladi
+      )
+      .max(3), // 3 dan ortiq saralash — indeks ishlamay qoladi
   );
 
 /**
@@ -1079,28 +1085,24 @@ To'liq ro'yxat — OpenAPI'da (§13). Bu yerda **asosiylar va nozik joylar**.
 
 ### 10.1 `catalog`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `GET` | `/products` | `GUEST`+ | Cursor pagination. `ETag`. Faqat `PUBLISHED` |
-| `GET` | `/products/:id` | `GUEST`+ | Variantlar bilan |
-| `GET` | `/products/:id/variants` | `GUEST`+ | — |
-| `GET` | `/products/:id/compatible` | `GUEST`+ | **Nozik** — pastga qarang |
-| `GET` | `/categories` | `GUEST`+ | Daraxt. Kuchli keshlanadi |
-| `GET` | `/attributes` | `GUEST`+ | Filtr UI ni qurish uchun lug'at |
-| `POST` | `/admin/products` | `product:write` | — |
-| `POST` | `/admin/products/:id/variants:generate` | `product:write` | **Nozik** — pastga |
-| `POST` | `/admin/products/:id/publish` | `product:publish` | To'liqsiz → `422 INCOMPLETE_PRODUCT` |
+| Metod  | Yo'l                                    | Auth              | Izoh                                         |
+| ------ | --------------------------------------- | ----------------- | -------------------------------------------- |
+| `GET`  | `/products`                             | `GUEST`+          | Cursor pagination. `ETag`. Faqat `PUBLISHED` |
+| `GET`  | `/products/:id`                         | `GUEST`+          | Variantlar bilan                             |
+| `GET`  | `/products/:id/variants`                | `GUEST`+          | —                                            |
+| `GET`  | `/products/:id/compatible`              | `GUEST`+          | **Nozik** — pastga qarang                    |
+| `GET`  | `/categories`                           | `GUEST`+          | Daraxt. Kuchli keshlanadi                    |
+| `GET`  | `/attributes`                           | `GUEST`+          | Filtr UI ni qurish uchun lug'at              |
+| `POST` | `/admin/products`                       | `product:write`   | —                                            |
+| `POST` | `/admin/products/:id/variants:generate` | `product:write`   | **Nozik** — pastga                           |
+| `POST` | `/admin/products/:id/publish`           | `product:publish` | To'liqsiz → `422 INCOMPLETE_PRODUCT`         |
 
 **`GET /products/:id/compatible?role=CONNECTOR`** — trek mosligi (kanon §9.7).
 
 ```json
 {
-  "compatible": [
-    { "productId": "018f...", "role": "CONNECTOR", "reason": "TRACK_SYSTEM_MATCH" }
-  ],
-  "incompatible": [
-    { "productId": "018f...", "reason": "VOLTAGE_MISMATCH" }
-  ]
+  "compatible": [{ "productId": "018f...", "role": "CONNECTOR", "reason": "TRACK_SYSTEM_MATCH" }],
+  "incompatible": [{ "productId": "018f...", "reason": "VOLTAGE_MISMATCH" }]
 }
 ```
 
@@ -1129,11 +1131,11 @@ To'liq ro'yxat — OpenAPI'da (§13). Bu yerda **asosiylar va nozik joylar**.
 
 ### 10.2 `search`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `GET` | `/search` | `GUEST`+ | Matn + facet. **Nozik** |
+| Metod | Yo'l              | Auth     | Izoh                             |
+| ----- | ----------------- | -------- | -------------------------------- |
+| `GET` | `/search`         | `GUEST`+ | Matn + facet. **Nozik**          |
 | `GET` | `/search/suggest` | `GUEST`+ | Autocomplete. Rate limit 120/min |
-| `GET` | `/search/facets` | `GUEST`+ | Faqat facet, natijasiz |
+| `GET` | `/search/facets`  | `GUEST`+ | Faqat facet, natijasiz           |
 
 **`GET /search`** — **eng nozik endpoint** (kanon §9.1):
 
@@ -1173,9 +1175,7 @@ GET /api/v1/search
       "type": "range",
       "min": "890000",
       "max": "12400000",
-      "histogram": [
-        { "from": "890000", "to": "3000000", "count": 64 }
-      ]
+      "histogram": [{ "from": "890000", "to": "3000000", "count": 64 }]
     }
   }
 }
@@ -1201,14 +1201,14 @@ GET /api/v1/search
 
 ### 10.3 `cart`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `GET` | `/carts/current` | `GUEST`+ | Mehmon: cookie ID, user: `userId` |
-| `POST` | `/carts/current/items` | `GUEST`+ | Bor bo'lsa miqdor qo'shiladi |
-| `PATCH` | `/carts/current/items/:itemId` | `GUEST`+ | Miqdor |
-| `DELETE` | `/carts/current/items/:itemId` | `GUEST`+ | `204` |
-| `POST` | `/carts/current/merge` | `CUSTOMER` | **Nozik** |
-| `POST` | `/carts/current/validate` | `GUEST`+ | **Nozik** |
+| Metod    | Yo'l                           | Auth       | Izoh                              |
+| -------- | ------------------------------ | ---------- | --------------------------------- |
+| `GET`    | `/carts/current`               | `GUEST`+   | Mehmon: cookie ID, user: `userId` |
+| `POST`   | `/carts/current/items`         | `GUEST`+   | Bor bo'lsa miqdor qo'shiladi      |
+| `PATCH`  | `/carts/current/items/:itemId` | `GUEST`+   | Miqdor                            |
+| `DELETE` | `/carts/current/items/:itemId` | `GUEST`+   | `204`                             |
+| `POST`   | `/carts/current/merge`         | `CUSTOMER` | **Nozik**                         |
+| `POST`   | `/carts/current/validate`      | `GUEST`+   | **Nozik**                         |
 
 **`POST /carts/current/merge`** — mehmon savatini birlashtirish (§01-spec US-CART-03):
 
@@ -1254,15 +1254,15 @@ GET /api/v1/search
 
 ### 10.4 `order` va `checkout`
 
-| Metod | Yo'l | Auth | Idempotency | Izoh |
-|---|---|---|---|---|
-| `POST` | `/checkout/reserve` | `GUEST`+ | **Majburiy** | **Eng nozik** |
-| `POST` | `/orders` | `GUEST`+ | **Majburiy** | Rezervdan `Order` |
-| `GET` | `/orders` | `order:read_own` | — | O'z buyurtmalari |
-| `GET` | `/orders/:id` | `order:read_own` | — | Boshqaniki → **`404`** (§4.2) |
-| `POST` | `/orders/:id/cancel` | `order:cancel` | Majburiy | Rezerv bo'shaydi + refund |
-| `POST` | `/orders/:id/transitions` | `order:transition` | Majburiy | **Nozik** |
-| `GET` | `/orders/:id/transitions` | `order:read_own` | — | Ruxsat etilgan o'tishlar |
+| Metod  | Yo'l                      | Auth               | Idempotency  | Izoh                          |
+| ------ | ------------------------- | ------------------ | ------------ | ----------------------------- |
+| `POST` | `/checkout/reserve`       | `GUEST`+           | **Majburiy** | **Eng nozik**                 |
+| `POST` | `/orders`                 | `GUEST`+           | **Majburiy** | Rezervdan `Order`             |
+| `GET`  | `/orders`                 | `order:read_own`   | —            | O'z buyurtmalari              |
+| `GET`  | `/orders/:id`             | `order:read_own`   | —            | Boshqaniki → **`404`** (§4.2) |
+| `POST` | `/orders/:id/cancel`      | `order:cancel`     | Majburiy     | Rezerv bo'shaydi + refund     |
+| `POST` | `/orders/:id/transitions` | `order:transition` | Majburiy     | **Nozik**                     |
+| `GET`  | `/orders/:id/transitions` | `order:read_own`   | —            | Ruxsat etilgan o'tishlar      |
 
 **`POST /checkout/reserve`** — oversell'ning yagona to'sig'i (kanon §9.2):
 
@@ -1279,6 +1279,7 @@ GET /api/v1/search
 ```
 
 > **Nozik joylar:**
+>
 > - Bu **to'lovdan OLDIN** chaqiriladi. Aks holda mijoz to'laydi, keyin tovar yo'qligi
 >   bilinadi.
 > - Muvaffaqiyatsiz → `409 INSUFFICIENT_STOCK` + `errors` da **qaysi pozitsiya**.
@@ -1295,6 +1296,7 @@ GET /api/v1/search
 ```
 
 > **Nega `PATCH /orders/:id { status }` EMAS:**
+>
 > 1. Holat o'zgarishi — **maydonni yozish emas**, biznes tranzaksiya: rezerv, to'lov,
 >    xabar, audit, outbox event.
 > 2. `PATCH` "har qanday holatga o'tish mumkin" degan taassurot beradi. Holbuki
@@ -1308,15 +1310,15 @@ GET /api/v1/search
 
 ### 10.5 `payment`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `POST` | `/payments` | `CUSTOMER` | `PaymentAttempt` + provayder URL |
-| `GET` | `/payments/:id` | `payment:read_own` | Holat |
-| `POST` | `/payments/:id/refund` | `payment:refund` | Idempotency majburiy |
-| `POST` | `/installments/quote` | `GUEST`+ | **Nozik** |
-| `POST` | `/webhooks/payments/click` | **YO'Q** | §11 |
-| `POST` | `/webhooks/payments/payme` | **YO'Q** | §11 |
-| `POST` | `/webhooks/payments/uzum` | **YO'Q** | §11 |
+| Metod  | Yo'l                       | Auth               | Izoh                             |
+| ------ | -------------------------- | ------------------ | -------------------------------- |
+| `POST` | `/payments`                | `CUSTOMER`         | `PaymentAttempt` + provayder URL |
+| `GET`  | `/payments/:id`            | `payment:read_own` | Holat                            |
+| `POST` | `/payments/:id/refund`     | `payment:refund`   | Idempotency majburiy             |
+| `POST` | `/installments/quote`      | `GUEST`+           | **Nozik**                        |
+| `POST` | `/webhooks/payments/click` | **YO'Q**           | §11                              |
+| `POST` | `/webhooks/payments/payme` | **YO'Q**           | §11                              |
+| `POST` | `/webhooks/payments/uzum`  | **YO'Q**           | §11                              |
 
 **`POST /installments/quote`** — rassrochka grafigi (§01-spec US-PAY-02):
 
@@ -1337,6 +1339,7 @@ GET /api/v1/search
 ```
 
 > **Nozik joylar:**
+>
 > - **`quote` — yaratmaydi, hisoblaydi.** Mijoz grafikni **to'lashdan oldin** ko'radi.
 >   `POST` chunki tanada murakkab kirish bor, lekin u **holat o'zgartirmaydi** —
 >   bu §14 dagi qoidaning teskarisi va u ataylab qabul qilingan istisno.
@@ -1349,13 +1352,13 @@ GET /api/v1/search
 
 ### 10.6 `inventory`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `GET` | `/stock?variantIds=...` | `GUEST`+ | **Nozik** — pastga |
-| `GET` | `/admin/stock` | `stock:read` | Ombor kesimida |
-| `POST` | `/admin/stock/movements` | `stock:movement_write` | Idempotency majburiy |
-| `POST` | `/admin/stock/adjustments` | `stock:adjust` | `reason` **majburiy** |
-| `GET` | `/admin/reservations` | `reservation:read` | Faol rezervlar |
+| Metod  | Yo'l                       | Auth                   | Izoh                  |
+| ------ | -------------------------- | ---------------------- | --------------------- |
+| `GET`  | `/stock?variantIds=...`    | `GUEST`+               | **Nozik** — pastga    |
+| `GET`  | `/admin/stock`             | `stock:read`           | Ombor kesimida        |
+| `POST` | `/admin/stock/movements`   | `stock:movement_write` | Idempotency majburiy  |
+| `POST` | `/admin/stock/adjustments` | `stock:adjust`         | `reason` **majburiy** |
+| `GET`  | `/admin/reservations`      | `reservation:read`     | Faol rezervlar        |
 
 **`GET /stock`** — ommaviy qoldiq:
 
@@ -1380,7 +1383,13 @@ GET /api/v1/search
 **`POST /admin/stock/adjustments`:**
 
 ```json
-{ "variantId": "018f...", "warehouseId": "018f...", "delta": -2, "reason": "BROKEN_GLASS", "note": "Javondan tushib ketdi" }
+{
+  "variantId": "018f...",
+  "warehouseId": "018f...",
+  "delta": -2,
+  "reason": "BROKEN_GLASS",
+  "note": "Javondan tushib ketdi"
+}
 ```
 
 > **`reason` majburiy va enum.** Erkin matn bo'lsa — hech kim yozmaydi yoki "tuzatish"
@@ -1390,23 +1399,30 @@ GET /api/v1/search
 
 ### 10.7 `delivery`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `POST` | `/delivery/zones/resolve` | `GUEST`+ | Koordinata → zona + narx |
-| `GET` | `/delivery/slots?zoneId=&from=&to=` | `GUEST`+ | **Bo'sh** slotlar (sig'im hisobga olingan) |
-| `GET` | `/shipments/:id` | `shipment:read_own` | Kuzatuv |
-| `GET` | `/courier/route?date=` | `shipment:read_assigned` | **Nozik** |
-| `POST` | `/courier/stops/:id/status` | `shipment:update_assigned` | **Nozik** |
-| `GET` | `/installer/jobs?date=` | `installation:read_assigned` | O'z ishlari |
-| `POST` | `/installer/jobs/:id/complete` | `installation:update_assigned` | Foto + tasdiq |
+| Metod  | Yo'l                                | Auth                           | Izoh                                       |
+| ------ | ----------------------------------- | ------------------------------ | ------------------------------------------ |
+| `POST` | `/delivery/zones/resolve`           | `GUEST`+                       | Koordinata → zona + narx                   |
+| `GET`  | `/delivery/slots?zoneId=&from=&to=` | `GUEST`+                       | **Bo'sh** slotlar (sig'im hisobga olingan) |
+| `GET`  | `/shipments/:id`                    | `shipment:read_own`            | Kuzatuv                                    |
+| `GET`  | `/courier/route?date=`              | `shipment:read_assigned`       | **Nozik**                                  |
+| `POST` | `/courier/stops/:id/status`         | `shipment:update_assigned`     | **Nozik**                                  |
+| `GET`  | `/installer/jobs?date=`             | `installation:read_assigned`   | O'z ishlari                                |
+| `POST` | `/installer/jobs/:id/complete`      | `installation:update_assigned` | Foto + tasdiq                              |
 
 **`POST /courier/stops/:id/status`:**
 
 ```json
-{ "status": "FAILED", "reason": "CUSTOMER_NOT_AVAILABLE", "note": "3 marta qo'ng'iroq qildim", "photoIds": [], "occurredAt": "2026-07-15T11:20:00.000Z" }
+{
+  "status": "FAILED",
+  "reason": "CUSTOMER_NOT_AVAILABLE",
+  "note": "3 marta qo'ng'iroq qildim",
+  "photoIds": [],
+  "occurredAt": "2026-07-15T11:20:00.000Z"
+}
 ```
 
 > **Nozik joylar:**
+>
 > - **`occurredAt` mijozdan keladi** — kuryer offline bo'lgan bo'lishi mumkin (PWA,
 >   §01-spec OS8). Server `receivedAt` ni o'zi qo'yadi. Ikkisi ham saqlanadi.
 > - **`occurredAt` ga to'liq ishonilmaydi:** kelajakdagi vaqt yoki juda eski vaqt →
@@ -1420,13 +1436,13 @@ GET /api/v1/search
 
 ### 10.8 `crm` va `pos`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `GET` | `/admin/customers?phone[eq]=` | `customer:read` | Telefon — asosiy qidiruv |
-| `POST` | `/admin/leads` | `lead:write_own` | Sotuvchiga biriktiriladi |
-| `POST` | `/pos/shifts` | `pos:shift_manage_own` | **Nozik** |
-| `POST` | `/pos/shifts/:id/close` | `pos:shift_manage_own` | Naqd farqi + sabab |
-| `POST` | `/pos/transactions` | `pos:transaction_create` | Idempotency majburiy |
+| Metod  | Yo'l                          | Auth                     | Izoh                     |
+| ------ | ----------------------------- | ------------------------ | ------------------------ |
+| `GET`  | `/admin/customers?phone[eq]=` | `customer:read`          | Telefon — asosiy qidiruv |
+| `POST` | `/admin/leads`                | `lead:write_own`         | Sotuvchiga biriktiriladi |
+| `POST` | `/pos/shifts`                 | `pos:shift_manage_own`   | **Nozik**                |
+| `POST` | `/pos/shifts/:id/close`       | `pos:shift_manage_own`   | Naqd farqi + sabab       |
+| `POST` | `/pos/transactions`           | `pos:transaction_create` | Idempotency majburiy     |
 
 **`POST /pos/shifts`:**
 
@@ -1442,14 +1458,14 @@ GET /api/v1/search
 
 ### 10.9 `admin`
 
-| Metod | Yo'l | Auth | Izoh |
-|---|---|---|---|
-| `GET` | `/admin/audit-logs` | `audit_log:read` | Offset pagination (§6.4). **Faqat o'qish** |
-| `GET` | `/admin/feature-flags` | `feature_flag:read` | — |
-| `PATCH` | `/admin/feature-flags/:key` | `feature_flag:write` | `OWNER` |
-| `POST` | `/admin/users/:id/roles` | `user:assign_role` | `OWNER` roli → `user:assign_owner_role` |
-| `POST` | `/admin/reports` | `report:read_all` | `202` + BullMQ |
-| `GET` | `/admin/reports/:id` | `report:read_all` | Holat / natija |
+| Metod   | Yo'l                        | Auth                 | Izoh                                       |
+| ------- | --------------------------- | -------------------- | ------------------------------------------ |
+| `GET`   | `/admin/audit-logs`         | `audit_log:read`     | Offset pagination (§6.4). **Faqat o'qish** |
+| `GET`   | `/admin/feature-flags`      | `feature_flag:read`  | —                                          |
+| `PATCH` | `/admin/feature-flags/:key` | `feature_flag:write` | `OWNER`                                    |
+| `POST`  | `/admin/users/:id/roles`    | `user:assign_role`   | `OWNER` roli → `user:assign_owner_role`    |
+| `POST`  | `/admin/reports`            | `report:read_all`    | `202` + BullMQ                             |
+| `GET`   | `/admin/reports/:id`        | `report:read_all`    | Holat / natija                             |
 
 > **`/admin/audit-logs` da `POST`/`PATCH`/`DELETE` YO'Q.** `AuditLog` — **append-only**.
 > Yozuvni faqat tizim qo'shadi. `OWNER` ham o'chira olmaydi (§01-spec US-ADM-01).
@@ -1473,14 +1489,14 @@ buyurtma to'langan deb belgilanadi → tovar bepul jo'natiladi.
 
 ### 11.2 Himoya qatlamlari
 
-| # | Qatlam | Nima qiladi |
-|---|---|---|
-| 1 | **Imzo tekshiruvi** | Yagona haqiqiy autentifikatsiya |
-| 2 | **Idempotentlik** | Takroriy webhook ikkinchi to'lovni yaratmaydi |
-| 3 | **Summa tekshiruvi** | Webhook'dagi summa `Order` dagi summaga teng bo'lishi shart |
-| 4 | **Holat tekshiruvi** | `PAID` buyurtma qayta `PAID` bo'lmaydi |
-| 5 | IP allowlist | Qo'shimcha, ⚠️ provayder IP lari o'zgarishi mumkin |
-| 6 | Raw body | Imzo **xom bayt** ustidan — JSON qayta serializatsiya imzoni buzadi |
+| #   | Qatlam               | Nima qiladi                                                         |
+| --- | -------------------- | ------------------------------------------------------------------- |
+| 1   | **Imzo tekshiruvi**  | Yagona haqiqiy autentifikatsiya                                     |
+| 2   | **Idempotentlik**    | Takroriy webhook ikkinchi to'lovni yaratmaydi                       |
+| 3   | **Summa tekshiruvi** | Webhook'dagi summa `Order` dagi summaga teng bo'lishi shart         |
+| 4   | **Holat tekshiruvi** | `PAID` buyurtma qayta `PAID` bo'lmaydi                              |
+| 5   | IP allowlist         | Qo'shimcha, ⚠️ provayder IP lari o'zgarishi mumkin                  |
+| 6   | Raw body             | Imzo **xom bayt** ustidan — JSON qayta serializatsiya imzoni buzadi |
 
 ### 11.3 Imzo — umumiy skelet
 
@@ -1584,20 +1600,20 @@ implementatsiyasi → [`01-product-spec.md`](./01-product-spec.md) §7.5.
 
 ### 12.2 Nima tarjima qilinadi, nima YO'Q
 
-| Element | Tarjima | Nega |
-|---|---|---|
-| `title` (Problem) | **HA** | Foydalanuvchi o'qiydi |
-| `detail` (Problem) | **HA** | Foydalanuvchi o'qiydi |
-| `errors[].message` | **HA** | Forma ostida ko'rinadi |
-| **`code`** | **YO'Q** | **Mashina uchun. Barqaror. Mijoz mantiqi shunga tayanadi** |
-| `errors[].code` | **YO'Q** | Bir xil sabab |
-| `errors[].pointer` | **YO'Q** | JSON Pointer — texnik |
-| `type` (URI) | **YO'Q** | Identifikator |
-| **Enum** (`PENDING_PAYMENT`) | **YO'Q** | Mashina qiymati. UI o'zi ko'rsatadi |
-| Mahsulot nomi, tavsif | **HA** | DB dan, locale bo'yicha |
-| Kategoriya, atribut **nomi** | **HA** | DB dan |
-| Atribut **qiymati** (`2700K`, `IP44`) | **YO'Q** | Texnik qiymat, tilga bog'liq emas |
-| `sku`, `traceId`, ID | **YO'Q** | — |
+| Element                               | Tarjima  | Nega                                                       |
+| ------------------------------------- | -------- | ---------------------------------------------------------- |
+| `title` (Problem)                     | **HA**   | Foydalanuvchi o'qiydi                                      |
+| `detail` (Problem)                    | **HA**   | Foydalanuvchi o'qiydi                                      |
+| `errors[].message`                    | **HA**   | Forma ostida ko'rinadi                                     |
+| **`code`**                            | **YO'Q** | **Mashina uchun. Barqaror. Mijoz mantiqi shunga tayanadi** |
+| `errors[].code`                       | **YO'Q** | Bir xil sabab                                              |
+| `errors[].pointer`                    | **YO'Q** | JSON Pointer — texnik                                      |
+| `type` (URI)                          | **YO'Q** | Identifikator                                              |
+| **Enum** (`PENDING_PAYMENT`)          | **YO'Q** | Mashina qiymati. UI o'zi ko'rsatadi                        |
+| Mahsulot nomi, tavsif                 | **HA**   | DB dan, locale bo'yicha                                    |
+| Kategoriya, atribut **nomi**          | **HA**   | DB dan                                                     |
+| Atribut **qiymati** (`2700K`, `IP44`) | **YO'Q** | Texnik qiymat, tilga bog'liq emas                          |
+| `sku`, `traceId`, ID                  | **YO'Q** | —                                                          |
 
 **Nega `code` hech qachon tarjima qilinmaydi — bu qat'iy:**
 
@@ -1605,10 +1621,14 @@ Agar mijoz kodi shunday yozilsa:
 
 ```ts
 // ❌ HECH QACHON. Til o'zgarsa — mantiq buziladi.
-if (problem.title === 'Tovar yetarli emas') { /* ... */ }
+if (problem.title === 'Tovar yetarli emas') {
+  /* ... */
+}
 
 // ✅ To'g'ri. `code` — shartnoma, `title` — matn.
-if (problem.code === 'INSUFFICIENT_STOCK') { /* ... */ }
+if (problem.code === 'INSUFFICIENT_STOCK') {
+  /* ... */
+}
 ```
 
 `code` — bu **API shartnomasining bir qismi**. Uni o'zgartirish — buzuvchi o'zgarish
@@ -1720,9 +1740,7 @@ export type ProblemDetails = components['schemas']['ProblemDetails'];
 export type SearchResponse =
   paths['/api/v1/search']['get']['responses']['200']['content']['application/json'];
 
-export type SearchQuery = NonNullable<
-  paths['/api/v1/search']['get']['parameters']['query']
->;
+export type SearchQuery = NonNullable<paths['/api/v1/search']['get']['parameters']['query']>;
 
 export type CreateOrderRequest =
   paths['/api/v1/orders']['post']['requestBody']['content']['application/json'];
@@ -1795,19 +1813,19 @@ jobs:
 
 ## 14. Nima YO'Q va nega
 
-| Nima | Nega yo'q | O'rniga |
-|---|---|---|
-| **Batch endpoint** (`POST /batch`) | Tranzaksiya chegarasi noaniq: 3 tadan 2 tasi o'tsa nima? Har element uchun status kodi kerak → HTTP semantikasi buziladi. Auth har element uchun alohida tekshirilishi kerak. Rate limit aylanib o'tiladi. Log/trace o'qib bo'lmaydi | Real ehtiyoj bo'lsa — **maxsus domen endpoint'i**: `POST /admin/products/bulk-publish` aniq shartnoma va aniq tranzaksiya bilan |
-| **Eager loading** (`?include=variants,reviews`) | Har kombinatsiya = alohida kesh yozuvi. Javob shakli **runtime'da o'zgaradi** → tiplar `Product & Partial<...>` ga aylanadi. N+1 riski mijozga o'tadi. Ruxsat: `?include=cost` — mijoz tannarxni ko'radimi? | **Endpoint aniq shakl beradi.** Kerak bo'lsa — alohida endpoint (`/products/:id/variants`) yoki javobga qo'shish (mijozlar bizniki, §1.2) |
-| **`PUT`** | Amalda hech kim to'liq resursni yubormaydi — yuborsa ham u eskirgan snapshot bo'ladi va o'zga o'zgarishlarni **jimgina o'chiradi** (lost update). `PATCH` niyatni aniq ifodalaydi | `PATCH` (qisman) yoki `POST /:id/:action` (holat o'tishi) |
-| **`GET` bilan holat o'zgartirish** | `GET /orders/:id/cancel` — **falokat**. Brauzer prefetch, CDN, qidiruv boti, `<link rel=prefetch>` buni chaqiradi. Buyurtma o'z-o'zidan bekor bo'ladi. `GET` — **spetsifikatsiya bo'yicha xavfsiz** | `POST /orders/:id/cancel` |
-| **`DELETE` bilan biznes-amal** | `DELETE /reservations/:id` — bu rezervni "o'chirish" emas, **bo'shatish** (qoldiqni qaytarish, event yuborish). `DELETE` semantikasi buni yashiradi | `POST /reservations/:id/release` |
-| **`totalCount` har kolleksiyada** | `COUNT(*)` qimmat, har so'rovda hisoblanadi, mijozga kamdan-kam kerak | Cursor + `hasNextPage`. Istisno: qidiruv (§10.2) va admin (§6.4) |
-| **API'da narx hisoblash mijozdan** | Mijoz `{"totalPrice": 1}` yuborsa — bu firibgarlik | Narx **har doim serverda**, mijoz faqat `variantId` + `quantity` yuboradi |
-| **Long polling / WebSocket (v1)** | Bitta do'kon yuklamasida buyurtma holati uchun bu ortiqcha infratuzilma | Sahifa ochilganda `GET`. Real-time kerak bo'lsa — SSE, keyingi bosqich |
-| **`X-` prefiksli o'z header'larimiz** | RFC 6648: `X-` eskirgan | `Idempotency-Key`, `RateLimit-*` — standart/de-fakto nomlar |
-| **API kalitlari (statik token)** | O'g'irlansa — muddatsiz kirish. Rotatsiya yo'q | JWT + refresh rotation (§5) |
-| **`?fields=id,name` (sparse fieldsets)** | Eager loading bilan bir xil muammolar: tip noaniq, kesh portlaydi | Endpoint aniq shakl beradi |
+| Nima                                            | Nega yo'q                                                                                                                                                                                                                            | O'rniga                                                                                                                                   |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Batch endpoint** (`POST /batch`)              | Tranzaksiya chegarasi noaniq: 3 tadan 2 tasi o'tsa nima? Har element uchun status kodi kerak → HTTP semantikasi buziladi. Auth har element uchun alohida tekshirilishi kerak. Rate limit aylanib o'tiladi. Log/trace o'qib bo'lmaydi | Real ehtiyoj bo'lsa — **maxsus domen endpoint'i**: `POST /admin/products/bulk-publish` aniq shartnoma va aniq tranzaksiya bilan           |
+| **Eager loading** (`?include=variants,reviews`) | Har kombinatsiya = alohida kesh yozuvi. Javob shakli **runtime'da o'zgaradi** → tiplar `Product & Partial<...>` ga aylanadi. N+1 riski mijozga o'tadi. Ruxsat: `?include=cost` — mijoz tannarxni ko'radimi?                          | **Endpoint aniq shakl beradi.** Kerak bo'lsa — alohida endpoint (`/products/:id/variants`) yoki javobga qo'shish (mijozlar bizniki, §1.2) |
+| **`PUT`**                                       | Amalda hech kim to'liq resursni yubormaydi — yuborsa ham u eskirgan snapshot bo'ladi va o'zga o'zgarishlarni **jimgina o'chiradi** (lost update). `PATCH` niyatni aniq ifodalaydi                                                    | `PATCH` (qisman) yoki `POST /:id/:action` (holat o'tishi)                                                                                 |
+| **`GET` bilan holat o'zgartirish**              | `GET /orders/:id/cancel` — **falokat**. Brauzer prefetch, CDN, qidiruv boti, `<link rel=prefetch>` buni chaqiradi. Buyurtma o'z-o'zidan bekor bo'ladi. `GET` — **spetsifikatsiya bo'yicha xavfsiz**                                  | `POST /orders/:id/cancel`                                                                                                                 |
+| **`DELETE` bilan biznes-amal**                  | `DELETE /reservations/:id` — bu rezervni "o'chirish" emas, **bo'shatish** (qoldiqni qaytarish, event yuborish). `DELETE` semantikasi buni yashiradi                                                                                  | `POST /reservations/:id/release`                                                                                                          |
+| **`totalCount` har kolleksiyada**               | `COUNT(*)` qimmat, har so'rovda hisoblanadi, mijozga kamdan-kam kerak                                                                                                                                                                | Cursor + `hasNextPage`. Istisno: qidiruv (§10.2) va admin (§6.4)                                                                          |
+| **API'da narx hisoblash mijozdan**              | Mijoz `{"totalPrice": 1}` yuborsa — bu firibgarlik                                                                                                                                                                                   | Narx **har doim serverda**, mijoz faqat `variantId` + `quantity` yuboradi                                                                 |
+| **Long polling / WebSocket (v1)**               | Bitta do'kon yuklamasida buyurtma holati uchun bu ortiqcha infratuzilma                                                                                                                                                              | Sahifa ochilganda `GET`. Real-time kerak bo'lsa — SSE, keyingi bosqich                                                                    |
+| **`X-` prefiksli o'z header'larimiz**           | RFC 6648: `X-` eskirgan                                                                                                                                                                                                              | `Idempotency-Key`, `RateLimit-*` — standart/de-fakto nomlar                                                                               |
+| **API kalitlari (statik token)**                | O'g'irlansa — muddatsiz kirish. Rotatsiya yo'q                                                                                                                                                                                       | JWT + refresh rotation (§5)                                                                                                               |
+| **`?fields=id,name` (sparse fieldsets)**        | Eager loading bilan bir xil muammolar: tip noaniq, kesh portlaydi                                                                                                                                                                    | Endpoint aniq shakl beradi                                                                                                                |
 
 ---
 
@@ -1847,22 +1865,22 @@ API shartnomasi qabul qilingan hisoblanadi, agar:
 
 ## 16. Ochiq savollar
 
-| # | Savol | Nega muhim | Kim javob beradi | Blokirovka |
-|---|---|---|---|---|
-| **OS1** | **Click / Payme / Uzum webhook protokoli:** imzo algoritmi, header nomi, javob formati, xato kodlari, timeout, retry siyosati, sandbox muhiti | §11 ning **hammasi** shunga bog'liq. Kanon §10: **to'qib chiqarish taqiqlanadi**. Noto'g'ri imzo tekshiruvi = soxta to'lovni qabul qilish | Provayderlarning rasmiy hujjati + texnik shartnoma | **HA** — `payment`, `order` |
-| **OS2** | **`StockReservation` TTL** aniq qiymati | To'lov oynasidan qisqa → to'langan buyurtma tovarsiz. Uzun → tovar bekorga bloklanadi. OS1 ga bog'liq | OS1 + do'kon egasi | **HA** — `/checkout/reserve` |
-| **OS3** | **Rassrochka provayderi API si** (Uzum Nasiya / Alif / Intend): foiz formulasi, grafik hisobi, kechikish, tasdiqlash oqimi | §10.5 dagi `/installments/quote` javobi **misol**, real formula noma'lum | Provayder + shartnoma | **HA** — `payment` |
-| **OS4** | **Idempotentlik `PROCESSING` da qolib ketsa** (server yiqildi) tiklash strategiyasi | Mijoz `409` oladi va qayta urina olmaydi | [`02-architecture.md`](./02-architecture.md) | Yo'q |
-| **OS5** | **Search engine:** PostgreSQL GIN yoki Meilisearch? | `/search` ning facet shakli va p95 shunga bog'liq (§10.2) | **O'lchov** → [`05-catalog-and-search.md`](./05-catalog-and-search.md) | Yo'q — API shakli ikkalasiga mos |
-| **OS6** | **Rate limit qiymatlari** (§8.2) real trafikda to'g'rimi? | Qattiq bo'lsa — halol foydalanuvchi bloklanadi. Bo'sh bo'lsa — SMS xarajati | O'lchov, ishga tushgandan keyin | Yo'q |
-| **OS7** | **`GET /stock` da aniq `quantity`** ko'rsatilsinmi? | Raqobatchi qoldiqni ko'radi, lekin brigadir (P3) aniq son xohlaydi | Do'kon egasi | Yo'q — API ikkalasiga tayyor |
-| **OS8** | **`v1` deprecation muddati** — `v2` chiqsa `v1` qancha yashaydi? | Mijozlar bizniki → qisqa bo'lishi mumkin. Lekin PWA da eski versiya keshlanib qolishi mumkin | Do'kon egasi + jamoa | Yo'q |
-| **OS9** | **Kuryer PWA offline:** `occurredAt` ga qanchalik ishonish mumkin? Qancha eski voqea qabul qilinadi? | Telefon soati noto'g'ri bo'lsa — statistika buziladi | O'lchov + kuryerlar bilan suhbat | Yo'q |
-| **OS10** | **`stock:adjust` uchun summa limiti** va `OWNER` tasdig'i kerakmi? | O'g'irlikni yashirish yo'li | Do'kon egasi | Yo'q |
-| **OS11** | **1C integratsiyasi** kerak bo'lsa — API yo'nalishi qanday? 1C bizni chaqiradimi yoki biz uni? Fayl almashinuvmi yoki HTTP? | Kanon §6: **tasdiqlanmagan**. Kerak bo'lsa — yangi mijoz turi, yangi auth modeli | Do'kon egasi + 1C ma'muri | Yo'q — lekin arxitektura buni **imkonsiz qilmasin** |
-| **OS12** | **Admin `totalCount` keshi TTL** | Uzun → admin eski sonni ko'radi. Qisqa → `COUNT(*)` tez-tez | O'lchov | Yo'q |
-| **OS13** | **Webhook IP allowlist** ishlatilsinmi? Provayder IP lari barqarormi? | Barqaror bo'lmasa — to'lovlar to'satdan rad etiladi | OS1 (provayder hujjati) | Yo'q |
-| **OS14** | **`GET /search` javobida narx** — mijoz segmentiga qarab o'zgaradimi (B2B narx)? Agar ha — kesh qanday ishlaydi? | Segmentga bog'liq narx **keshni segmentlarga bo'ladi** | [`05-catalog-and-search.md`](./05-catalog-and-search.md) + do'kon egasi | Yo'q |
+| #        | Savol                                                                                                                                         | Nega muhim                                                                                                                                | Kim javob beradi                                                        | Blokirovka                                          |
+| -------- | --------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------- |
+| **OS1**  | **Click / Payme / Uzum webhook protokoli:** imzo algoritmi, header nomi, javob formati, xato kodlari, timeout, retry siyosati, sandbox muhiti | §11 ning **hammasi** shunga bog'liq. Kanon §10: **to'qib chiqarish taqiqlanadi**. Noto'g'ri imzo tekshiruvi = soxta to'lovni qabul qilish | Provayderlarning rasmiy hujjati + texnik shartnoma                      | **HA** — `payment`, `order`                         |
+| **OS2**  | **`StockReservation` TTL** aniq qiymati                                                                                                       | To'lov oynasidan qisqa → to'langan buyurtma tovarsiz. Uzun → tovar bekorga bloklanadi. OS1 ga bog'liq                                     | OS1 + do'kon egasi                                                      | **HA** — `/checkout/reserve`                        |
+| **OS3**  | **Rassrochka provayderi API si** (Uzum Nasiya / Alif / Intend): foiz formulasi, grafik hisobi, kechikish, tasdiqlash oqimi                    | §10.5 dagi `/installments/quote` javobi **misol**, real formula noma'lum                                                                  | Provayder + shartnoma                                                   | **HA** — `payment`                                  |
+| **OS4**  | **Idempotentlik `PROCESSING` da qolib ketsa** (server yiqildi) tiklash strategiyasi                                                           | Mijoz `409` oladi va qayta urina olmaydi                                                                                                  | [`02-architecture.md`](./02-architecture.md)                            | Yo'q                                                |
+| **OS5**  | **Search engine:** PostgreSQL GIN yoki Meilisearch?                                                                                           | `/search` ning facet shakli va p95 shunga bog'liq (§10.2)                                                                                 | **O'lchov** → [`05-catalog-and-search.md`](./05-catalog-and-search.md)  | Yo'q — API shakli ikkalasiga mos                    |
+| **OS6**  | **Rate limit qiymatlari** (§8.2) real trafikda to'g'rimi?                                                                                     | Qattiq bo'lsa — halol foydalanuvchi bloklanadi. Bo'sh bo'lsa — SMS xarajati                                                               | O'lchov, ishga tushgandan keyin                                         | Yo'q                                                |
+| **OS7**  | **`GET /stock` da aniq `quantity`** ko'rsatilsinmi?                                                                                           | Raqobatchi qoldiqni ko'radi, lekin brigadir (P3) aniq son xohlaydi                                                                        | Do'kon egasi                                                            | Yo'q — API ikkalasiga tayyor                        |
+| **OS8**  | **`v1` deprecation muddati** — `v2` chiqsa `v1` qancha yashaydi?                                                                              | Mijozlar bizniki → qisqa bo'lishi mumkin. Lekin PWA da eski versiya keshlanib qolishi mumkin                                              | Do'kon egasi + jamoa                                                    | Yo'q                                                |
+| **OS9**  | **Kuryer PWA offline:** `occurredAt` ga qanchalik ishonish mumkin? Qancha eski voqea qabul qilinadi?                                          | Telefon soati noto'g'ri bo'lsa — statistika buziladi                                                                                      | O'lchov + kuryerlar bilan suhbat                                        | Yo'q                                                |
+| **OS10** | **`stock:adjust` uchun summa limiti** va `OWNER` tasdig'i kerakmi?                                                                            | O'g'irlikni yashirish yo'li                                                                                                               | Do'kon egasi                                                            | Yo'q                                                |
+| **OS11** | **1C integratsiyasi** kerak bo'lsa — API yo'nalishi qanday? 1C bizni chaqiradimi yoki biz uni? Fayl almashinuvmi yoki HTTP?                   | Kanon §6: **tasdiqlanmagan**. Kerak bo'lsa — yangi mijoz turi, yangi auth modeli                                                          | Do'kon egasi + 1C ma'muri                                               | Yo'q — lekin arxitektura buni **imkonsiz qilmasin** |
+| **OS12** | **Admin `totalCount` keshi TTL**                                                                                                              | Uzun → admin eski sonni ko'radi. Qisqa → `COUNT(*)` tez-tez                                                                               | O'lchov                                                                 | Yo'q                                                |
+| **OS13** | **Webhook IP allowlist** ishlatilsinmi? Provayder IP lari barqarormi?                                                                         | Barqaror bo'lmasa — to'lovlar to'satdan rad etiladi                                                                                       | OS1 (provayder hujjati)                                                 | Yo'q                                                |
+| **OS14** | **`GET /search` javobida narx** — mijoz segmentiga qarab o'zgaradimi (B2B narx)? Agar ha — kesh qanday ishlaydi?                              | Segmentga bog'liq narx **keshni segmentlarga bo'ladi**                                                                                    | [`05-catalog-and-search.md`](./05-catalog-and-search.md) + do'kon egasi | Yo'q                                                |
 
 ---
 

@@ -51,20 +51,23 @@ A furniture product has colour, size, material. A luminaire has **luminous flux 
 temperature (K), CRI (Ra), IP rating, socket type, wattage, voltage, dimmability, beam angle** — 15+
 filterable attributes, several with awkward semantics:
 
-- **IP rating is ordinal, not enum.** A customer filtering "for a bathroom" picks IP44 — but IP65
-  must also match, because it satisfies the IP44 requirement. `WHERE ip_rating = 'IP44'` is wrong.
+- **IP rating is a partial order** — and this one is a trap. A customer filtering "for a bathroom"
+  picks IP44, so IP65 must match too; `WHERE ip_rating = 'IP44'` is wrong. But treating it as a
+  simple rank is _also_ wrong: IPx7 (immersion) does **not** cover IPx5 (water jets) — they are
+  different tests. That's exactly why `IP65/IP67` dual markings exist. A numeric `rank >= N` filter
+  returns wrong results **silently**. See [data model §3.3](./docs/03-data-model.md).
 - **Track systems have a compatibility graph.** Track + connector + spot must fit each other.
 - **Colour temperature is the brand.** 2700K warm → 6500K cool. That gradient is the logo.
 
 ## The hard parts
 
-| Problem | Why it's difficult |
-|---|---|
-| **[Oversell](./docs/06-inventory-and-reservations.md)** | Two customers buy the last chandelier at the same instant. Solved with an atomic conditional `UPDATE`, which works *only* because of PostgreSQL's `EvalPlanQual` under `READ COMMITTED` — raise the isolation level and it breaks **silently**. See [ADR-0007](./docs/adr/0007-atomic-conditional-reservation.md). |
-| **[Money](./docs/adr/0003-money-as-bigint-tiyin.md)** | `BigInt` in tiyin, never float. Split 5,000,000 UZS into 3 instalments and one tiyin goes missing — the customer's debt then never closes. `allocate()` is proven by property test over 500 random amount × term combinations. |
-| **[Order saga](./docs/07-order-and-checkout.md)** | Payment ↔ reservation ↔ delivery. No distributed transaction, so: compensation. "Paid, but stock ran out" goes to **manual review** — never an automatic refund. |
-| **[Faceted search](./docs/05-catalog-and-search.md)** | 15+ attributes with live result counts per filter value. Meilisearch returns IDs only; price and stock are always re-read from PostgreSQL, so a stale index causes inconvenience — never overselling. |
-| **[Transactional outbox](./docs/adr/0004-transactional-outbox.md)** | `payment.status = PAID` committed, then the process dies before the event fires. Customer paid, got nothing, no error in the log. |
+| Problem                                                             | Why it's difficult                                                                                                                                                                                                                                                                                                 |
+| ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| **[Oversell](./docs/06-inventory-and-reservations.md)**             | Two customers buy the last chandelier at the same instant. Solved with an atomic conditional `UPDATE`, which works _only_ because of PostgreSQL's `EvalPlanQual` under `READ COMMITTED` — raise the isolation level and it breaks **silently**. See [ADR-0007](./docs/adr/0007-atomic-conditional-reservation.md). |
+| **[Money](./docs/adr/0003-money-as-bigint-tiyin.md)**               | `BigInt` in tiyin, never float. Split 5,000,000 UZS into 3 instalments and one tiyin goes missing — the customer's debt then never closes. `allocate()` is proven by property test over 500 random amount × term combinations.                                                                                     |
+| **[Order saga](./docs/07-order-and-checkout.md)**                   | Payment ↔ reservation ↔ delivery. No distributed transaction, so: compensation. "Paid, but stock ran out" goes to **manual review** — never an automatic refund.                                                                                                                                                   |
+| **[Faceted search](./docs/05-catalog-and-search.md)**               | 15+ attributes with live result counts per filter value. Meilisearch returns IDs only; price and stock are always re-read from PostgreSQL, so a stale index causes inconvenience — never overselling.                                                                                                              |
+| **[Transactional outbox](./docs/adr/0004-transactional-outbox.md)** | `payment.status = PAID` committed, then the process dies before the event fires. Customer paid, got nothing, no error in the log.                                                                                                                                                                                  |
 
 ## Architecture
 
@@ -122,13 +125,13 @@ consistency buys nothing. The admin panel has no design and needs speed, so it u
 
 The React app in `apps/storefront` was measured, not assumed:
 
-| | |
-|---|---|
-| Lines | 8,729 — of which **6,313 (72%) are `.styled.js`** |
-| Components with React state | **1 of 48** (`ProductDetail`) |
-| `fetch` / `axios` calls | **0** |
-| Working cart | **No** — hardcoded image, no state, no localStorage |
-| Backend | **None** (until now) |
+|                             |                                                     |
+| --------------------------- | --------------------------------------------------- |
+| Lines                       | 8,729 — of which **6,313 (72%) are `.styled.js`**   |
+| Components with React state | **1 of 48** (`ProductDetail`)                       |
+| `fetch` / `axios` calls     | **0**                                               |
+| Working cart                | **No** — hardcoded image, no state, no localStorage |
+| Backend                     | **None** (until now)                                |
 
 It is a **design shell**. Making it work — state, API, cart, auth, i18n — is the actual project.
 
@@ -142,21 +145,21 @@ heading — the template was adapted from another domain.
 
 The spec is the deliverable. Written to be implementable, not to impress.
 
-| | |
-|---|---|
-| **[Start here](./docs/)** | Index and reading order |
+|                                                 |                                                     |
+| ----------------------------------------------- | --------------------------------------------------- |
+| **[Start here](./docs/)**                       | Index and reading order                             |
 | [Vision & scope](./docs/00-vision-and-scope.md) | What this is and is **not**. Honest project history |
-| [Architecture](./docs/02-architecture.md) | Modules, layers, event flow |
-| [Data model](./docs/03-data-model.md) | 40+ entities, critical design decisions |
-| [ADRs](./docs/adr/) | 7 decisions — what, why, **at what cost** |
-| [Roadmap](./docs/15-roadmap.md) | 11 phases, risk register, honest estimates |
+| [Architecture](./docs/02-architecture.md)       | Modules, layers, event flow                         |
+| [Data model](./docs/03-data-model.md)           | 40+ entities, critical design decisions             |
+| [ADRs](./docs/adr/)                             | 7 decisions — what, why, **at what cost**           |
+| [Roadmap](./docs/15-roadmap.md)                 | 11 phases, risk register, honest estimates          |
 
 Docs are in **Uzbek** — working documents for whoever builds this. Code and comments in English.
 
 ### On honesty
 
-Every doc has an *open questions* section. Unverified numbers are marked. Every ADR has a mandatory
-*negative consequences* section. Legal questions are flagged as **blockers for a lawyer**, never
+Every doc has an _open questions_ section. Unverified numbers are marked. Every ADR has a mandatory
+_negative consequences_ section. Legal questions are flagged as **blockers for a lawyer**, never
 answered as advice.
 
 [ADR-0006](./docs/adr/0006-meilisearch-for-faceted-search.md) is marked **conditional**: it assumes
@@ -204,7 +207,7 @@ pnpm lint && pnpm typecheck && pnpm build
 ## Credits
 
 **Design** — the storefront UI is built from a Figma provided as course material by the author's
-instructor. The original brand in that design was *NORNLIGHT*; only the name and logo were changed
+instructor. The original brand in that design was _NORNLIGHT_; only the name and logo were changed
 to Kelvin. The layout, grid, colours and typography are the designer's work, not mine. Implementing
 a designer's Figma is a frontend developer's job — but the design is theirs and is credited here.
 

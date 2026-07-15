@@ -4,8 +4,9 @@
 > **Bog'liq modullar:** `order` (§5), `inventory` (§8), `pos` (§11), `crm` (§10), `notification` (§16)
 > **Bog'liq hujjatlar:** `docs/06-inventory-and-reservations.md`, `docs/09-delivery-and-operations.md`
 > **Status:** loyihalash (implementatsiya yo'q)
-> **⚠️ BLOKER:** bu hujjatda 3 ta yuridik savol bor (§7.3, §10, §14.4). Ular hal
-> bo'lmaguncha `payment` moduli **to'liq ishga tushirilmaydi**.
+> **⚠️ BLOKER:** bu hujjatda **8 ta yuridik/buxgalteriya bloker savoli** bor
+> (§7.3, §10, §14.4, jamlanma — §15.1: Q-01…Q-08). Ular hal bo'lmaguncha
+> `payment` moduli **to'liq ishga tushirilmaydi**.
 
 ---
 
@@ -27,11 +28,11 @@ so'rash" bilan tuzatib bo'lmaydi, chunki:
 Shu sababdan bu hujjat butun boshli uch qoidaga tayanadi va ular muhokama
 qilinmaydi:
 
-| # | Qoida | Manba | Nega |
-|---|---|---|---|
-| 1 | Pul — **`BigInt`, tiyinda**. Float **hech qachon** | CANON §8 | §3.1 |
-| 2 | Har bir pul harakati — **double-entry ledger'da**. `balance` ustuni yo'q | Bu hujjat §6 | §6.1 |
-| 3 | Har bir yozuv operatsiyasi — **idempotent** | Bu hujjat §5 | §5.1 |
+| #   | Qoida                                                                    | Manba        | Nega |
+| --- | ------------------------------------------------------------------------ | ------------ | ---- |
+| 1   | Pul — **`BigInt`, tiyinda**. Float **hech qachon**                       | CANON §8     | §3.1 |
+| 2   | Har bir pul harakati — **double-entry ledger'da**. `balance` ustuni yo'q | Bu hujjat §6 | §6.1 |
+| 3   | Har bir yozuv operatsiyasi — **idempotent**                              | Bu hujjat §5 | §5.1 |
 
 ### 0.1 Bu hujjat NIMA YOZMAYDI (ataylab)
 
@@ -65,15 +66,15 @@ Kelvin — O'zbekiston bozoridagi bitta do'kon (CANON §1). Bu yerda to'lov manz
 G'arbdan **tubdan farq qiladi**, va buni tushunmasdan arxitektura qurish
 mumkin emas.
 
-| Kanal | Turi | Kim ishlatadi | Kelvin uchun ahamiyati |
-|---|---|---|---|
-| **Click** | To'lov tizimi | Ommaviy | Yuqori — onlayn to'lovning asosiy qismi |
-| **Payme** | To'lov tizimi | Ommaviy | Yuqori |
-| **Uzum Bank** | Bank + super-app | O'suvchi | O'rta-yuqori (rassrochka bilan bog'liq) |
-| **Naqd (kuryerga)** | Offline | Juda keng | **Juda yuqori** — §1.4 |
-| **POS terminal (do'konda)** | Offline | Keng | Yuqori — `docs/08` §9 |
-| **Bank o'tkazmasi** | B2B | Yuridik shaxs | O'rta — §1.5 |
-| **Rassrochka** | Kredit | Qimmat tovarda | **Kritik** — §7 |
+| Kanal                       | Turi             | Kim ishlatadi  | Kelvin uchun ahamiyati                  |
+| --------------------------- | ---------------- | -------------- | --------------------------------------- |
+| **Click**                   | To'lov tizimi    | Ommaviy        | Yuqori — onlayn to'lovning asosiy qismi |
+| **Payme**                   | To'lov tizimi    | Ommaviy        | Yuqori                                  |
+| **Uzum Bank**               | Bank + super-app | O'suvchi       | O'rta-yuqori (rassrochka bilan bog'liq) |
+| **Naqd (kuryerga)**         | Offline          | Juda keng      | **Juda yuqori** — §1.4                  |
+| **POS terminal (do'konda)** | Offline          | Keng           | Yuqori — `docs/08` §9                   |
+| **Bank o'tkazmasi**         | B2B              | Yuridik shaxs  | O'rta — §1.5                            |
+| **Rassrochka**              | Kredit           | Qimmat tovarda | **Kritik** — §7                         |
 
 ### 1.2 Kartalar: UzCard, Humo, Visa/Mastercard
 
@@ -122,16 +123,16 @@ Mijoz → Click/Payme/Uzum → UzCard/Humo protsessing → bank
 
 **⚠️ NOMA'LUM — TO'QIB CHIQARILMAYDI:**
 
-| Savol | Manba |
-|---|---|
-| Endpoint URL, HTTP metod, parametr nomlari | `docs.click.uz` / `developer.help.paycom.uz` |
-| Imzo algoritmi (MD5/HMAC/SHA?) va imzolanadigan qatorning aniq tuzilishi | Rasmiy hujjat |
-| Xato kodlari ro'yxati va ularning semantikasi | Rasmiy hujjat |
-| `Prepare`/`Complete` kabi ikki fazali oqim bormi va u qanday ishlaydi | Rasmiy hujjat |
-| Refund API bormi, qisman refund qo'llab-quvvatlanadimi | Rasmiy hujjat + shartnoma |
-| Settlement (pul do'kon hisobiga qachon tushadi) davri | Shartnoma |
-| Sandbox muhiti bor-yo'qligi va unga kirish tartibi | Rasmiy hujjat |
-| Komissiya stavkasi | Shartnoma |
+| Savol                                                                    | Manba                                        |
+| ------------------------------------------------------------------------ | -------------------------------------------- |
+| Endpoint URL, HTTP metod, parametr nomlari                               | `docs.click.uz` / `developer.help.paycom.uz` |
+| Imzo algoritmi (MD5/HMAC/SHA?) va imzolanadigan qatorning aniq tuzilishi | Rasmiy hujjat                                |
+| Xato kodlari ro'yxati va ularning semantikasi                            | Rasmiy hujjat                                |
+| `Prepare`/`Complete` kabi ikki fazali oqim bormi va u qanday ishlaydi    | Rasmiy hujjat                                |
+| Refund API bormi, qisman refund qo'llab-quvvatlanadimi                   | Rasmiy hujjat + shartnoma                    |
+| Settlement (pul do'kon hisobiga qachon tushadi) davri                    | Shartnoma                                    |
+| Sandbox muhiti bor-yo'qligi va unga kirish tartibi                       | Rasmiy hujjat                                |
+| Komissiya stavkasi                                                       | Shartnoma                                    |
 
 **Bu jadval — ish rejasi.** Har bir qator adapter yozilishidan **oldin**
 to'ldirilishi shart (§14, AC-P1).
@@ -173,7 +174,7 @@ Xususiyatlari:
 > ⚠️ **TEKSHIRILISHI KERAK:** yuridik shaxsga sotishda hujjat talablari (hisob-faktura
 > shakli, shartnoma, EDI/E-faktura tizimi). O'zbekistonda elektron hisob-faktura
 > tizimi mavjud — lekin uning Kelvin uchun majburiyligi va integratsiya usuli
-> **buxgalter bilan tasdiqlanishi kerak**. → Ochiq savol Q-08.
+> **buxgalter bilan tasdiqlanishi kerak**. → Ochiq savol Q-19.
 
 ---
 
@@ -191,7 +192,7 @@ Eng ko'p uchraydigan xato — provayder nomini biznes-mantiqqa olib kirish:
 // ❌ SHUNDAY QILMAYMIZ
 async function pay(order: Order, method: string) {
   if (method === 'click') {
-    const res = await clickApi.createInvoice(order.total);  // ...
+    const res = await clickApi.createInvoice(order.total); // ...
   } else if (method === 'payme') {
     const res = await paymeApi.receiptsCreate(order.total); // ...
   } else if (method === 'cash') {
@@ -247,12 +248,7 @@ holat mashinasiga va reconciliation'ga tushadi (§1.4).
 import type { Money } from './money';
 
 /** CANON §6: Click, Payme, Uzum + offline kanallar. */
-export type PaymentProviderCode =
-  | 'click'
-  | 'payme'
-  | 'uzum'
-  | 'cash'
-  | 'bank_transfer';
+export type PaymentProviderCode = 'click' | 'payme' | 'uzum' | 'cash' | 'bank_transfer';
 
 /**
  * Provayder qanday tasdiqlanadi.
@@ -440,9 +436,15 @@ rasmiy hujjat tekshirilmaguncha kodni ishga tushirmaslik. Bu — CANON §10:
 
 import { Injectable } from '@nestjs/common';
 import type {
-  PaymentProvider, ProviderCapabilities, CreateChargeInput, CreateChargeResult,
-  ProviderPaymentState, RefundInput, RefundResult,
-  RawWebhookRequest, NormalizedWebhookEvent,
+  PaymentProvider,
+  ProviderCapabilities,
+  CreateChargeInput,
+  CreateChargeResult,
+  ProviderPaymentState,
+  RefundInput,
+  RefundResult,
+  RawWebhookRequest,
+  NormalizedWebhookEvent,
 } from '@kelvin/contracts';
 
 /**
@@ -500,7 +502,7 @@ export class ClickAdapter implements PaymentProvider {
 
 `PaymeAdapter` va `UzumAdapter` — aynan shu shaklda, mos manba bilan
 (`developer.help.paycom.uz`; Uzum uchun rasmiy hujjat havolasi hali aniqlanmagan
-→ Ochiq savol Q-02).
+→ Ochiq savol Q-11).
 
 ### 2.6 `CashAdapter` — tashqi API'siz adapter
 
@@ -514,11 +516,11 @@ export class CashAdapter implements PaymentProvider {
   readonly code = 'cash' as const;
 
   readonly capabilities: ProviderCapabilities = {
-    confirmation: 'manual',        // kuryer/kassir tasdiqlaydi (§1.4)
-    supportsPartialRefund: true,   // kassadan qisman qaytarish — jismonan mumkin
-    supportsApiRefund: false,      // API yo'q: pul qo'ldan beriladi
+    confirmation: 'manual', // kuryer/kassir tasdiqlaydi (§1.4)
+    supportsPartialRefund: true, // kassadan qisman qaytarish — jismonan mumkin
+    supportsApiRefund: false, // API yo'q: pul qo'ldan beriladi
     supportsSettlementReport: false,
-    invoiceTtlSeconds: null,       // naqd "muddati o'tmaydi"
+    invoiceTtlSeconds: null, // naqd "muddati o'tmaydi"
   };
 
   async createCharge(input: CreateChargeInput): Promise<CreateChargeResult> {
@@ -534,7 +536,13 @@ export class CashAdapter implements PaymentProvider {
 
   async getState(_id: string): Promise<ProviderPaymentState> {
     // Naqdda tashqi haqiqat manbai yo'q — Kelvin ledger'i O'ZI manba.
-    return { status: 'unknown', providerTransactionId: null, paidAmount: null, paidAt: null, raw: null };
+    return {
+      status: 'unknown',
+      providerTransactionId: null,
+      paidAmount: null,
+      paidAt: null,
+      raw: null,
+    };
   }
 
   async refund(_input: RefundInput): Promise<RefundResult> {
@@ -566,9 +574,9 @@ Bu qoida did masalasi emas. IEEE-754 `double` ikkilik kasr bilan ishlaydi va
 o'nlik kasrni **aniq ifodalay olmaydi**:
 
 ```ts
-0.1 + 0.2 === 0.3;            // false
-0.1 + 0.2;                    // 0.30000000000000004
-1_666_666.67 * 3;             // 5000000.009999999
+0.1 + 0.2 === 0.3; // false
+0.1 + 0.2; // 0.30000000000000004
+1_666_666.67 * 3; // 5000000.009999999
 ```
 
 Oxirgi qator — aynan bizning holat: 5 mln so'mlik qandil, 3 oylik rassrochka.
@@ -687,7 +695,7 @@ export class Money {
    * ASOSLASH: bu — foiz/QQS uchun keng tarqalgan tijorat konvensiyasi va u
    * simmetrik (manfiy summada ham kattaligi bo'yicha yuqoriga). ⚠️ Soliq
    * hisobida yaxlitlash qoidasi qonun bilan belgilangan bo'lishi mumkin —
-   * buxgalter bilan tasdiqlanadi (Ochiq savol Q-09).
+   * buxgalter bilan tasdiqlanadi (Ochiq savol Q-03).
    */
   percentage(basisPoints: bigint | number): Money {
     const bp = BigInt(basisPoints);
@@ -696,8 +704,12 @@ export class Money {
     return new Money(divideHalfUp(numerator, denominator), this.currency);
   }
 
-  isZero(): boolean { return this.minor === 0n; }
-  isNegative(): boolean { return this.minor < 0n; }
+  isZero(): boolean {
+    return this.minor === 0n;
+  }
+  isNegative(): boolean {
+    return this.minor < 0n;
+  }
   equals(other: Money): boolean {
     return this.currency === other.currency && this.minor === other.minor;
   }
@@ -768,12 +780,12 @@ export class Money {
 /** Nolga qarab emas, MANFIY CHEKSIZLIK tomon bo'lish. bigint `/` nolga qarab kesadi. */
 function floorDiv(a: bigint, b: bigint): bigint {
   const q = a / b;
-  return (a % b !== 0n && (a < 0n) !== (b < 0n)) ? q - 1n : q;
+  return a % b !== 0n && a < 0n !== b < 0n ? q - 1n : q;
 }
 
 /** HALF_UP: kattalik bo'yicha yaxlitlash (|x| ning yarmi — yuqoriga). */
 function divideHalfUp(a: bigint, b: bigint): bigint {
-  const neg = (a < 0n) !== (b < 0n);
+  const neg = a < 0n !== b < 0n;
   const absA = a < 0n ? -a : a;
   const absB = b < 0n ? -b : b;
   const q = (2n * absA + absB) / (2n * absB);
@@ -795,11 +807,11 @@ qoldiq                    = 2 tiyin
 **2 tiyin qayerdadir bo'lishi SHART.** Uch xil yechim bor va ularning ikkitasi
 xato:
 
-| Yondashuv | Natija | Yig'indi | Baho |
-|---|---|---|---|
-| `1 666 666.67 × 3` (float, yaxlit) | 1 666 666.67 ×3 | 5 000 000.01 | ❌ Do'kon 1 tiyin ko'p oladi |
-| `1 666 666.66 × 3` (kesish) | 1 666 666.66 ×3 | 4 999 999.98 | ❌ Do'kon 2 tiyin yo'qotadi |
-| **`allocate([1,1,1])`** | 166 666 667 / 166 666 667 / 166 666 666 | **500 000 000** | ✅ Aniq |
+| Yondashuv                          | Natija                                  | Yig'indi        | Baho                         |
+| ---------------------------------- | --------------------------------------- | --------------- | ---------------------------- |
+| `1 666 666.67 × 3` (float, yaxlit) | 1 666 666.67 ×3                         | 5 000 000.01    | ❌ Do'kon 1 tiyin ko'p oladi |
+| `1 666 666.66 × 3` (kesish)        | 1 666 666.66 ×3                         | 4 999 999.98    | ❌ Do'kon 2 tiyin yo'qotadi  |
+| **`allocate([1,1,1])`**            | 166 666 667 / 166 666 667 / 166 666 666 | **500 000 000** | ✅ Aniq                      |
 
 `allocate` natijasi (tiyinda):
 
@@ -822,13 +834,13 @@ CANON "har texnik da'vo ortida sabab bo'lsin" deydi. Yaxlitlash yo'nalishi —
 aynan shunday joy. Umumiy "hamma joyda HALF_UP" qoidasi **noto'g'ri**: yo'nalish
 kimga foyda berishiga qarab tanlanadi va har safar yoziladi.
 
-| Joy | Yo'nalish | Asos |
-|---|---|---|
-| `allocate()` (grafik, ulush) | floor + qoldiqni tarqatish | Yig'indi saqlanishi shart — bu yagona to'g'ri yo'l |
-| `percentage()` (foiz, QQS) | HALF_UP | Tijorat konvensiyasi; ⚠️ soliq uchun Q-09 |
-| Chegirma summasi | **mijoz foydasiga** (yuqoriga) | 1 tiyin do'konga arzimaydi; mijoz "chegirma kam bo'ldi" demasin |
-| Penya (§7.9) | **mijoz foydasiga** (pastga) | Jarima — nozik joy. Kam olish xavfsiz, ko'p olish nizo |
-| Mijozga ko'rsatiladigan oylik to'lov | so'mgacha (§7.6) | Tiyin muomalada yo'q; UI da "1 666 666,67" — bema'ni |
+| Joy                                  | Yo'nalish                      | Asos                                                            |
+| ------------------------------------ | ------------------------------ | --------------------------------------------------------------- |
+| `allocate()` (grafik, ulush)         | floor + qoldiqni tarqatish     | Yig'indi saqlanishi shart — bu yagona to'g'ri yo'l              |
+| `percentage()` (foiz, QQS)           | HALF_UP                        | Tijorat konvensiyasi; ⚠️ soliq uchun Q-03                       |
+| Chegirma summasi                     | **mijoz foydasiga** (yuqoriga) | 1 tiyin do'konga arzimaydi; mijoz "chegirma kam bo'ldi" demasin |
+| Penya (§7.9)                         | **mijoz foydasiga** (pastga)   | Jarima — nozik joy. Kam olish xavfsiz, ko'p olish nizo          |
+| Mijozga ko'rsatiladigan oylik to'lov | so'mgacha (§7.6)               | Tiyin muomalada yo'q; UI da "1 666 666,67" — bema'ni            |
 
 **Muhim nuance:** oxirgi qatordagi yaxlitlash **grafik yig'indisini buzmasligi**
 kerak. Yechim §7.6 da: so'mgacha yaxlitlash `allocate` dan **keyin** emas,
@@ -886,20 +898,27 @@ stateDiagram-v2
 // apps/api/src/payment/payment.state.ts
 
 export type PaymentStatus =
-  | 'created' | 'pending' | 'paid' | 'failed' | 'expired' | 'cancelled'
-  | 'refund_requested' | 'refunded' | 'partially_refunded';
+  | 'created'
+  | 'pending'
+  | 'paid'
+  | 'failed'
+  | 'expired'
+  | 'cancelled'
+  | 'refund_requested'
+  | 'refunded'
+  | 'partially_refunded';
 
 /** Yagona haqiqat manbai. Diagramma — shuning ko'rinishi, aksincha emas. */
 const TRANSITIONS: Readonly<Record<PaymentStatus, readonly PaymentStatus[]>> = {
-  created:            ['pending', 'failed'],
-  pending:            ['paid', 'failed', 'expired', 'cancelled'],
-  paid:               ['refund_requested'],
-  refund_requested:   ['refunded', 'partially_refunded', 'paid'],
+  created: ['pending', 'failed'],
+  pending: ['paid', 'failed', 'expired', 'cancelled'],
+  paid: ['refund_requested'],
+  refund_requested: ['refunded', 'partially_refunded', 'paid'],
   partially_refunded: ['refund_requested'],
-  failed:             [],
-  expired:            [],
-  cancelled:          [],
-  refunded:           [],
+  failed: [],
+  expired: [],
+  cancelled: [],
+  refunded: [],
 };
 
 export function canTransition(from: PaymentStatus, to: PaymentStatus): boolean {
@@ -968,11 +987,11 @@ async transition(
 **Chaqiruvchi konflikni qanday qayta ishlaydi** — bu holatga bog'liq va bu yerda
 "retry qilaver" degan javob **xato**:
 
-| Kim yutqazdi | To'g'ri javob |
-|---|---|
-| Webhook (`paid` yozolmadi, chunki `expired`) | **Ogohlantirish + qo'lda ko'rib chiqish.** Pul olingan, lekin to'lov muddati o'tgan. Bu — pul bilan bog'liq nomuvofiqlik, avtomatik hal qilinmaydi (§12.4) |
-| Expire job (`expired` yozolmadi, chunki `paid`) | **Jim tashlab yuborish.** To'g'ri natija allaqachon yozilgan |
-| Webhook takrori (`paid` → `paid`) | **Jim OK qaytarish.** Idempotentlik (§5) |
+| Kim yutqazdi                                    | To'g'ri javob                                                                                                                                              |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Webhook (`paid` yozolmadi, chunki `expired`)    | **Ogohlantirish + qo'lda ko'rib chiqish.** Pul olingan, lekin to'lov muddati o'tgan. Bu — pul bilan bog'liq nomuvofiqlik, avtomatik hal qilinmaydi (§12.4) |
+| Expire job (`expired` yozolmadi, chunki `paid`) | **Jim tashlab yuborish.** To'g'ri natija allaqachon yozilgan                                                                                               |
+| Webhook takrori (`paid` → `paid`)               | **Jim OK qaytarish.** Idempotentlik (§5)                                                                                                                   |
 
 Shu sababdan `transition()` xatoni **yutmaydi** — chaqiruvchi qaror qabul qiladi.
 
@@ -999,13 +1018,13 @@ belgiladi, pulni cho'ntagiga soldi). Shuning uchun:
 Idempotentlik — "yaxshi bo'lsa bo'ldi" xususiyati emas. To'lov tizimida
 **takror — norma, istisno emas**:
 
-| Ssenariy | Chastota | Idempotentliksiz natija |
-|---|---|---|
-| Provayder webhook'ni takrorlaydi (javobni olmadi) | **Doimiy** — bu provayderlarning normal xatti-harakati | Ledger'ga ikki marta yozuv, revenue ikki barobar |
-| Mijoz "To'lash" tugmasini ikki marta bosdi | Tez-tez | Ikkita `Payment`, ikkita rezerv, ikki marta yechish |
-| Tarmoq uzildi: so'rov ketdi, javob kelmadi | Tez-tez | Client retry qiladi → ikkinchi charge |
-| BullMQ job qayta urinmoqda | Doimiy | Ikki marta SMS, ikki marta refund |
-| Reconciliation job'i webhook bilan bir vaqtda | Kunlik | Ikkita `paid` o'tishi |
+| Ssenariy                                          | Chastota                                               | Idempotentliksiz natija                             |
+| ------------------------------------------------- | ------------------------------------------------------ | --------------------------------------------------- |
+| Provayder webhook'ni takrorlaydi (javobni olmadi) | **Doimiy** — bu provayderlarning normal xatti-harakati | Ledger'ga ikki marta yozuv, revenue ikki barobar    |
+| Mijoz "To'lash" tugmasini ikki marta bosdi        | Tez-tez                                                | Ikkita `Payment`, ikkita rezerv, ikki marta yechish |
+| Tarmoq uzildi: so'rov ketdi, javob kelmadi        | Tez-tez                                                | Client retry qiladi → ikkinchi charge               |
+| BullMQ job qayta urinmoqda                        | Doimiy                                                 | Ikki marta SMS, ikki marta refund                   |
+| Reconciliation job'i webhook bilan bir vaqtda     | Kunlik                                                 | Ikkita `paid` o'tishi                               |
 
 Ya'ni: **retry — arxitekturaning bir qismi.** Savol "takror keladimi?" emas,
 "takror kelganda nima bo'ladi?".
@@ -1331,49 +1350,49 @@ qoladi.
  *
  * ⚠️ TASDIQLANISHI KERAK: bu reja — MUHANDISLIK modeli, rasmiy buxgalteriya
  * hisoblar rejasi EMAS. O'zbekiston BHMS (buxgalteriya hisobi milliy standarti)
- * bo'yicha hisob raqamlari bilan moslashtirish BUXGALTER ishi. → Ochiq savol Q-10.
+ * bo'yicha hisob raqamlari bilan moslashtirish BUXGALTER ishi. → Ochiq savol Q-07.
  */
 export const ACCOUNTS = {
   // AKTIV — bizda bor pul
-  'asset.cash.click':          'Click hisobidagi pul',
-  'asset.cash.payme':          'Payme hisobidagi pul',
-  'asset.cash.uzum':           'Uzum hisobidagi pul',
-  'asset.cash.pos_drawer':     'Do\'kon kassasidagi naqd (§9)',
-  'asset.cash.courier':        'Kuryer qo\'lidagi naqd (§1.4)',
-  'asset.cash.bank':           'Bank hisobraqami',
+  'asset.cash.click': 'Click hisobidagi pul',
+  'asset.cash.payme': 'Payme hisobidagi pul',
+  'asset.cash.uzum': 'Uzum hisobidagi pul',
+  'asset.cash.pos_drawer': "Do'kon kassasidagi naqd (§9)",
+  'asset.cash.courier': "Kuryer qo'lidagi naqd (§1.4)",
+  'asset.cash.bank': 'Bank hisobraqami',
   'asset.receivable.provider': 'Provayder ushlab turgan pul (settlement kutilmoqda)',
-  'asset.receivable.installment': 'Rassrochka qarzi — mijoz to\'lashi kerak (§7)',
+  'asset.receivable.installment': "Rassrochka qarzi — mijoz to'lashi kerak (§7)",
 
   // PASSIV — bizning majburiyatimiz
-  'liability.customer_prepayment': 'Oldindan to\'lov: pul olindi, tovar berilmadi',
-  'liability.refund_payable':      'Qaytarilishi kerak, hali qaytarilmagan (§8)',
-  'liability.vat_payable':         'Soliqqa to\'lanadigan QQS (⚠️ §10)',
+  'liability.customer_prepayment': "Oldindan to'lov: pul olindi, tovar berilmadi",
+  'liability.refund_payable': 'Qaytarilishi kerak, hali qaytarilmagan (§8)',
+  'liability.vat_payable': "Soliqqa to'lanadigan QQS (⚠️ §10)",
 
   // DAROMAD
-  'revenue.product':        'Tovar sotuvi',
-  'revenue.delivery':       'Yetkazib berish xizmati',
-  'revenue.installation':   'O\'rnatish xizmati (CANON §4.6)',
-  'revenue.installment_fee':'Rassrochka ustamasi (agar bo\'lsa — §7.5)',
+  'revenue.product': 'Tovar sotuvi',
+  'revenue.delivery': 'Yetkazib berish xizmati',
+  'revenue.installation': "O'rnatish xizmati (CANON §4.6)",
+  'revenue.installment_fee': "Rassrochka ustamasi (agar bo'lsa — §7.5)",
 
   // KONTR-DAROMAD — refund revenue'dan AYIRILMAYDI, alohida yuritiladi
-  'contra_revenue.refund':  'Qaytarilgan sotuv (§8)',
-  'revenue.cash_overage':   'Kassada ortiqcha chiqqan naqd (§9.3)',
+  'contra_revenue.refund': 'Qaytarilgan sotuv (§8)',
+  'revenue.cash_overage': 'Kassada ortiqcha chiqqan naqd (§9.3)',
 
   // XARAJAT
-  'expense.provider_fee':   'Provayder komissiyasi',
+  'expense.provider_fee': 'Provayder komissiyasi',
   'expense.installment_loss': 'Rassrochka defolti — hisobdan chiqarilgan qarz (§7.10)',
-  'expense.cash_shortage':  'Kassada kam chiqqan naqd (§9.3)',
+  'expense.cash_shortage': 'Kassada kam chiqqan naqd (§9.3)',
 } as const;
 
 export type AccountCode = keyof typeof ACCOUNTS;
 ```
 
 > **⚠️ Muhim tuzatish.** Dastlabki eskizda `liability.installment_receivable`
-> yozilgan edi. Bu **noto'g'ri**: *receivable* (qarz — bizga to'lanishi kerak) —
+> yozilgan edi. Bu **noto'g'ri**: _receivable_ (qarz — bizga to'lanishi kerak) —
 > bu **aktiv**, majburiyat emas. Shuning uchun bu yerda
 > `asset.receivable.installment` ishlatilgan. Nomni jim tuzatib qo'ymay,
 > ochiq yozdim — chunki hisob turini chalkashtirish butun hisobotni ag'daradi.
-> ⚠️ Baribir **buxgalter tasdig'i shart** (Q-10).
+> ⚠️ Baribir **buxgalter tasdig'i shart** (Q-07).
 
 **Kontr-daromad haqida:** refund'da `revenue.product` ni kamaytirish
 **mumkin emas** — u holda "bugun 50 mln sotdik, 3 mln qaytardik" ma'lumoti
@@ -1465,36 +1484,36 @@ FROM ledger_entries GROUP BY transaction_id HAVING SUM(debit) <> SUM(credit);
 **A. Click orqali 5 000 000 so'mlik qandil sotildi** (soddalashtirilgan, QQS'siz —
 QQS §10 da, u tasdiqlanmagan):
 
-| Hisob | Debit | Credit | Izoh |
-|---|---:|---:|---|
-| `asset.receivable.provider` | 500 000 000 | | Click pulni oldi, bizga hali o'tkazmadi |
-| `revenue.product` | | 500 000 000 | Daromad tan olindi |
+| Hisob                       |       Debit |      Credit | Izoh                                    |
+| --------------------------- | ----------: | ----------: | --------------------------------------- |
+| `asset.receivable.provider` | 500 000 000 |             | Click pulni oldi, bizga hali o'tkazmadi |
+| `revenue.product`           |             | 500 000 000 | Daromad tan olindi                      |
 
 Click settlement qilganda (pul bankka tushdi, komissiya 1% deb **faraz** —
 ⚠️ real stavka shartnomadan, §1.2):
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `asset.cash.bank` | 495 000 000 | |
-| `expense.provider_fee` | 5 000 000 | |
-| `asset.receivable.provider` | | 500 000 000 |
+| Hisob                       |       Debit |      Credit |
+| --------------------------- | ----------: | ----------: |
+| `asset.cash.bank`           | 495 000 000 |             |
+| `expense.provider_fee`      |   5 000 000 |             |
+| `asset.receivable.provider` |             | 500 000 000 |
 
 **Diqqat:** komissiya `revenue` dan ayirilmaydi. Daromad — 5 mln, komissiya —
 xarajat. Aks holda "sotuv hajmi" metrikasi buziladi.
 
 **B. Naqd, kuryer orqali** (§1.4):
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `asset.cash.courier` | 500 000 000 | |
-| `revenue.product` | | 500 000 000 |
+| Hisob                |       Debit |      Credit |
+| -------------------- | ----------: | ----------: |
+| `asset.cash.courier` | 500 000 000 |             |
+| `revenue.product`    |             | 500 000 000 |
 
 Kuryer kassaga topshirganda:
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `asset.cash.pos_drawer` | 500 000 000 | |
-| `asset.cash.courier` | | 500 000 000 |
+| Hisob                   |       Debit |      Credit |
+| ----------------------- | ----------: | ----------: |
+| `asset.cash.pos_drawer` | 500 000 000 |             |
+| `asset.cash.courier`    |             | 500 000 000 |
 
 Kuryer topshirmasa — `asset.cash.courier` da qoldiq **turaveradi va ko'rinadi**.
 Hisobot "Aliyevda 12 mln so'm 4 kundan beri" deydi. Bu — ledger'ning
@@ -1538,16 +1557,16 @@ Audit uchun aynan shu kerak.
 
 ### 6.7 Ledger qachon yoziladi
 
-| Hodisa | Ledger yozuvi | Qachon |
-|---|---|---|
-| `Payment: created → pending` | **Yo'q** | Hali pul yo'q, faqat niyat |
-| `Payment: pending → paid` | **Ha** | §6.5.A — bitta tranzaksiyada (§5.5) |
-| `Payment: pending → failed/expired` | **Yo'q** | Pul harakati bo'lmagan |
-| Provayder settlement | **Ha** | Reconciliation job (§12) |
-| Rassrochka shartnomasi tuzildi | **Ha** | §7.7 |
-| Rassrochka oyligi to'landi | **Ha** | §7.7 |
-| Refund | **Ha** | §8.4 |
-| Smena yopildi, farq bor | **Ha** | §9.3 |
+| Hodisa                              | Ledger yozuvi | Qachon                              |
+| ----------------------------------- | ------------- | ----------------------------------- |
+| `Payment: created → pending`        | **Yo'q**      | Hali pul yo'q, faqat niyat          |
+| `Payment: pending → paid`           | **Ha**        | §6.5.A — bitta tranzaksiyada (§5.5) |
+| `Payment: pending → failed/expired` | **Yo'q**      | Pul harakati bo'lmagan              |
+| Provayder settlement                | **Ha**        | Reconciliation job (§12)            |
+| Rassrochka shartnomasi tuzildi      | **Ha**        | §7.7                                |
+| Rassrochka oyligi to'landi          | **Ha**        | §7.7                                |
+| Refund                              | **Ha**        | §8.4                                |
+| Smena yopildi, farq bor             | **Ha**        | §9.3                                |
 
 **Qoida:** ledger'ga faqat **real pul harakati** yoziladi. Holat o'zgarishi —
 `Payment.status` ning ishi. Bu ikkisini aralashtirish — eng ko'p uchraydigan
@@ -1610,30 +1629,30 @@ Kelvin uchun bu deyarli **oddiy to'lov**: `PaymentProvider` porti (§2.3) shu
 holatni ham qoplaydi. Rassrochka provayderi — bu shunchaki `capabilities`
 boshqacha bo'lgan adapter.
 
-| Jihat | Baho |
-|---|---|
-| Pul qachon keladi | Darhol (settlement davri bilan) |
-| Kredit riski | **Provayderda** |
-| Undirish (qarz qaytmasa) | **Provayderning ishi** |
-| Yuridik status | Provayder litsenziyalangan moliya tashkiloti |
-| Kelvin xarajati | Komissiya (⚠️ stavka noma'lum — shartnoma) |
-| Texnik murakkablik | **Past** — mavjud port yetadi |
-| Grafik hisobi | Provayderda. Kelvin faqat **ko'rsatadi** |
+| Jihat                    | Baho                                         |
+| ------------------------ | -------------------------------------------- |
+| Pul qachon keladi        | Darhol (settlement davri bilan)              |
+| Kredit riski             | **Provayderda**                              |
+| Undirish (qarz qaytmasa) | **Provayderning ishi**                       |
+| Yuridik status           | Provayder litsenziyalangan moliya tashkiloti |
+| Kelvin xarajati          | Komissiya (⚠️ stavka noma'lum — shartnoma)   |
+| Texnik murakkablik       | **Past** — mavjud port yetadi                |
+| Grafik hisobi            | Provayderda. Kelvin faqat **ko'rsatadi**     |
 
 > **⚠️ TEKSHIRILISHI KERAK — TO'QIB CHIQARILMAYDI (CANON §6, §10):**
 > Uzum Nasiya, Alif Nasiya, Intend va boshqa provayderlarning **API'lari
 > menga noma'lum**. Quyidagilarning **hech biri** bu hujjatda yozilmagan va
 > yozilmaydi:
 >
-> | Savol | Kim aniqlaydi |
-> |---|---|
-> | Integratsiya API bormi yoki hamma narsa ularning ilovasi orqalimi | Provayder |
-> | Skoring natijasi Kelvinga qaytadimi (yoki mijoz o'zi ilovada ko'radimi) | Provayder |
-> | Qaysi muddatlar (3/6/9/12 oy) qo'llab-quvvatlanadi | Shartnoma |
-> | Komissiya stavkasi va u muddatga bog'liqmi | Shartnoma |
-> | Refund/qaytarish qanday ishlaydi (§8.6) | Shartnoma + API |
-> | Do'kon uchun minimal/maksimal summa chegarasi | Shartnoma |
-> | Webhook bormi, imzo qanday | Rasmiy hujjat |
+> | Savol                                                                   | Kim aniqlaydi   |
+> | ----------------------------------------------------------------------- | --------------- |
+> | Integratsiya API bormi yoki hamma narsa ularning ilovasi orqalimi       | Provayder       |
+> | Skoring natijasi Kelvinga qaytadimi (yoki mijoz o'zi ilovada ko'radimi) | Provayder       |
+> | Qaysi muddatlar (3/6/9/12 oy) qo'llab-quvvatlanadi                      | Shartnoma       |
+> | Komissiya stavkasi va u muddatga bog'liqmi                              | Shartnoma       |
+> | Refund/qaytarish qanday ishlaydi (§8.6)                                 | Shartnoma + API |
+> | Do'kon uchun minimal/maksimal summa chegarasi                           | Shartnoma       |
+> | Webhook bormi, imzo qanday                                              | Rasmiy hujjat   |
 >
 > Adapter §2.5 dagi shaklda — `throw new Error('Not implemented: verify provider docs first')`.
 
@@ -1652,14 +1671,14 @@ buxgalteriya tili bilan `asset.receivable.installment`, oddiy til bilan
 Bu yerda ochiq aytish kerak: **bu texnik xususiyat emas, bu moliyaviy faoliyat.**
 Kelvin bu modelda do'kon bo'lishdan tashqari **kreditor** bo'ladi.
 
-| Jihat | Baho |
-|---|---|
-| Pul qachon keladi | 3-12 oy davomida |
-| Kredit riski | **Kelvinda** — mijoz to'lamasa, zarar Kelvinniki |
-| Undirish | **Kelvinning ishi** — qo'ng'iroq, sud, hisobdan chiqarish |
-| Aylanma mablag' | **Muzlaydi** — 100 ta rassrochka = ~500 mln so'm ko'chada |
-| Yuridik status | 🚫 **NOMA'LUM — BLOKER (§7.3)** |
-| Texnik murakkablik | **Yuqori** — §7.4-7.10 shu haqda |
+| Jihat              | Baho                                                      |
+| ------------------ | --------------------------------------------------------- |
+| Pul qachon keladi  | 3-12 oy davomida                                          |
+| Kredit riski       | **Kelvinda** — mijoz to'lamasa, zarar Kelvinniki          |
+| Undirish           | **Kelvinning ishi** — qo'ng'iroq, sud, hisobdan chiqarish |
+| Aylanma mablag'    | **Muzlaydi** — 100 ta rassrochka = ~500 mln so'm ko'chada |
+| Yuridik status     | 🚫 **NOMA'LUM — BLOKER (§7.3)**                           |
+| Texnik murakkablik | **Yuqori** — §7.4-7.10 shu haqda                          |
 
 ### 7.3 🚫 YURIDIK BLOKER — B model
 
@@ -1671,7 +1690,7 @@ Kelvin bu modelda do'kon bo'lishdan tashqari **kreditor** bo'ladi.
 >
 > **Men bu savolga JAVOB BERMAYMAN.** Sabab: men yurist emasman va bu yerda
 > taxmin qilish — loyiha egasini huquqbuzarlikka boshlash demakdir. CANON §10:
-> *"Yuridik maslahat (yurist savoli sifatida belgila)"*.
+> _"Yuridik maslahat (yurist savoli sifatida belgila)"_.
 >
 > **Nima uchun bu jiddiy:** agar javob "ha, litsenziya kerak" bo'lsa, B model
 > Kelvin uchun **umuman yopiq** — kod yozilgan yoki yozilmagani ahamiyatsiz.
@@ -1681,17 +1700,17 @@ Kelvin bu modelda do'kon bo'lishdan tashqari **kreditor** bo'ladi.
 
 **Yuristga beriladigan savollar ro'yxati (aynan shu shaklda):**
 
-| # | Savol | Nega muhim |
-|---|---|---|
-| L1 | Savdo tashkilotining o'z hisobidan bo'lib to'lash sharti bilan sotishi litsenziya talab qiladimi? | Butun B modelning mavjudligi |
-| L2 | Agar yo'q — bu munosabat qanday rasmiylashtiriladi (oldi-sotdi shartnomasi + to'lov grafigi? boshqa shakl?) | Shartnoma shabloni |
-| L3 | Ustama (foiz) olish mumkinmi? Cheklov bormi? | §7.5 — foiz modeli |
-| L4 | Ustama — bu "foiz" (kredit) bo'lib qoladimi, yoki narx farqi sifatida rasmiylashtiriladimi? | Yuridik kvalifikatsiya + soliq |
-| L5 | Kechikish uchun penya olish mumkinmi? Maksimal stavka bormi? | §7.9 |
-| L6 | Daromad qachon tan olinadi: tovar berilganda yoki pul kelganda? | §6.7, §7.7 — ledger va soliq |
-| L7 | QQS qachon va qaysi summadan hisoblanadi (to'liq narxdanmi, har oylik to'lovdanmi)? | §10 |
-| L8 | Mijoz to'lamasa, undirish tartibi qanday? Tovarni qaytarib olish mumkinmi? | §7.10 |
-| L9 | Mijozning shaxsiy ma'lumotini (passport, daromad) skoring uchun saqlash talablari | Ma'lumot himoyasi |
+| #   | Savol                                                                                                       | Nega muhim                     |
+| --- | ----------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| L1  | Savdo tashkilotining o'z hisobidan bo'lib to'lash sharti bilan sotishi litsenziya talab qiladimi?           | Butun B modelning mavjudligi   |
+| L2  | Agar yo'q — bu munosabat qanday rasmiylashtiriladi (oldi-sotdi shartnomasi + to'lov grafigi? boshqa shakl?) | Shartnoma shabloni             |
+| L3  | Ustama (foiz) olish mumkinmi? Cheklov bormi?                                                                | §7.5 — foiz modeli             |
+| L4  | Ustama — bu "foiz" (kredit) bo'lib qoladimi, yoki narx farqi sifatida rasmiylashtiriladimi?                 | Yuridik kvalifikatsiya + soliq |
+| L5  | Kechikish uchun penya olish mumkinmi? Maksimal stavka bormi?                                                | §7.9                           |
+| L6  | Daromad qachon tan olinadi: tovar berilganda yoki pul kelganda?                                             | §6.7, §7.7 — ledger va soliq   |
+| L7  | QQS qachon va qaysi summadan hisoblanadi (to'liq narxdanmi, har oylik to'lovdanmi)?                         | §10                            |
+| L8  | Mijoz to'lamasa, undirish tartibi qanday? Tovarni qaytarib olish mumkinmi?                                  | §7.10                          |
+| L9  | Mijozning shaxsiy ma'lumotini (passport, daromad) skoring uchun saqlash talablari                           | Ma'lumot himoyasi              |
 
 **Blokerning kodga ta'siri — aniq:**
 
@@ -1833,16 +1852,16 @@ ALTER TABLE installment_schedules ADD CONSTRAINT sched_non_negative CHECK (
 
 **Kirish parametrlari:**
 
-| Parametr | Qiymat | Manba |
-|---|---|---|
-| `termMonths` | 3 / 6 / 9 / 12 | Biznes tanlovi. ⚠️ Aniq ro'yxat — Q-04 |
-| `downPayment` | Boshlang'ich badal | ⚠️ Majburiymi va necha % — Q-05 |
-| `markupBps` | Ustama, basis point | ⚠️ 0 bo'lishi mumkin. Yuridik — L3/L4 |
+| Parametr      | Qiymat              | Manba                                  |
+| ------------- | ------------------- | -------------------------------------- |
+| `termMonths`  | 3 / 6 / 9 / 12      | Biznes tanlovi. ⚠️ Aniq ro'yxat — Q-21 |
+| `downPayment` | Boshlang'ich badal  | ⚠️ Majburiymi va necha % — Q-22        |
+| `markupBps`   | Ustama, basis point | ⚠️ 0 bo'lishi mumkin. Yuridik — L3/L4  |
 
 > ⚠️ **Bu jadvaldagi hech bir RAQAM bu hujjatda belgilanmagan.** "3 oy — 0%,
 > 12 oy — 20%" kabi jumla bu yerda **yo'q**, chunki men Kelvinning marja
 > tuzilishini, kapital narxini va raqobatchilar shartlarini bilmayman. Bu —
-> **do'kon egasining moliyaviy qarori**, muhandisniki emas (Q-04, Q-05, Q-06).
+> **do'kon egasining moliyaviy qarori**, muhandisniki emas (Q-21, Q-22, Q-23, Q-24).
 > Kod ularni **parametr** sifatida oladi.
 
 **Ustama modeli — ikki xil bo'lishi mumkin va farqi katta:**
@@ -1862,7 +1881,7 @@ export type MarkupModel =
   | 'reducing';
 ```
 
-> ⚠️ **QAYSI MODEL — TASDIQLANISHI KERAK (Q-06).** Bu tanlov mijoz to'laydigan
+> ⚠️ **QAYSI MODEL — TASDIQLANISHI KERAK (Q-23).** Bu tanlov mijoz to'laydigan
 > summani **sezilarli** o'zgartiradi va yuridik kvalifikatsiyaga ham ta'sir
 > qilishi mumkin (L4). Men "flat ishlatamiz" deb qaror qilmayman. Quyidagi kod
 > ikkalasini ham qo'llab-quvvatlaydi va tanlovni konfiguratsiyaga qoldiradi.
@@ -1893,10 +1912,10 @@ UZS da muomalada yo'q (§3.1). Shuning uchun grafikda `allocate` ustiga
 
 **Nima uchun aynan OXIRGI oy:**
 
-| Variant | Muammo |
-|---|---|
-| Farq **birinchi** oyga | Mijoz birinchi to'lovda ko'proq to'laydi — "kelishuvdan boshqa" taassuroti, eng yomon paytda |
-| Farq **tarqatilsa** | Har oy boshqa summa: 1 666 667 / 1 666 667 / 1 666 666 — mijoz "nega har oy har xil?" deb so'raydi |
+| Variant                 | Muammo                                                                                              |
+| ----------------------- | --------------------------------------------------------------------------------------------------- |
+| Farq **birinchi** oyga  | Mijoz birinchi to'lovda ko'proq to'laydi — "kelishuvdan boshqa" taassuroti, eng yomon paytda        |
+| Farq **tarqatilsa**     | Har oy boshqa summa: 1 666 667 / 1 666 667 / 1 666 666 — mijoz "nega har oy har xil?" deb so'raydi  |
 | **Farq oxirgi oyga** ✅ | Birinchi N-1 oy — bir xil, yaxlit, tushunarli. Oxirgisi biroz farq qiladi va buni tushuntirish oson |
 
 ```ts
@@ -1914,7 +1933,7 @@ export interface BuildScheduleInput {
    * Mijozga ko'rsatiladigan to'lovni shu birlikka yaxlitlash (tiyinda).
    *   100n     = 1 so'mgacha
    *   100_000n = 1000 so'mgacha
-   * ⚠️ Qiymat — biznes qarori (Q-07). Kod uni PARAMETR sifatida oladi.
+   * ⚠️ Qiymat — biznes qarori (Q-25). Kod uni PARAMETR sifatida oladi.
    */
   readonly roundingUnit: bigint;
   readonly startDate: Date;
@@ -1938,11 +1957,12 @@ export function buildSchedule(input: BuildScheduleInput): readonly ScheduleRow[]
   const principal = totalAmount.subtract(downPayment);
 
   // 1. Ustama
-  const markup = input.markupModel === 'flat'
-    ? principal.percentage(markupBps)
-    : reducingMarkup(principal, termMonths, markupBps);
+  const markup =
+    input.markupModel === 'flat'
+      ? principal.percentage(markupBps)
+      : reducingMarkup(principal, termMonths, markupBps);
 
-  const payable = principal.add(markup);   // ← YIG'INDI shunga TENG bo'lishi shart
+  const payable = principal.add(markup); // ← YIG'INDI shunga TENG bo'lishi shart
 
   // 2. Teng bo'lish — tiyin yo'qotmasdan (§3.3)
   const rawParts = payable.split(termMonths);
@@ -1963,7 +1983,7 @@ export function buildSchedule(input: BuildScheduleInput): readonly ScheduleRow[]
   rounded.push(payable.subtract(accumulated));
 
   // 4. Har oy ichida principal/markup ajratish — yana allocate bilan
-  const principalParts = principal.allocate(rounded.map((m) => m.minor === 0n ? 1n : m.minor));
+  const principalParts = principal.allocate(rounded.map((m) => (m.minor === 0n ? 1n : m.minor)));
   const markupParts = rounded.map((total, i) => total.subtract(principalParts[i]));
 
   return rounded.map((amountDue, i) => ({
@@ -1977,19 +1997,19 @@ export function buildSchedule(input: BuildScheduleInput): readonly ScheduleRow[]
 
 /** Pastga yaxlitlash — berilgan birlikka (100n = 1 so'm). */
 function floorToUnit(m: Money, unit: bigint): Money {
-  const rem = ((m.minor % unit) + unit) % unit;   // manfiy uchun ham to'g'ri
+  const rem = ((m.minor % unit) + unit) % unit; // manfiy uchun ham to'g'ri
   return Money.fromMinor(m.minor - rem, m.currency);
 }
 
 /**
  * Kamayib boruvchi qoldiqqa ustama.
- * ⚠️ Formula — TASDIQLANISHI KERAK (Q-06). Bu — bir yechim, yagona emas.
+ * ⚠️ Formula — TASDIQLANISHI KERAK (Q-23). Bu — bir yechim, yagona emas.
  */
 function reducingMarkup(principal: Money, months: number, bps: number): Money {
   let total = Money.zero(principal.currency);
   let remaining = principal;
   const monthlyPrincipal = principal.split(months);
-  const monthlyBps = Math.round(bps / 12);   // ⚠️ oylik stavka: yillikni 12 ga? — Q-06
+  const monthlyBps = Math.round(bps / 12); // ⚠️ oylik stavka: yillikni 12 ga? — Q-23
   for (let i = 0; i < months; i++) {
     total = total.add(remaining.percentage(monthlyBps));
     remaining = remaining.subtract(monthlyPrincipal[i]);
@@ -2002,7 +2022,9 @@ function addMonths(date: Date, months: number): Date {
   const targetMonth = d.getUTCMonth() + months;
   const result = new Date(Date.UTC(d.getUTCFullYear(), targetMonth, 1));
   // 31-yanvar + 1 oy = 28/29-fevral (31-fevral yo'q). Oyning oxirgi kunini olamiz.
-  const lastDay = new Date(Date.UTC(result.getUTCFullYear(), result.getUTCMonth() + 1, 0)).getUTCDate();
+  const lastDay = new Date(
+    Date.UTC(result.getUTCFullYear(), result.getUTCMonth() + 1, 0),
+  ).getUTCDate();
   result.setUTCDate(Math.min(d.getUTCDate(), lastDay));
   result.setUTCHours(d.getUTCHours(), d.getUTCMinutes(), 0, 0);
   return result;
@@ -2018,18 +2040,18 @@ accumulated (2 oy)             = 333 333 200          tiyin
 oxirgi oy = 500 000 000 - 333 333 200 = 166 666 800   tiyin  = 1 666 668 so'm
 ```
 
-| Oy | To'lov (so'm) | Tiyinda |
-|---|---:|---:|
-| 1 | 1 666 666 | 166 666 600 |
-| 2 | 1 666 666 | 166 666 600 |
-| 3 | **1 666 668** | 166 666 800 |
+| Oy           |    To'lov (so'm) |            Tiyinda |
+| ------------ | ---------------: | -----------------: |
+| 1            |        1 666 666 |        166 666 600 |
+| 2            |        1 666 666 |        166 666 600 |
+| 3            |    **1 666 668** |        166 666 800 |
 | **Yig'indi** | **5 000 000** ✅ | **500 000 000** ✅ |
 
 Ikki oy bir xil va yaxlit; oxirgi oy 2 so'mga ko'p; **yig'indi asl summaga aniq
 teng**. `addMonths` dagi 31-yanvar holati ham qasddan hal qilingan: sana
 matematikasi — grafikdagi ikkinchi jim bag manbai.
 
-**⚠️ Yaxlitlash birligi (`roundingUnit`) — ochiq savol (Q-07).** 1 so'mmi yoki
+**⚠️ Yaxlitlash birligi (`roundingUnit`) — ochiq savol (Q-25).** 1 so'mmi yoki
 1000 so'mmi? 1000 so'm bo'lsa oxirgi oy farqi kattaroq bo'ladi (~2000 so'mgacha),
 lekin mijozga ko'rsatiladigan raqam chiroyliroq. Bu — biznes qarori.
 
@@ -2037,23 +2059,35 @@ lekin mijozga ko'rsatiladigan raqam chiroyliroq. Bu — biznes qarori.
 
 **B model, shartnoma tuzildi** (5 mln, 1 mln badal, 4 mln 3 oyga, ustamasiz):
 
-| Hisob | Debit | Credit | Izoh |
-|---|---:|---:|---|
-| `asset.cash.pos_drawer` | 100 000 000 | | Boshlang'ich badal — naqd |
-| `asset.receivable.installment` | 400 000 000 | | Mijozning qarzi — **aktiv** |
-| `revenue.product` | | 500 000 000 | Daromad to'liq tan olindi |
+| Hisob                          |       Debit |      Credit | Izoh                        |
+| ------------------------------ | ----------: | ----------: | --------------------------- |
+| `asset.cash.pos_drawer`        | 100 000 000 |             | Boshlang'ich badal — naqd   |
+| `asset.receivable.installment` | 400 000 000 |             | Mijozning qarzi — **aktiv** |
+| `revenue.product`              |             | 500 000 000 | Daromad to'liq tan olindi   |
 
 > ⚠️ **Daromadni qachon tan olish — L6 savoli.** Bu yerda "tovar berilganda"
 > modeli ko'rsatilgan (accrual). Agar buxgalter "pul kelganda" (cash basis)
 > desa — yozuv butunlay boshqacha bo'ladi: `liability.customer_prepayment`
 > orqali. **Bu tanlov buxgalter tasdig'isiz qotirilmaydi.**
 
-**Har oylik to'lov kelganda** (Click orqali 1 666 666 so'm):
+**Har oylik to'lov kelganda.** Grafik §7.6 dagi algoritm bilan hisoblanadi —
+lekin bu safar **principal 4 000 000 so'm** (5 mln − 1 mln badal), 3 oyga:
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `asset.receivable.provider` | 166 666 600 | |
-| `asset.receivable.installment` | | 166 666 600 |
+```
+400 000 000 tiyin → allocate → [133 333 334, 133 333 333, 133 333 333]
+1 so'mgacha yaxlitlash, farq oxirgi oyga:
+  1-oy: 133 333 300 tiyin = 1 333 333 so'm
+  2-oy: 133 333 300 tiyin = 1 333 333 so'm
+  3-oy: 133 333 400 tiyin = 1 333 334 so'm   ← farqni yutdi
+  Yig'indi: 400 000 000 tiyin = 4 000 000 so'm ✅
+```
+
+Birinchi oylik to'lov (1 333 333 so'm) Click orqali kelganda:
+
+| Hisob                          |       Debit |      Credit |
+| ------------------------------ | ----------: | ----------: |
+| `asset.receivable.provider`    | 133 333 300 |             |
+| `asset.receivable.installment` |             | 133 333 300 |
 
 **Diqqat:** bu yerda `revenue` **yo'q** — daromad shartnoma tuzilganda allaqachon
 tan olingan. Har oylik to'lov — bu qarzning yopilishi, yangi sotuv emas. Ikkinchi
@@ -2061,11 +2095,11 @@ marta `revenue` yozish — daromadni ikki barobar ko'rsatish.
 
 **A model** (provayder to'ladi) — `Installment` umuman yo'q:
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
+| Hisob                       |       Debit |                                   Credit |
+| --------------------------- | ----------: | ---------------------------------------: |
 | `asset.receivable.provider` | 485 000 000 | (komissiya 3% — **faraz**, ⚠️ shartnoma) |
-| `expense.provider_fee` | 15 000 000 | |
-| `revenue.product` | | 500 000 000 |
+| `expense.provider_fee`      |  15 000 000 |                                          |
+| `revenue.product`           |             |                              500 000 000 |
 
 ### 7.8 Grafik qatorining holat mashinasi
 
@@ -2127,11 +2161,11 @@ export class OverdueProcessor {
     const today = startOfDayTashkent(new Date());
 
     // 1. ESLATMA — muddat YAQINLASHGANDA (kechikkanda emas!)
-    //    ⚠️ Necha kun oldin — Q-11. Bu yerda 3 kun — PLACEHOLDER.
+    //    ⚠️ Necha kun oldin — Q-28. Bu yerda 3 kun — PLACEHOLDER.
     const upcoming = await this.repo.findDueIn(today, 3);
     for (const row of upcoming) {
       await this.notifications.send({
-        channel: 'sms',                      // Eskiz.uz (CANON §6)
+        channel: 'sms', // Eskiz.uz (CANON §6)
         template: 'installment_reminder',
         vars: { amount: fmt(row.amountDue), date: fmt(row.dueDate) },
       });
@@ -2164,7 +2198,7 @@ export class OverdueProcessor {
  *
  * ⚠️ STAVKA BU YERDA YOZILMAGAN va u kodda qattiq yozilmaydi. Sabab:
  *   1. L5: penya olish umuman mumkinmi va cheklov bormi — YURIST savoli
- *   2. Stavka — biznes qarori (Q-12)
+ *   2. Stavka — biznes qarori (Q-29)
  * Kod stavkani konfiguratsiyadan oladi; default — 0 (penya yo'q).
  */
 private computePenalty(row: ScheduleRow, daysLate: number, dailyBps: number): Money {
@@ -2189,7 +2223,7 @@ private computePenalty(row: ScheduleRow, daysLate: number, dailyBps: number): Mo
 ```ts
 /**
  * Grace period tugagach — defolt.
- * ⚠️ Necha kun (30? 60? 90?) — Q-13. Yuridik oqibati — L8.
+ * ⚠️ Necha kun (30? 60? 90?) — Q-30. Yuridik oqibati — L8.
  */
 private async markDefaults(today: Date): Promise<void> {
   const candidates = await this.repo.findOverdueLongerThan(today, this.config.graceDays);
@@ -2209,10 +2243,10 @@ private async markDefaults(today: Date): Promise<void> {
 
 **Qarzni hisobdan chiqarish (write-off) — qo'lda, buxgalter tomonidan:**
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `expense.installment_loss` | 400 000 000 | |
-| `asset.receivable.installment` | | 400 000 000 |
+| Hisob                          |       Debit |      Credit |
+| ------------------------------ | ----------: | ----------: |
+| `expense.installment_loss`     | 400 000 000 |             |
+| `asset.receivable.installment` |             | 400 000 000 |
 
 **Nima uchun avtomatik emas:** bu — zararni tan olish, soliq oqibati bor (L6) va
 qaytarib bo'lmaydi. Bunday qarorni cron job qabul qilmaydi.
@@ -2232,10 +2266,10 @@ sindi. Har biri — pulni qaytarish.
 
 ### 8.2 To'liq va qisman
 
-| Tur | Ssenariy |
-|---|---|
-| **To'liq** | Yagona tovar sindi / mijoz butun buyurtmadan voz kechdi |
-| **Qisman** | Buyurtmada 3 ta spot + 1 qandil; qandil sindi → faqat qandil narxi |
+| Tur                          | Ssenariy                                                               |
+| ---------------------------- | ---------------------------------------------------------------------- |
+| **To'liq**                   | Yagona tovar sindi / mijoz butun buyurtmadan voz kechdi                |
+| **Qisman**                   | Buyurtmada 3 ta spot + 1 qandil; qandil sindi → faqat qandil narxi     |
 | **Qisman (yetkazib berish)** | Tovar joyida, lekin kuryer kechikdi → yetkazib berish haqi qaytariladi |
 
 **Qisman refund — arifmetik tuzoq:** buyurtmaga 10% chegirma qo'llangan bo'lsa,
@@ -2338,10 +2372,10 @@ Bu — inson qarori. Avtomatlashtirilsa — suiiste'mol.
 
 Ledger yozuvi (2 mln so'mlik qandil qaytarildi):
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `contra_revenue.refund` | 200 000 000 | |
-| `asset.cash.bank` | | 200 000 000 |
+| Hisob                   |       Debit |      Credit |
+| ----------------------- | ----------: | ----------: |
+| `contra_revenue.refund` | 200 000 000 |             |
+| `asset.cash.bank`       |             | 200 000 000 |
 
 `revenue.product` **tegilmaydi** (§6.3).
 
@@ -2408,7 +2442,8 @@ Kelvin → provayderga refund → provayder mijozning grafigini yopadi
                             → mijoz to'lagan pulini provayderdan oladi
 ```
 
-> ⚠️ **BU QANDAY ISHLASHI NOMA'LUM.** Savollar (Q-03):
+> ⚠️ **BU QANDAY ISHLASHI NOMA'LUM.** Savollar (Q-12, Q-13):
+>
 > - Provayder qisman refund'ni qabul qiladimi (qandil qaytdi, spotlar qoldi)?
 > - Grafik o'rtasida refund bo'lsa — qayta hisoblanadimi yoki yopiladimi?
 > - Mijoz to'lagan ustama qaytariladimi?
@@ -2431,15 +2466,16 @@ qolgan qarz   = 3 750 000
 ```
 
 To'g'ri yechim:
+
 - Qolgan grafik qatorlari → `cancelled` (yangi holat kerak! — §8.7)
 - Mijozga **to'lagani qaytariladi**: 1 250 000
 - `asset.receivable.installment` yopiladi (3 750 000 — teskari yozuv)
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `contra_revenue.refund` | 500 000 000 | |
-| `asset.receivable.installment` | | 375 000 000 |
-| `asset.cash.bank` | | 125 000 000 |
+| Hisob                          |       Debit |      Credit |
+| ------------------------------ | ----------: | ----------: |
+| `contra_revenue.refund`        | 500 000 000 |             |
+| `asset.receivable.installment` |             | 375 000 000 |
+| `asset.cash.bank`              |             | 125 000 000 |
 
 Muvozanat: 500 000 000 = 375 000 000 + 125 000 000 ✅
 
@@ -2453,7 +2489,7 @@ Bu — **grafikni qayta hisoblash** demakdir va shu yerda tuzoq bor:
 
 ```ts
 /**
- * ⚠️ QAROR TALAB QILINADI (Q-14): qisman refundda grafik qanday o'zgaradi?
+ * ⚠️ QAROR TALAB QILINADI (Q-31): qisman refundda grafik qanday o'zgaradi?
  *
  * Variant A: MUDDAT saqlanadi, oylik to'lov kamayadi.
  *   12 oy qoladi, har oy kamroq. Mijoz uchun tushunarli.
@@ -2470,15 +2506,16 @@ export function recalculateAfterPartialRefund(
   strategy: 'keep_term' | 'keep_payment',
 ): readonly ScheduleRow[] {
   const paidTotal = paidRows.reduce((a, r) => a.add(r.amountDue), Money.zero('UZS'));
-  const newPayable = Money.fromMinor(installment.principal + installment.markup)
-    .subtract(refundAmount);
+  const newPayable = Money.fromMinor(installment.principal + installment.markup).subtract(
+    refundAmount,
+  );
 
   const remaining = newPayable.subtract(paidTotal);
 
   // Mijoz KERAGIDAN KO'P to'lab qo'ygan bo'lsa — pulni QAYTARAMIZ.
   // Bu real holat: 90% to'lagan mijoz katta tovarni qaytarsa.
   if (remaining.isNegative()) {
-    throw new OverpaidRefundError(installment.id, remaining);  // → §8.6.3
+    throw new OverpaidRefundError(installment.id, remaining); // → §8.6.3
   }
 
   const futureRows = /* pending + overdue qatorlar */ [];
@@ -2495,10 +2532,10 @@ export function recalculateAfterPartialRefund(
 **3. Mijoz qarzdan ko'p to'lagan** (`OverpaidRefundError`). Kelvin
 **mijozga qarzdor** bo'lib qoladi:
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `asset.receivable.installment` | ... | |
-| `liability.refund_payable` | | ... |
+| Hisob                          | Debit | Credit |
+| ------------------------------ | ----: | -----: |
+| `asset.receivable.installment` |   ... |        |
+| `liability.refund_payable`     |       |    ... |
 
 Aynan shu uchun `liability.refund_payable` hisobi bor (§6.3): "qaytarilishi kerak,
 hali qaytarilmagan" — bu real majburiyat va u ko'rinib turishi shart.
@@ -2619,7 +2656,7 @@ async closeShift(shiftId: string, countedCash: Money, userId: string): Promise<S
         refType: 'pos_shift', refId: shiftId,
         description: `Shift discrepancy: ${discrepancy.format()}`,
         lines: discrepancy.isNegative()
-          // Kam chiqdi → xarajat (yoki kassir zimmasiga — ⚠️ Q-15, mehnat huquqi)
+          // Kam chiqdi → xarajat (yoki kassir zimmasiga — ⚠️ Q-32, mehnat huquqi)
           ? [{ account: 'expense.cash_shortage', debit: discrepancy.minor * -1n },
              { account: 'asset.cash.pos_drawer', credit: discrepancy.minor * -1n }]
           // Ortiqcha chiqdi → bu ham muammo: demak biror sotuv yozilmagan
@@ -2627,7 +2664,7 @@ async closeShift(shiftId: string, countedCash: Money, userId: string): Promise<S
              { account: 'revenue.cash_overage', credit: discrepancy.minor }],
       });
 
-      // ⚠️ Chegara — Q-15. Har qanday farq alertmi yoki ma'lum summadan yuqorisimi?
+      // ⚠️ Chegara — Q-32. Har qanday farq alertmi yoki ma'lum summadan yuqorisimi?
       await this.notifications.notifyStaff({ template: 'shift_discrepancy', shiftId, amount: discrepancy });
     }
 
@@ -2643,10 +2680,10 @@ Faqat kamomadni kuzatish — yarim nazorat.
 
 Kassadan pul olinib bankka topshiriladi:
 
-| Hisob | Debit | Credit |
-|---|---:|---:|
-| `asset.cash.bank` | 5 000 000 000 | |
-| `asset.cash.pos_drawer` | | 5 000 000 000 |
+| Hisob                   |         Debit |        Credit |
+| ----------------------- | ------------: | ------------: |
+| `asset.cash.bank`       | 5 000 000 000 |               |
+| `asset.cash.pos_drawer` |               | 5 000 000 000 |
 
 Bu — daromad emas, **joyi o'zgarishi**. `revenue` tegilmaydi. Kuryer naqdi
 (§1.4) ham xuddi shunday: `asset.cash.courier` → `asset.cash.pos_drawer`.
@@ -2667,7 +2704,7 @@ flowchart TB
 POS naqd sotuvi `CashAdapter` (§2.6) orqali o'tadi. Farq faqat hisob kodida:
 kuryer naqdi → `asset.cash.courier`, kassa naqdi → `asset.cash.pos_drawer`.
 
-> **Offline rejim (internetsiz) — ochiq savol Q-16.** Do'konda internet uzilsa
+> **Offline rejim (internetsiz) — ochiq savol Q-33.** Do'konda internet uzilsa
 > kassa ishlashi kerakmi? Agar ha — bu lokal navbat, sinxronizatsiya va
 > konflikt hal qilishni talab qiladi, ya'ni **sezilarli** murakkablik. Men buni
 > "kerak" deb qaror qilmayman — bu do'kon egasining savoli.
@@ -2683,22 +2720,22 @@ kuryer naqdi → `asset.cash.courier`, kassa naqdi → `asset.cash.pos_drawer`.
 > **Men bu talablarning aniq mazmunini, texnik reglamentini va Kelvinga
 > qo'llanilishini BILMAYMAN.**
 >
-> CANON §10: *"Yuridik maslahat (yurist savoli sifatida belgila)"*.
+> CANON §10: _"Yuridik maslahat (yurist savoli sifatida belgila)"_.
 > Bu yerda taxmin qilish — soliq huquqbuzarligiga olib borishi mumkin.
 
 **Yurist va buxgalterga beriladigan savollar:**
 
-| # | Savol | Ta'siri |
-|---|---|---|
-| F1 | Kelvin uchun onlayn NKM (kassa apparati) / virtual kassa majburiymi? | Butun `pos` moduli va onlayn to'lov |
-| F2 | Onlayn to'lovda (Click/Payme) fiskal chek kim tomonidan shakllantiriladi — do'konmi yoki provaydermi? | Integratsiya bor-yo'qligi |
-| F3 | Fiskal ma'lumot qaysi tizimga, qaysi format va protokol orqali yuboriladi? | Yangi integratsiya (hajmi noma'lum) |
-| F4 | Naqd sotuvda (kuryer qo'lida) chek qanday beriladi? | `docs/09` §5 — kuryer oqimi |
-| F5 | Rassrochkada chek qachon beriladi — shartnoma tuzilganda yoki har to'lovda? | §7.7 |
-| F6 | **QQS stavkasi** Kelvin tovarlari uchun necha foiz? | Har bir narx hisobi |
-| F7 | Kelvin QQS to'lovchisimi (aylanmaga bog'liq)? | Soliq rejimi |
-| F8 | QQS narxga kiritilganmi (ichida) yoki ustiga qo'shiladimi? | `pricing` moduli, storefront |
-| F9 | Refundda chek/QQS qanday qaytariladi? | §8 |
+| #   | Savol                                                                                                 | Ta'siri                             |
+| --- | ----------------------------------------------------------------------------------------------------- | ----------------------------------- |
+| F1  | Kelvin uchun onlayn NKM (kassa apparati) / virtual kassa majburiymi?                                  | Butun `pos` moduli va onlayn to'lov |
+| F2  | Onlayn to'lovda (Click/Payme) fiskal chek kim tomonidan shakllantiriladi — do'konmi yoki provaydermi? | Integratsiya bor-yo'qligi           |
+| F3  | Fiskal ma'lumot qaysi tizimga, qaysi format va protokol orqali yuboriladi?                            | Yangi integratsiya (hajmi noma'lum) |
+| F4  | Naqd sotuvda (kuryer qo'lida) chek qanday beriladi?                                                   | `docs/09` §5 — kuryer oqimi         |
+| F5  | Rassrochkada chek qachon beriladi — shartnoma tuzilganda yoki har to'lovda?                           | §7.7                                |
+| F6  | **QQS stavkasi** Kelvin tovarlari uchun necha foiz?                                                   | Har bir narx hisobi                 |
+| F7  | Kelvin QQS to'lovchisimi (aylanmaga bog'liq)?                                                         | Soliq rejimi                        |
+| F8  | QQS narxga kiritilganmi (ichida) yoki ustiga qo'shiladimi?                                            | `pricing` moduli, storefront        |
+| F9  | Refundda chek/QQS qanday qaytariladi?                                                                 | §8                                  |
 
 **⚠️ QQS stavkasi bu hujjatda YOZILMAGAN.** Men taxminiy foiz yozib, uni kodga
 kiritmayman — noto'g'ri stavka bilan hisoblangan minglab chek soliq
@@ -2751,12 +2788,12 @@ umuman ko'rmaslik**.
 
 **Amalda bu nimani anglatadi:**
 
-| ✅ To'g'ri | ❌ Taqiq |
-|---|---|
-| Mijoz provayder sahifasiga/ilovasiga yo'naltiriladi | Kelvin formasida karta raqami |
-| Kelvin faqat `providerTransactionId` va oxirgi 4 raqamni ko'radi | PAN (to'liq raqam) saqlash |
-| Takroriy to'lov uchun — **provayder tokeni** | CVV ni "vaqtincha" saqlash |
-| Log'da — `paymentId`, `orderId` | Log'da provayder xom javobi (filtrsiz) |
+| ✅ To'g'ri                                                       | ❌ Taqiq                               |
+| ---------------------------------------------------------------- | -------------------------------------- |
+| Mijoz provayder sahifasiga/ilovasiga yo'naltiriladi              | Kelvin formasida karta raqami          |
+| Kelvin faqat `providerTransactionId` va oxirgi 4 raqamni ko'radi | PAN (to'liq raqam) saqlash             |
+| Takroriy to'lov uchun — **provayder tokeni**                     | CVV ni "vaqtincha" saqlash             |
+| Log'da — `paymentId`, `orderId`                                  | Log'da provayder xom javobi (filtrsiz) |
 
 ```ts
 // apps/api/src/common/logging/redact.ts
@@ -2766,10 +2803,19 @@ umuman ko'rmaslik**.
  * Yangi provayder qo'shilganda ro'yxat KENGAYTIRILADI (§2 checklist).
  */
 export const REDACT_PATHS = [
-  '*.card_number', '*.cardNumber', '*.pan', '*.cvv', '*.cvc',
-  '*.expiry', '*.exp_month', '*.exp_year',
-  'req.headers.authorization', 'req.headers["idempotency-key"]',
-  '*.password', '*.token', '*.secret',
+  '*.card_number',
+  '*.cardNumber',
+  '*.pan',
+  '*.cvv',
+  '*.cvc',
+  '*.expiry',
+  '*.exp_month',
+  '*.exp_year',
+  'req.headers.authorization',
+  'req.headers["idempotency-key"]',
+  '*.password',
+  '*.token',
+  '*.secret',
 ];
 ```
 
@@ -2796,7 +2842,7 @@ Uchta qoida:
 
 ```ts
 // apps/api/src/main.ts
-app.use('/payments/*/webhook', express.raw({ type: '*/*' }));   // ← parse QILMA
+app.use('/payments/*/webhook', express.raw({ type: '*/*' })); // ← parse QILMA
 ```
 
 Nima uchun: `JSON.parse` → `JSON.stringify` **aylanishi baytni o'zgartiradi**
@@ -2816,7 +2862,7 @@ export function safeCompare(a: string, b: string): boolean {
   // Uzunlik farq qilsa — timingSafeEqual throw qiladi. Uzunlikni oldin tekshiramiz,
   // lekin ERTA return qilmaymiz: baribir taqqoslashni bajaramiz.
   if (bufA.length !== bufB.length) {
-    timingSafeEqual(bufA, bufA);   // vaqtni tekislash uchun
+    timingSafeEqual(bufA, bufA); // vaqtni tekislash uchun
     return false;
   }
   return timingSafeEqual(bufA, bufB);
@@ -2852,7 +2898,7 @@ tarmoqdan haqiqiy webhook'ni ushlab, uni 1000 marta yuboradi.
 Ikki qatlamli himoya:
 
 ```ts
-const REPLAY_WINDOW_SECONDS = 300;   // 5 daqiqa
+const REPLAY_WINDOW_SECONDS = 300; // 5 daqiqa
 
 function assertFresh(occurredAt: Date): void {
   const ageMs = Date.now() - occurredAt.getTime();
@@ -2872,7 +2918,7 @@ muammo.
 
 > ⚠️ Provayder webhook'ida timestamp bormi va u qayerda (header? body?) —
 > rasmiy hujjatdan (§1.3). Bo'lmasa — faqat unique constraint qoladi va bu
-> ochiq savol sifatida qayd etiladi (Q-17).
+> ochiq savol sifatida qayd etiladi (Q-16).
 
 ### 11.5 Qo'shimcha chora
 
@@ -2893,14 +2939,14 @@ Kelvin ledger'i "bugun Click orqali 47 mln so'm" deydi. Click hisoboti
 
 Javob: **bilmaymiz** — va aynan shu muammo. Farq quyidagilardan bo'lishi mumkin:
 
-| Sabab | Xavflilik |
-|---|---|
-| Webhook yetib kelmagan (tarmoq) | Yuqori — mijoz to'lagan, buyurtma yo'q |
-| Webhook kelgan, lekin xato bilan qayta ishlangan | Yuqori |
-| To'lov provayder tomonida bekor qilingan, Kelvin bilmaydi | Yuqori |
-| Settlement davri chegarasi (kecha 23:59 to'lov) | Past — vaqt masalasi |
-| Komissiya ushlab qolingan | Past — kutilgan |
-| **Firibgarlik** | Kritik |
+| Sabab                                                     | Xavflilik                              |
+| --------------------------------------------------------- | -------------------------------------- |
+| Webhook yetib kelmagan (tarmoq)                           | Yuqori — mijoz to'lagan, buyurtma yo'q |
+| Webhook kelgan, lekin xato bilan qayta ishlangan          | Yuqori                                 |
+| To'lov provayder tomonida bekor qilingan, Kelvin bilmaydi | Yuqori                                 |
+| Settlement davri chegarasi (kecha 23:59 to'lov)           | Past — vaqt masalasi                   |
+| Komissiya ushlab qolingan                                 | Past — kutilgan                        |
+| **Firibgarlik**                                           | Kritik                                 |
 
 **Reconciliation'siz bu farqlarni hech kim ko'rmaydi.** Ular oylab yig'iladi va
 yillik hisobotda "qayerdadir 300 mln yo'q" bo'lib chiqadi — sababini topib
@@ -2915,7 +2961,7 @@ bo'lmaydigan holatda.
 export class ReconciliationProcessor {
   /**
    * Har kuni 03:00 (Asia/Tashkent) — kunlik yopilishdan keyin.
-   * ⚠️ Provayder hisoboti qachon tayyor bo'ladi — bu shartnomadan (Q-18).
+   * ⚠️ Provayder hisoboti qachon tayyor bo'ladi — bu shartnomadan (Q-14).
    * 03:00 — PLACEHOLDER.
    */
   @Process()
@@ -2925,11 +2971,14 @@ export class ReconciliationProcessor {
 
     if (!provider.capabilities.supportsSettlementReport) {
       // Hisobot API yo'q → qo'lda solishtirish (CSV import). Bu ham reja.
-      this.logger.warn({ providerCode }, 'settlement report not supported; manual reconciliation required');
+      this.logger.warn(
+        { providerCode },
+        'settlement report not supported; manual reconciliation required',
+      );
       return;
     }
 
-    const providerRows = await this.fetchReport(provider, date);   // ⚠️ format noma'lum
+    const providerRows = await this.fetchReport(provider, date); // ⚠️ format noma'lum
     const internalRows = await this.repo.findPaidByDate(providerCode, date);
 
     const diff = compareRows(internalRows, providerRows);
@@ -2969,13 +3018,13 @@ export interface ReconciliationDiff {
 
 ### 12.4 Alert siyosati
 
-| Holat | Daraja | Javob |
-|---|---|---|
+| Holat                              | Daraja | Javob                                                           |
+| ---------------------------------- | ------ | --------------------------------------------------------------- |
 | `onlyProvider` (webhook yo'qolgan) | **P1** | Darhol Telegram, avtomatik `getState()` bilan tiklashga urinish |
-| `amountMismatch` | **P1** | Darhol. Avtomatik hech narsa qilinmaydi — inson ko'radi |
-| Ledger invarianti buzilgan (§6.4) | **P1** | Darhol. Bu — kod bagi |
-| `onlyInternal` | **P2** | Kun ichida |
-| Komissiya farqi | **P3** | Haftalik hisobot |
+| `amountMismatch`                   | **P1** | Darhol. Avtomatik hech narsa qilinmaydi — inson ko'radi         |
+| Ledger invarianti buzilgan (§6.4)  | **P1** | Darhol. Bu — kod bagi                                           |
+| `onlyInternal`                     | **P2** | Kun ichida                                                      |
+| Komissiya farqi                    | **P3** | Haftalik hisobot                                                |
 
 **`amountMismatch` da avtomatik tuzatish YO'Q.** Vasvasa bor: "provayder haq,
 uning qiymatini yozamiz". Bu xato — agar bug bizda bo'lsa, avtomatik "tuzatish"
@@ -3014,3 +3063,652 @@ Bu beshta so'rov — **tizimning o'zini o'zi tekshirishi**. Ularning har biri
 bo'sh natija qaytarishi shart; qaytarmasa — P1.
 
 ---
+
+## 13. Test strategiyasi
+
+### 13.1 Nima uchun bu yerda oddiy unit test yetarli emas
+
+`docs/06` §9 da aytilgan tamoyil bu yerda ham amal qiladi va yanada qattiqroq:
+**pul kodida misol-testlar (example-based) yolg'on xavfsizlik hissi beradi.**
+
+"5 000 000 ni 3 ga bo'lsak to'g'ri chiqdi" — bu bitta holat. Bag esa
+4 999 999 da yoki 7 oyda yoki 0 so'mda chiqadi. Shuning uchun:
+
+| Qatlam               | Vosita                        | Nimani tekshiradi                              |
+| -------------------- | ----------------------------- | ---------------------------------------------- |
+| Property test        | **fast-check** (CANON §6)     | `Money`, `allocate`, grafik — **invariantlar** |
+| Unit                 | Jest                          | Holat mashinasi, adapter mantiqi               |
+| Integratsiya         | **Testcontainers** (CANON §6) | DB constraint, tranzaksiya, CAS                |
+| Webhook simulyatsiya | Supertest                     | Imzo, idempotentlik, replay                    |
+| Sandbox              | Provayder sandbox             | Haqiqiy oqim (⚠️ mavjudligi — §1.3)            |
+
+### 13.2 `Money` — property testlar
+
+```ts
+// packages/contracts/src/payment/__tests__/money.property.spec.ts
+
+import fc from 'fast-check';
+import { Money } from '../money';
+
+/** Tiyin generatori: real diapazon (0 dan ~1 mlrd so'mgacha). */
+const minorArb = fc.bigInt({ min: 0n, max: 100_000_000_000n });
+
+describe('Money — invariantlar', () => {
+  it('add/subtract — teskari amallar', () => {
+    fc.assert(
+      fc.property(minorArb, minorArb, (a, b) => {
+        const ma = Money.fromMinor(a);
+        const mb = Money.fromMinor(b);
+        expect(ma.add(mb).subtract(mb).equals(ma)).toBe(true);
+      }),
+    );
+  });
+
+  it("fromMajor → toJSON → fromMinor — yo'qotishsiz", () => {
+    fc.assert(
+      fc.property(
+        fc.bigInt({ min: 0n, max: 1_000_000_000n }),
+        fc.integer({ min: 0, max: 99 }),
+        (som, tiyin) => {
+          const major = `${som}.${String(tiyin).padStart(2, '0')}`;
+          const m = Money.fromMajor(major);
+          expect(Money.fromMinor(m.toJSON().amount).equals(m)).toBe(true);
+        },
+      ),
+    );
+  });
+
+  it('percentage — hech qachon manfiy natija (musbat kirishda)', () => {
+    fc.assert(
+      fc.property(minorArb, fc.integer({ min: 0, max: 10_000 }), (a, bps) => {
+        expect(Money.fromMinor(a).percentage(bps).isNegative()).toBe(false);
+      }),
+    );
+  });
+
+  it("percentage(10000) === asl summa (100% = o'zi)", () => {
+    fc.assert(
+      fc.property(minorArb, (a) => {
+        expect(Money.fromMinor(a).percentage(10_000).equals(Money.fromMinor(a))).toBe(true);
+      }),
+    );
+  });
+});
+```
+
+### 13.3 `allocate()` — 1000 ta tasodifiy holat
+
+**Bu — hujjatdagi eng muhim test.** U §3.3 dagi asosiy invariantni tekshiradi.
+
+```ts
+// packages/contracts/src/payment/__tests__/allocate.property.spec.ts
+
+import fc from 'fast-check';
+import { Money } from '../money';
+
+const ratiosArb = fc.array(fc.bigInt({ min: 1n, max: 1000n }), { minLength: 1, maxLength: 24 });
+
+describe("Money.allocate — tiyin yo'qolmaydi", () => {
+  it("INVARIANT: yig'indi HAR DOIM asl summaga teng", () => {
+    fc.assert(
+      fc.property(fc.bigInt({ min: 0n, max: 1_000_000_000_000n }), ratiosArb, (minor, ratios) => {
+        const money = Money.fromMinor(minor);
+        const parts = money.allocate(ratios);
+
+        const sum = parts.reduce((a, p) => a.add(p), Money.zero('UZS'));
+        expect(sum.minor).toBe(money.minor); // ← ASOSIY INVARIANT
+      }),
+      { numRuns: 1000 }, // topshiriq: 1000 ta holat
+    );
+  });
+
+  it("bo'laklar soni = ratios soni", () => {
+    fc.assert(
+      fc.property(fc.bigInt({ min: 0n, max: 10_000_000_000n }), ratiosArb, (minor, ratios) => {
+        expect(Money.fromMinor(minor).allocate(ratios)).toHaveLength(ratios.length);
+      }),
+      { numRuns: 1000 },
+    );
+  });
+
+  it("har bo'lak ideal ulushdan 1 tiyindan ko'p farq qilmaydi", () => {
+    fc.assert(
+      fc.property(fc.bigInt({ min: 0n, max: 10_000_000_000n }), ratiosArb, (minor, ratios) => {
+        const total = ratios.reduce((a, b) => a + b, 0n);
+        const parts = Money.fromMinor(minor).allocate(ratios);
+        parts.forEach((p, i) => {
+          const ideal = (minor * ratios[i]) / total;
+          const delta = p.minor - ideal;
+          expect(delta >= -1n && delta <= 1n).toBe(true); // adolatlilik
+        });
+      }),
+      { numRuns: 1000 },
+    );
+  });
+
+  it('DETERMINIZM: bir xil kirishda bir xil natija (CANON §9.5)', () => {
+    fc.assert(
+      fc.property(fc.bigInt({ min: 0n, max: 10_000_000_000n }), ratiosArb, (minor, ratios) => {
+        const a = Money.fromMinor(minor)
+          .allocate(ratios)
+          .map((m) => m.minor);
+        const b = Money.fromMinor(minor)
+          .allocate(ratios)
+          .map((m) => m.minor);
+        expect(a).toEqual(b);
+      }),
+      { numRuns: 1000 },
+    );
+  });
+
+  it("split(n) — teng bo'lish ham yig'indini saqlaydi", () => {
+    fc.assert(
+      fc.property(
+        fc.bigInt({ min: 0n, max: 10_000_000_000n }),
+        fc.integer({ min: 1, max: 24 }),
+        (minor, n) => {
+          const money = Money.fromMinor(minor);
+          const sum = money.split(n).reduce((a, p) => a.add(p), Money.zero('UZS'));
+          expect(sum.minor).toBe(money.minor);
+        },
+      ),
+      { numRuns: 1000 },
+    );
+  });
+
+  // Topshiriqdagi ANIQ misol — regressiya sifatida qotiriladi
+  it("5 000 000 so'm / 3 oy — 2 tiyin yo'qolmaydi", () => {
+    const parts = Money.fromMajor('5000000').allocate([1n, 1n, 1n]);
+    expect(parts.map((p) => p.minor)).toEqual([166_666_667n, 166_666_667n, 166_666_666n]);
+    expect(parts.reduce((a, p) => a.add(p), Money.zero()).minor).toBe(500_000_000n);
+  });
+});
+```
+
+### 13.4 Rassrochka grafigi testi
+
+```ts
+// apps/api/src/payment/installment/__tests__/schedule.property.spec.ts
+
+describe('buildSchedule — invariantlar', () => {
+  const termArb = fc.constantFrom(3, 6, 9, 12);
+  const priceArb = fc.bigInt({ min: 10_000_000n, max: 5_000_000_000n }); // 100k–50 mln so'm
+  const unitArb = fc.constantFrom(1n, 100n, 100_000n);
+
+  it("INVARIANT: grafik yig'indisi = principal + markup", () => {
+    fc.assert(
+      fc.property(
+        priceArb,
+        termArb,
+        fc.integer({ min: 0, max: 5000 }),
+        unitArb,
+        (total, term, bps, unit) => {
+          const rows = buildSchedule({
+            totalAmount: Money.fromMinor(total),
+            downPayment: Money.zero(),
+            termMonths: term,
+            markupBps: bps,
+            markupModel: 'flat',
+            roundingUnit: unit,
+            startDate: new Date('2026-01-15T00:00:00Z'),
+          });
+          const sum = rows.reduce((a, r) => a.add(r.amountDue), Money.zero('UZS'));
+          const expected = Money.fromMinor(total).add(Money.fromMinor(total).percentage(bps));
+          expect(sum.equals(expected)).toBe(true); // ← tiyin yo'qolmaydi
+        },
+      ),
+      { numRuns: 1000 },
+    );
+  });
+
+  it('INVARIANT: har oy amountDue = principalPart + markupPart', () => {
+    fc.assert(
+      fc.property(priceArb, termArb, fc.integer({ min: 0, max: 5000 }), (total, term, bps) => {
+        const rows = buildSchedule({/* ... */} as never);
+        rows.forEach((r) =>
+          expect(r.amountDue.equals(r.principalPart.add(r.markupPart))).toBe(true),
+        );
+      }),
+      { numRuns: 1000 },
+    );
+  });
+
+  it("INVARIANT: hech bir to'lov manfiy emas (§7.6 — pastga yaxlitlash sababi)", () => {
+    fc.assert(
+      fc.property(priceArb, termArb, unitArb, (total, term, unit) => {
+        const rows = buildSchedule({/* ... */} as never);
+        rows.forEach((r) => expect(r.amountDue.isNegative()).toBe(false));
+      }),
+      { numRuns: 1000 },
+    );
+  });
+
+  it('N-1 oy bir xil, oxirgi oy farq qiladi (§7.6)', () => {
+    const rows = buildSchedule({
+      totalAmount: Money.fromMajor('5000000'),
+      downPayment: Money.zero(),
+      termMonths: 3,
+      markupBps: 0,
+      markupModel: 'flat',
+      roundingUnit: 100n,
+      startDate: new Date('2026-01-15T00:00:00Z'),
+    });
+    expect(rows[0].amountDue.minor).toBe(166_666_600n); // 1 666 666 so'm
+    expect(rows[1].amountDue.minor).toBe(166_666_600n); // 1 666 666 so'm
+    expect(rows[2].amountDue.minor).toBe(166_666_800n); // 1 666 668 so'm — farqni yutdi
+  });
+
+  it('sana: 31-yanvarda boshlangan grafik fevralda qulamaydi', () => {
+    const rows = buildSchedule({
+      startDate: new Date('2026-01-31T00:00:00Z'),
+      termMonths: 3,
+    } as never);
+    expect(rows[0].dueDate.getUTCMonth()).toBe(1); // fevral
+    expect(rows[0].dueDate.getUTCDate()).toBe(28); // 31 emas — oy oxiri
+  });
+});
+```
+
+### 13.5 Idempotentlik — property test
+
+```ts
+// apps/api/src/payment/__tests__/idempotency.property.spec.ts
+// Testcontainers: haqiqiy PostgreSQL. DB constraint'lar — testning bir qismi.
+
+describe('Idempotentlik', () => {
+  it('INVARIANT: bir xil Idempotency-Key bilan N marta — 1 ta Payment', async () => {
+    await fc.assert(
+      fc.asyncProperty(fc.integer({ min: 2, max: 10 }), async (n) => {
+        const key = randomUUID();
+        const dto = { orderId, amount: '500000000', providerCode: 'cash' };
+
+        const results = await Promise.all(
+          Array.from({ length: n }, () => service.createPayment(dto, key)),
+        );
+
+        // Hammasi BIR XIL javob
+        const ids = new Set(results.map((r) => r.id));
+        expect(ids.size).toBe(1);
+
+        // DB da BITTA attempt
+        const attempts = await prisma.paymentAttempt.count({ where: { idempotencyKey: key } });
+        expect(attempts).toBe(1);
+      }),
+      { numRuns: 50 },
+    ); // DB bilan — kamroq run, lekin haqiqiy
+  });
+
+  it('INVARIANT: webhook N marta — ledger BIR MARTA yoziladi', async () => {
+    await fc.assert(
+      fc.asyncProperty(fc.integer({ min: 2, max: 20 }), async (n) => {
+        const event = buildWebhookEvent({ providerTransactionId: randomUUID(), status: 'paid' });
+
+        // PARALLEL — ketma-ket emas. Race'ni ataylab chaqiramiz.
+        await Promise.allSettled(Array.from({ length: n }, () => service.applyWebhookEvent(event)));
+
+        const entries = await prisma.ledgerEntry.findMany({
+          where: { refType: 'payment', refId: event.paymentId! },
+        });
+        // Bitta to'lov = 2 qator (debit + credit), N marta EMAS
+        expect(entries).toHaveLength(2);
+        expect(sumDebit(entries)).toBe(sumCredit(entries)); // muvozanat (§6.4)
+      }),
+      { numRuns: 30 },
+    );
+  });
+
+  it('bir xil kalit + BOSHQA summa → 409', async () => {
+    const key = randomUUID();
+    await service.createPayment({ orderId, amount: '500000000', providerCode: 'cash' }, key);
+    await expect(
+      service.createPayment({ orderId, amount: '999000000', providerCode: 'cash' }, key),
+    ).rejects.toThrow(ConflictException);
+  });
+});
+```
+
+### 13.6 Holat mashinasi va race
+
+```ts
+describe('Payment holat mashinasi', () => {
+  it("ruxsatsiz o'tish rad etiladi", () => {
+    fc.assert(
+      fc.property(statusArb, statusArb, (from, to) => {
+        if (!canTransition(from, to)) {
+          expect(() => assertTransition(from, to)).toThrow(InvalidTransitionError);
+        }
+      }),
+    );
+  });
+
+  it("terminal holatdan chiqib bo'lmaydi", () => {
+    (['failed', 'expired', 'cancelled', 'refunded'] as const).forEach((t) => {
+      statusList.forEach((to) => expect(canTransition(t, to)).toBe(false));
+    });
+  });
+
+  // RACE — bu test DB bilan ishlaydi (Testcontainers), mock bilan EMAS
+  it('webhook × expire job: FAQAT BITTASI yutadi (§4.3)', async () => {
+    const payment = await createPending();
+
+    const [paidRes, expiredRes] = await Promise.allSettled([
+      repo.transition(prisma, payment.id, 'pending', 'paid'),
+      repo.transition(prisma, payment.id, 'pending', 'expired'),
+    ]);
+
+    const wins = [paidRes, expiredRes].filter((r) => r.status === 'fulfilled').length;
+    expect(wins).toBe(1); // ← ikkalasi ham yutsa — CAS ishlamayapti
+
+    const loser = [paidRes, expiredRes].find((r) => r.status === 'rejected');
+    expect((loser as PromiseRejectedResult).reason).toBeInstanceOf(PaymentStateConflictError);
+  });
+});
+```
+
+### 13.7 Webhook simulyatsiyasi
+
+Provayder sandbox'i **bo'lmasligi mumkin** (§1.3), lekin xavfsizlik testlari
+sandbox'siz ham yoziladi:
+
+```ts
+describe('Webhook xavfsizligi', () => {
+  it("imzosiz so'rov RAD etiladi", async () => {
+    await request(app.getHttpServer())
+      .post('/payments/click/webhook')
+      .send(validPayload)
+      .expect((res) => expect(res.status).toBeGreaterThanOrEqual(400));
+  });
+
+  it("noto'g'ri imzo RAD etiladi", async () => {
+    /* ... */
+  });
+
+  it("body o'zgartirilsa imzo buziladi (raw body ustidan — §11.3)", async () => {
+    const { body, signature } = signPayload({ amount: '500000000' });
+    const tampered = body.replace('500000000', '1');
+    await request(app.getHttpServer())
+      .post('/payments/click/webhook')
+      .set('X-Signature', signature)
+      .send(tampered)
+      .expect(400);
+  });
+
+  it('eski timestamp — replay sifatida rad etiladi (§11.4)', async () => {
+    const old = new Date(Date.now() - 10 * 60_000); // 10 daqiqa oldin
+    await expect(assertFresh(old)).rejects?.toBeDefined?.();
+  });
+
+  it('kelajakdagi timestamp ham rad etiladi', () => {
+    expect(() => assertFresh(new Date(Date.now() + 10 * 60_000))).toThrow(ReplayAttackError);
+  });
+
+  it('imzo taqqoslash timing-safe (§11.3)', () => {
+    // safeCompare === ishlatmasligini statik tekshiruv bilan ham kuzatamiz (eslint qoidasi)
+    expect(safeCompare('abc', 'abd')).toBe(false);
+    expect(safeCompare('abc', 'abc')).toBe(true);
+    expect(safeCompare('abc', 'abcd')).toBe(false); // uzunlik farqi — throw emas
+  });
+});
+```
+
+### 13.8 Ledger integratsiya testlari
+
+```ts
+describe('Ledger — DB majburlaydi', () => {
+  it("debit va credit birga bo'lsa — DB rad etadi (§6.4)", async () => {
+    await expect(prisma.$executeRaw`
+      INSERT INTO ledger_entries (id, transaction_id, account_code, debit, credit, ref_type, ref_id, description)
+      VALUES (gen_random_uuid(), gen_random_uuid(), 'asset.cash.bank', 100, 100, 'test', gen_random_uuid(), 'x')
+    `).rejects.toThrow(/ledger_debit_xor_credit/);
+  });
+
+  it('UPDATE taqiqlangan — trigger (§6.4)', async () => {
+    const e = await insertBalancedEntry();
+    await expect(prisma.$executeRaw`
+      UPDATE ledger_entries SET debit = 999 WHERE id = ${e.id}::uuid
+    `).rejects.toThrow(/append-only/);
+  });
+
+  it('DELETE taqiqlangan', async () => {
+    /* ... */
+  });
+
+  it('teskari yozuv balansni nolga qaytaradi (§6.6)', async () => {
+    const txId = await ledger.record(prisma, sampleSale());
+    await ledger.reverse(prisma, txId, 'operator error');
+    const net = await accountBalance('revenue.product');
+    expect(net).toBe(0n);
+  });
+
+  it("ikki marta teskari qilib bo'lmaydi", async () => {
+    const txId = await ledger.record(prisma, sampleSale());
+    await ledger.reverse(prisma, txId, 'first');
+    await expect(ledger.reverse(prisma, txId, 'second')).rejects.toThrow(AlreadyReversedError);
+  });
+
+  it('INVARIANT: tasodifiy 100 operatsiyadan keyin ham SUM(debit) === SUM(credit)', async () => {
+    await fc.assert(
+      fc.asyncProperty(fc.array(operationArb, { minLength: 1, maxLength: 100 }), async (ops) => {
+        for (const op of ops) await applyOperation(op); // sotuv, refund, inkassatsiya, rassrochka...
+        const [{ imbalance }] = await prisma.$queryRaw<[{ imbalance: bigint }]>`
+        SELECT SUM(debit) - SUM(credit) AS imbalance FROM ledger_entries
+      `;
+        expect(imbalance).toBe(0n);
+      }),
+      { numRuns: 20 },
+    );
+  });
+});
+```
+
+### 13.9 Sandbox testlari
+
+> ⚠️ **Sandbox mavjudligi tasdiqlanmagan** (§1.3). Agar mavjud bo'lsa:
+>
+> - Sandbox testlari CI da **alohida** ishlaydi (nightly), har PR da emas —
+>   tashqi xizmatga bog'liqlik CI ni beqaror qiladi.
+> - Sandbox kalitlari production kalitlaridan **butunlay ajratilgan** (§11.2).
+> - Testlar tashqi xizmat **o'chganda** ham xatolik bermasin: `skip` bilan.
+>
+> Sandbox bo'lmasa — adapter testlari `nock`/`msw` bilan yoziladi, lekin bu
+> **haqiqiy oqimni tasdiqlamaydi**. Bu holat ochiq savol sifatida qayd etiladi (Q-15).
+
+---
+
+## 14. Acceptance criteria
+
+### 14.1 Pul va matematika
+
+| ID    | Kriteriya                                                                | Qanday tekshiriladi                                   |
+| ----- | ------------------------------------------------------------------------ | ----------------------------------------------------- |
+| AC-M1 | Kodda **birorta** pul qiymati `number`/`float` da saqlanmaydi            | Code review + eslint qoidasi (`no-restricted-syntax`) |
+| AC-M2 | Prisma sxemasida har pul ustuni — `BigInt` + `currency` ustuni bor       | Sxema review                                          |
+| AC-M3 | API javoblarida pul — **string**, JSON number emas                       | Contract test                                         |
+| AC-M4 | `allocate()` yig'indisi 1000 tasodifiy holatda asl summaga teng          | §13.3                                                 |
+| AC-M5 | `allocate()` deterministik: bir xil kirish → bir xil natija              | §13.3                                                 |
+| AC-M6 | Grafik yig'indisi 1000 tasodifiy holatda `principal + markup` ga teng    | §13.4                                                 |
+| AC-M7 | Har bo'lishda yaxlitlash yo'nalishi kodda **kommentda asoslangan**       | Code review                                           |
+| AC-M8 | 5 000 000 / 3 oy → [1 666 666, 1 666 666, 1 666 668], yig'indi 5 000 000 | §13.4                                                 |
+
+### 14.2 Idempotentlik va holat
+
+| ID    | Kriteriya                                                | Qanday tekshiriladi |
+| ----- | -------------------------------------------------------- | ------------------- |
+| AC-I1 | `POST /payments` `Idempotency-Key` siz **rad etiladi**   | §5.4                |
+| AC-I2 | Bir xil kalit N marta → 1 ta `Payment`, bir xil javob    | §13.5               |
+| AC-I3 | Bir xil kalit + boshqa body → **409**                    | §13.5               |
+| AC-I4 | `@@unique([providerCode, providerTransactionId])` mavjud | Migratsiya          |
+| AC-I5 | Webhook N marta (parallel) → ledger'da 2 qator, N×2 emas | §13.5               |
+| AC-I6 | Ruxsatsiz holat o'tishi rad etiladi                      | §13.6               |
+| AC-I7 | Parallel `paid` va `expired` — faqat bittasi yutadi      | §13.6               |
+| AC-I8 | Holat o'tishi va ledger yozuvi — **bitta tranzaksiyada** | Code review + §13.5 |
+| AC-I9 | Tashqi chaqiruvdan **oldin** attempt yoziladi            | §5.6, code review   |
+
+### 14.3 Ledger
+
+| ID    | Kriteriya                                                        | Qanday tekshiriladi  |
+| ----- | ---------------------------------------------------------------- | -------------------- |
+| AC-L1 | `SUM(debit) == SUM(credit)` — global, har doim                   | §12.5 №1, §13.8      |
+| AC-L2 | Har `transactionId` ichida muvozanat                             | §12.5 №2             |
+| AC-L3 | `ledger_entries` da `UPDATE`/`DELETE` — **DB trigger** rad etadi | §13.8                |
+| AC-L4 | CHECK: debit XOR credit, ikkalasi ham manfiy emas                | §13.8                |
+| AC-L5 | Xato tuzatish — **faqat** teskari yozuv orqali                   | §13.8                |
+| AC-L6 | `status = 'paid'` bo'lgan har `Payment` uchun ledger yozuvi bor  | §12.5 №5             |
+| AC-L7 | Hisoblar rejasi buxgalter tomonidan **imzolangan**               | 🚫 **BLOKER** — Q-07 |
+
+### 14.4 Yuridik — 🚫 BLOKERLAR
+
+> Quyidagilar **hal bo'lmaguncha** tegishli funksiya production'ga chiqmaydi.
+> Bular texnik vazifa emas — ular **javob kutadi**.
+
+| ID           | Kriteriya                                                                          | Bloklaydi                        |
+| ------------ | ---------------------------------------------------------------------------------- | -------------------------------- |
+| **AC-B1** 🚫 | **L1-L9** (§7.3) bo'yicha yuristdan **yozma** javob olingan                        | Butun B model (o'z rassrochkasi) |
+| **AC-B2** 🚫 | `inHouseEnabled = false` — L1 javobi olinmaguncha production'da **o'zgarmaydi**    | §7.3                             |
+| **AC-B3** 🚫 | **F1-F9** (§10) bo'yicha buxgalter/yuristdan javob olingan                         | Fiskal chek, QQS, butun sotuv    |
+| **AC-B4** 🚫 | QQS stavkasi va qo'llash tartibi **tasdiqlangan** — kodda taxminiy stavka **yo'q** | `pricing`, har bir chek          |
+| **AC-B5** 🚫 | Hisoblar rejasi (§6.3) BHMS ga moslashtirilgan                                     | Hisobot, soliq                   |
+| **AC-B6** 🚫 | Daromadni tan olish momenti (L6) tasdiqlangan                                      | §7.7 ledger yozuvlari            |
+| **AC-B7** 🚫 | Penya qonuniyligi va stavkasi (L5) tasdiqlangan                                    | §7.9                             |
+
+**AC-B1 va AC-B3 — loyihaning eng katta noaniqligi.** Ular texnik ish bilan hal
+bo'lmaydi: ularni **hal qilish uchun kod yozish kerak emas, savol berish kerak**.
+
+### 14.5 Integratsiya
+
+| ID    | Kriteriya                                                        | Qanday tekshiriladi |
+| ----- | ---------------------------------------------------------------- | ------------------- |
+| AC-P1 | §1.3 jadvalidagi **har bir qator** rasmiy hujjatdan to'ldirilgan | Hujjat review       |
+| AC-P2 | Adapter yozilishidan oldin AC-P1 bajarilgan                      | Process             |
+| AC-P3 | Yangi provayder qo'shish — `PaymentService`ga tegmasdan          | §2.4, code review   |
+| AC-P4 | `CashAdapter` port ortida ishlaydi (abstraksiya isboti)          | §2.6                |
+| AC-P5 | Rassrochka provayderi (A model) — `Installment` **yaratmaydi**   | §7.2                |
+
+### 14.6 Xavfsizlik
+
+| ID    | Kriteriya                                                  | Qanday tekshiriladi     |
+| ----- | ---------------------------------------------------------- | ----------------------- |
+| AC-S1 | Karta ma'lumoti DB/log/Redis/Sentry da **yo'q**            | Code review + log audit |
+| AC-S2 | Imzo **raw body** ustidan tekshiriladi                     | §13.7                   |
+| AC-S3 | Taqqoslash — `timingSafeEqual`                             | §13.7 + eslint          |
+| AC-S4 | Imzo **yo'q** bo'lsa — rad etiladi (o'tkazib yuborilmaydi) | §13.7                   |
+| AC-S5 | Replay oynasi (o'tmish **va** kelajak) tekshiriladi        | §13.7                   |
+| AC-S6 | Provayder kalitlari repoda yo'q                            | `gitleaks` CI da        |
+| AC-S7 | Webhook endpoint — HTTPS + rate limit                      | Infra review            |
+
+### 14.7 Operatsiya
+
+| ID    | Kriteriya                                              | Qanday tekshiriladi        |
+| ----- | ------------------------------------------------------ | -------------------------- |
+| AC-O1 | Kunlik reconciliation job ishlaydi va hisobot saqlaydi | §12.2                      |
+| AC-O2 | `onlyProvider` farq → **P1 alert**                     | §12.4                      |
+| AC-O3 | Farq **avtomatik tuzatilmaydi**                        | §12.4, code review         |
+| AC-O4 | §12.5 dagi 5 ta so'rov kunlik ishlaydi, natija bo'sh   | §12.5                      |
+| AC-O5 | Kassa smenasi: bitta kassirda bitta ochiq smena        | §9.2, partial unique index |
+| AC-O6 | Smena farqi ledger'ga yoziladi (kam **va** ortiqcha)   | §9.3                       |
+| AC-O7 | Kuryer naqdi `asset.cash.courier` da ko'rinadi         | §1.4, §6.5                 |
+| AC-O8 | Naqd `capture` — RBAC + `AuditLog` bilan               | §4.4                       |
+
+---
+
+## 15. Ochiq savollar
+
+### 15.1 🚫 Blokerlar (javobsiz — ish boshlanmaydi)
+
+| #           | Savol                                                                                                  | Kim javob beradi       | Bloklaydi          |
+| ----------- | ------------------------------------------------------------------------------------------------------ | ---------------------- | ------------------ |
+| **Q-01** 🚫 | Savdo tashkilotining o'z hisobidan bo'lib to'lash sharti bilan sotishi litsenziya talab qiladimi? (L1) | **Yurist**             | B model butunlay   |
+| **Q-02** 🚫 | Fiskal chek / onlayn NKM talablari Kelvinga qanday qo'llaniladi? (F1-F5)                               | **Yurist + buxgalter** | Har qanday sotuv   |
+| **Q-03** 🚫 | QQS: stavka, to'lovchi maqomi, narxga kiritilganmi? (F6-F8)                                            | **Buxgalter**          | Narx, chek, ledger |
+| **Q-04** 🚫 | Ustama "foiz" bo'lib kvalifikatsiya qilinadimi? Cheklov bormi? (L3, L4)                                | **Yurist**             | §7.5               |
+| **Q-05** 🚫 | Penya olish qonuniymi, maksimal stavka bormi? (L5)                                                     | **Yurist**             | §7.9               |
+| **Q-06** 🚫 | Daromad qachon tan olinadi — tovar berilganda yoki pul kelganda? (L6)                                  | **Buxgalter**          | §7.7               |
+| **Q-07** 🚫 | Hisoblar rejasi (§6.3) BHMS bilan qanday moslashadi?                                                   | **Buxgalter**          | Hisobot            |
+| **Q-08** 🚫 | Defolt bo'lgan qarzni undirish tartibi; tovarni qaytarib olish mumkinmi? (L8)                          | **Yurist**             | §7.10              |
+
+### 15.2 ⚠️ Integratsiya — rasmiy hujjatdan tekshiriladi
+
+| #    | Savol                                                                                                             | Manba                      |
+| ---- | ----------------------------------------------------------------------------------------------------------------- | -------------------------- |
+| Q-09 | Click API: endpoint, parametr, imzo algoritmi, xato kodlari, ikki fazali oqim                                     | `docs.click.uz`            |
+| Q-10 | Payme API: shu ro'yxat                                                                                            | `developer.help.paycom.uz` |
+| Q-11 | Uzum Bank API: rasmiy hujjat **havolasi ham noma'lum**                                                            | Provayder bilan aloqa      |
+| Q-12 | Rassrochka provayderlari (Uzum Nasiya, Alif, Intend): API bormi, skoring natijasi qaytadimi, muddatlar, komissiya | Provayder + shartnoma      |
+| Q-13 | Har provayderda refund API bormi, **qisman** refund bormi                                                         | Rasmiy hujjat + shartnoma  |
+| Q-14 | Settlement davri va hisobot formati (reconciliation uchun)                                                        | Shartnoma                  |
+| Q-15 | Sandbox mavjudmi, unga qanday kirish olinadi                                                                      | Rasmiy hujjat              |
+| Q-16 | Webhook'da timestamp bormi (replay himoyasi uchun — §11.4)                                                        | Rasmiy hujjat              |
+| Q-17 | Provayder IP diapazoni bormi (allowlist uchun)                                                                    | Rasmiy hujjat              |
+| Q-18 | Komissiya stavkalari                                                                                              | Shartnoma                  |
+| Q-19 | Elektron hisob-faktura tizimi B2B sotuvda majburiymi (§1.5)                                                       | Buxgalter                  |
+| Q-20 | **1C integratsiyasi** rassrochka va ledger ma'lumotini talab qiladimi? (CANON §6 — tasdiqlanmagan)                | Do'kon egasi               |
+
+### 15.3 Biznes qarorlari — do'kon egasi
+
+| #    | Savol                                                                            | Ta'siri                                    |
+| ---- | -------------------------------------------------------------------------------- | ------------------------------------------ |
+| Q-21 | Rassrochka muddatlari: 3/6/9/12 — hammasimi yoki qismimi?                        | §7.5                                       |
+| Q-22 | Boshlang'ich badal majburiymi? Necha foiz? Muddatga bog'liqmi?                   | §7.5                                       |
+| Q-23 | Ustama modeli: `flat` yoki `reducing`?                                           | §7.5 — mijoz to'lovi sezilarli farq qiladi |
+| Q-24 | Ustama stavkasi (bps) — muddatga qarab jadval                                    | §7.5                                       |
+| Q-25 | Yaxlitlash birligi: 1 so'mmi yoki 1000 so'mmi?                                   | §7.6                                       |
+| Q-26 | Rassrochkaga minimal summa bormi (masalan, 1 mln so'mdan yuqori)?                | §7                                         |
+| Q-27 | B model uchun skoring: qanday mezon? Passport? Kafil?                            | §7.2, L9                                   |
+| Q-28 | Eslatma SMS necha kun oldin?                                                     | §7.9                                       |
+| Q-29 | Penya kunlik stavkasi (agar Q-05 ruxsat bersa)                                   | §7.9                                       |
+| Q-30 | Grace period: necha kundan keyin defolt?                                         | §7.10                                      |
+| Q-31 | Qisman refundda grafik: `keep_term` yoki `keep_payment`?                         | §8.6                                       |
+| Q-32 | Kassa farqi: qaysi summadan yuqorisi alert? Kassir zimmasigami? (mehnat huquqi!) | §9.3                                       |
+| Q-33 | POS internetsiz ishlashi kerakmi? (offline rejim — katta murakkablik)            | §9.5                                       |
+| Q-34 | Refund tasdig'i uchun qaysi rol yetarli (manager? faqat egasi?)                  | §8.4                                       |
+
+### 15.4 Texnik — keyinroq hal qilinadi
+
+| #    | Savol                                                                                                                                                                                                                     | Izoh                                          |
+| ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------- |
+| Q-35 | Webhook dedup uchun alohida jadval kerakmi? CANON §8 da `WebhookEvent` **yo'q**; hozir `PaymentAttempt` + unique constraint yetadi (§5.3). Provayder bir tranzaksiya uchun ko'p **turli** event yuborsa — qayta ko'riladi | Kanon o'zgarishi talab qilinadi               |
+| Q-36 | Ledger hajmi: yiliga necha yozuv? Partitsiyalash kerak bo'ladimi?                                                                                                                                                         | O'lchov bilan (CANON §2)                      |
+| Q-37 | Reconciliation hisoboti qayerda saqlanadi — DB da yoki S3 da?                                                                                                                                                             | Hajmga bog'liq                                |
+| Q-38 | Ko'p valyuta kerak bo'ladimi? (hozir faqat UZS)                                                                                                                                                                           | `Money` tayyor, `CurrencyCode` kengaytiriladi |
+
+---
+
+## 16. Bog'liq hujjatlar
+
+| Hujjat                                  | Bog'liqlik                                                                           |
+| --------------------------------------- | ------------------------------------------------------------------------------------ |
+| `docs/01-product-spec.md`               | RBAC (§4.4, §8.4), user story'lar                                                    |
+| `docs/06-inventory-and-reservations.md` | Rezerv ↔ to'lov (saga, CANON §9.3); mo'rt tovar → refund (§8.1)                      |
+| `docs/07-order-and-checkout.md`         | Buyurtma holat mashinasi; chegirma tarqatilishi (§8.2)                               |
+| `docs/09-delivery-and-operations.md`    | Kuryer naqdi (§1.4), qaytarish logistikasi (§8)                                      |
+| `KELVIN_CANON.md`                       | §6 (texnologiya), §8 (entity, pul qoidasi), §9.6 (rassrochka), §10 (nima yozilmaydi) |
+
+---
+
+## 17. Qarorlar xulosasi
+
+| #   | Qaror                                                        | Asos                            |
+| --- | ------------------------------------------------------------ | ------------------------------- |
+| 1   | Pul — `BigInt`, tiyinda; API'da string                       | CANON §8; §3.1                  |
+| 2   | `allocate()` — floor + qoldiqni deterministik tarqatish      | §3.3 — yig'indi saqlanadi       |
+| 3   | Grafikda farqni **oxirgi oy** yutadi                         | §7.6 — N-1 oy bir xil va yaxlit |
+| 4   | Provayder — port/adapter ortida; naqd ham adapter            | §2.2, §2.6                      |
+| 5   | Adapter skeletlari `throw` qiladi — hujjat tasdiqlanmaguncha | §2.5, CANON §10                 |
+| 6   | Double-entry ledger; `balance` ustuni **yo'q**               | §6.1                            |
+| 7   | Ledger append-only — **DB trigger** bilan majburlangan       | §6.4                            |
+| 8   | Xato → teskari yozuv, `UPDATE` emas                          | §6.6                            |
+| 9   | Idempotentlik — 3 qatlam, oxirgi hakam **DB unique**         | §5.2                            |
+| 10  | `PaymentAttempt` = idempotentlik yozuvi (yangi entity yo'q)  | §5.3, CANON §0                  |
+| 11  | Holat o'tishi — compare-and-set                              | §4.3                            |
+| 12  | A model (provayder rassrochkasi) `Installment` yaratmaydi    | §7.2                            |
+| 13  | B model — **darvoza ortida**, `inHouseEnabled = false`       | §7.3 — yuridik bloker           |
+| 14  | Onlayn va offline — **bitta ledger**                         | §9.1                            |
+| 15  | Reconciliation farqi avtomatik tuzatilmaydi                  | §12.4                           |
+| 16  | Karta ma'lumoti Kelvinga **tegmaydi**                        | §11.1                           |
+
+---
+
+> **Hujjat holati:** loyihalash. Kod skeletlari `throw` qiladi — bu ataylab.
+> **Keyingi qadam:** §15.1 dagi 8 ta blokerni yuristga va buxgalterga berish.
+> Ular javob bermaguncha `payment` moduli **yozilishi mumkin, lekin
+> yoqilmaydi**.

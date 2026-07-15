@@ -29,27 +29,28 @@ currency    String  @default("UZS")
 ### Nega Float jinoyat
 
 ```js
-0.1 + 0.2                  // 0.30000000000000004
-(0.1 + 0.2).toFixed(2)     // "0.30"  ← xato YASHIRINDI, yo'qolmadi
+0.1 +
+  0.2 // 0.30000000000000004
+  (0.1 + 0.2).toFixed(2); // "0.30"  ← xato YASHIRINDI, yo'qolmadi
 
 let total = 0;
 for (let i = 0; i < 1000; i++) total += 0.1;
-total === 100              // false → 99.9999999999986
+total === 100; // false → 99.9999999999986
 ```
 
 Do'konda bu **balans mos kelmaydi** degani. Xato jimgina to'planadi — hech kim sezmaydi, toki inventarizatsiya yoki soliq tekshiruvi kelguncha.
 
 Bu test kodda bor va `number` ning ishonchsizligini hujjatlashtiradi:
-[`money.spec.ts`](../../apps/api/src/core/money/money.spec.ts) → *"taqqoslash uchun: `number` bilan xuddi shu hisob YIQILADI"*.
+[`money.spec.ts`](../../apps/api/src/core/money/money.spec.ts) → _"taqqoslash uchun: `number` bilan xuddi shu hisob YIQILADI"_.
 
 ### Nega BigInt
 
-| Yondashuv | Baho |
-|---|---|
-| `Float` | ❌ Yuqorida |
+| Yondashuv                        | Baho                                                                            |
+| -------------------------------- | ------------------------------------------------------------------------------- |
+| `Float`                          | ❌ Yuqorida                                                                     |
 | `Decimal` (PostgreSQL `NUMERIC`) | ✅ To'g'ri, lekin JS'da `Decimal.js` obyekti — har amalda `.plus()`, `.times()` |
-| `Integer` + tiyin | ⚠️ 32-bit → maksimum ~21 mln so'm. **Qandil 5 mln so'm — chegara yaqin** |
-| **`BigInt` + tiyin** | ✅ **Tanlandi** |
+| `Integer` + tiyin                | ⚠️ 32-bit → maksimum ~21 mln so'm. **Qandil 5 mln so'm — chegara yaqin**        |
+| **`BigInt` + tiyin**             | ✅ **Tanlandi**                                                                 |
 
 `BigInt` ustunligi: **yaxlitlash muammosi tuzilmaviy jihatdan yo'q** — tiyindan mayda birlik yo'q. Native tip, kutubxona kerak emas.
 
@@ -88,11 +89,13 @@ Kafolat property test bilan tekshiriladi: **har qanday summa × har qanday mudda
 ## Oqibatlar
 
 **Ijobiy:**
+
 - Yaxlitlash xatosi **imkonsiz**
 - Ledger invarianti (`SUM(debit) == SUM(credit)`) har doim bajariladi
 - Rassrochka grafigi aniq
 
 **Salbiy:**
+
 - **`BigInt` JSON'da serializatsiya qilinmaydi** — `JSON.stringify(1n)` xato tashlaydi. Global patch kerak (`main.ts`). API'da pul **string** sifatida qaytadi: `"amount": "54000000"`. Bu ataylab — JS `Number` 2⁵³ dan katta butun sonni yo'qotadi
 - Har joyda `n` suffiksi — kod shovqinli
 - `1n + 1` → `TypeError`. Bu **yaxshi** (xato erta chiqadi), lekin o'rganish kerak

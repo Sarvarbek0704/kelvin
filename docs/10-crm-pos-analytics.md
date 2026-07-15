@@ -104,6 +104,7 @@ orqali bo'ladi.
 #### Mehmon buyurtmasini bog'lash
 
 Ssenariy:
+
 1. Mijoz saytga kirdi, ro'yxatdan o'tmadi, `+998901234567` bilan buyurtma berdi.
 2. Bir oy o'tib, **do'konga keldi**, kassada yana shu telefon bilan sotib oldi.
 3. Yana bir oy o'tib, **ro'yxatdan o'tdi** — shu telefon bilan.
@@ -207,6 +208,7 @@ export function normalizePhone(input: string): string {
 
 Odam raqamini o'zgartirishi mumkin. Yoki eski raqam boshqa odamga berilishi
 mumkin (operatorlar shunday qiladi). Unda:
+
 - Yangi odam eski mijozning buyurtmalar tarixini ko'radimi? **Bu — shaxsiy
   ma'lumot sizib chiqishi.**
 
@@ -334,13 +336,13 @@ stateDiagram-v2
 
 ```ts
 const LEAD_TRANSITIONS: Readonly<Record<LeadStatus, readonly LeadStatus[]>> = {
-  NEW:         ['CONTACTED', 'LOST'],
-  CONTACTED:   ['QUALIFIED', 'LOST'],
-  QUALIFIED:   ['PROPOSAL', 'LOST'],
-  PROPOSAL:    ['NEGOTIATION', 'WON', 'LOST'],
+  NEW: ['CONTACTED', 'LOST'],
+  CONTACTED: ['QUALIFIED', 'LOST'],
+  QUALIFIED: ['PROPOSAL', 'LOST'],
+  PROPOSAL: ['NEGOTIATION', 'WON', 'LOST'],
   NEGOTIATION: ['WON', 'LOST'],
-  WON:         [],   // terminal
-  LOST:        [],   // terminal
+  WON: [], // terminal
+  LOST: [], // terminal
 } as const;
 
 export function canTransitionLead(from: LeadStatus, to: LeadStatus): boolean {
@@ -492,7 +494,7 @@ export interface CustomerProfile {
 
   readonly orders: {
     readonly total: number;
-    readonly totalValue: bigint;        // tiyin
+    readonly totalValue: bigint; // tiyin
     readonly lastOrderAt: Date | null;
     readonly recent: readonly OrderSummaryDto[];
   };
@@ -538,13 +540,13 @@ sanab, "buni qilsangiz yetarli" deya olmayman. Bu — **yurist ishi**.
 
 **Muhandislik nuqtai nazaridan hal qilinishi kerak bo'lgan savollar:**
 
-| Savol | Nega texnik ta'siri bor |
-|---|---|
-| Ma'lumot O'zbekiston hududida saqlanishi shartmi? | Bu — **hosting joyi** qarori. S3-mos storage (kanon §6) qayerda? Bu butun infratuzilmaga ta'sir qiladi |
-| Mijoz "meni o'chiring" desa — nima o'chiriladi? | Buyurtma tarixi buxgalteriya uchun kerak. To'liq o'chirish mumkin emas. **Anonimlashtirish** kerak: ism/telefon o'chadi, `Order` summasi qoladi |
-| Marketing roziligi qanday olinadi va isbotlanadi? | `marketingConsent` + `marketingConsentAt` — bor. Lekin **rozilik matni** va uni saqlash — yuridik talab |
-| Sotuvchi barcha mijoz ma'lumotini ko'radimi? | RBAC savoli → `docs/11-security.md` |
-| Qo'ng'iroq yozuvi saqlansa — mijozdan rozilik kerakmi? | Telefoniya bo'lsa — kritik |
+| Savol                                                  | Nega texnik ta'siri bor                                                                                                                         |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ma'lumot O'zbekiston hududida saqlanishi shartmi?      | Bu — **hosting joyi** qarori. S3-mos storage (kanon §6) qayerda? Bu butun infratuzilmaga ta'sir qiladi                                          |
+| Mijoz "meni o'chiring" desa — nima o'chiriladi?        | Buyurtma tarixi buxgalteriya uchun kerak. To'liq o'chirish mumkin emas. **Anonimlashtirish** kerak: ism/telefon o'chadi, `Order` summasi qoladi |
+| Marketing roziligi qanday olinadi va isbotlanadi?      | `marketingConsent` + `marketingConsentAt` — bor. Lekin **rozilik matni** va uni saqlash — yuridik talab                                         |
+| Sotuvchi barcha mijoz ma'lumotini ko'radimi?           | RBAC savoli → `docs/11-security.md`                                                                                                             |
+| Qo'ng'iroq yozuvi saqlansa — mijozdan rozilik kerakmi? | Telefoniya bo'lsa — kritik                                                                                                                      |
 
 **Texnik tayyorgarlik (yuristdan javob kelgunicha qilinadigan ish):**
 
@@ -805,7 +807,7 @@ export function calculateExpectedCash(input: {
   readonly cashRefunds: bigint;
   readonly collections: bigint;
   readonly deposits: bigint;
-  readonly corrections: bigint;   // musbat yoki manfiy
+  readonly corrections: bigint; // musbat yoki manfiy
 }): bigint {
   return (
     input.openingCash +
@@ -903,34 +905,34 @@ Bu **arxitektura qarori**, sozlama emas. U butun tizimga ta'sir qiladi.
 
 Kassa — brauzerdagi veb-ilova. Internet yo'q → kassa ishlamaydi.
 
-| Ijobiy | Salbiy |
-|---|---|
+| Ijobiy                                                     | Salbiy                                          |
+| ---------------------------------------------------------- | ----------------------------------------------- |
 | **Oddiy.** Hech qanday sinxronizatsiya, konflikt, local DB | Internet uzilsa — **do'kon savdo qila olmaydi** |
-| Qoldiq doim to'g'ri — bitta manba | Mijoz navbatda turadi va ketadi |
-| Oversell imkonsiz (kanon §9.2 yechimi ishlaydi) | Do'kon egasi buni **qabul qilmasligi mumkin** |
-| Ledger doim izchil | |
+| Qoldiq doim to'g'ri — bitta manba                          | Mijoz navbatda turadi va ketadi                 |
+| Oversell imkonsiz (kanon §9.2 yechimi ishlaydi)            | Do'kon egasi buni **qabul qilmasligi mumkin**   |
+| Ledger doim izchil                                         |                                                 |
 
 #### Variant B — Local-first + sync
 
 Kassa mahalliy DB bilan ishlaydi (IndexedDB/SQLite), keyin serverga sinxronlaydi.
 
-| Ijobiy | Salbiy |
-|---|---|
+| Ijobiy                            | Salbiy                                                                                                                                                                                             |
+| --------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Internet yo'q — savdo davom etadi | **Qoldiq konflikti.** Kassa oflayn oxirgi qandilni sotdi, sayt ham sotdi. Ikkalasi ham "muvaffaqiyatli". Sync paytida — **oversell fakt**, uni bekor qilib bo'lmaydi (pul olingan, tovar berilgan) |
-| | **Narx konflikti.** Oflayn eski narx bilan sotildi |
-| | **ID konflikti.** Order raqami qanday beriladi? UUID v7 (kanon §8) yordam beradi, lekin **inson o'qiydigan** buyurtma raqami? |
-| | Konfliktni **kim** hal qiladi? Avtomatik qoida yozib bo'lmaydi — pul va tovar allaqachon harakat qilgan |
-| | Kod hajmi **sezilarli darajada** ortadi: sync engine, konflikt aniqlash, retry, versiyalash |
-| | Test qilish qiyin: oflayn ssenariylarni takrorlash |
+|                                   | **Narx konflikti.** Oflayn eski narx bilan sotildi                                                                                                                                                 |
+|                                   | **ID konflikti.** Order raqami qanday beriladi? UUID v7 (kanon §8) yordam beradi, lekin **inson o'qiydigan** buyurtma raqami?                                                                      |
+|                                   | Konfliktni **kim** hal qiladi? Avtomatik qoida yozib bo'lmaydi — pul va tovar allaqachon harakat qilgan                                                                                            |
+|                                   | Kod hajmi **sezilarli darajada** ortadi: sync engine, konflikt aniqlash, retry, versiyalash                                                                                                        |
+|                                   | Test qilish qiyin: oflayn ssenariylarni takrorlash                                                                                                                                                 |
 
 #### Variant C — Gibrid (o'qish oflayn, yozish onlayn)
 
 Katalog va narxlar keshlanadi. Sotuv — faqat onlayn.
 
-| Ijobiy | Salbiy |
-|---|---|
+| Ijobiy                                 | Salbiy                                                 |
+| -------------------------------------- | ------------------------------------------------------ |
 | Internet sekinlashsa — UI tez ishlaydi | Internet **butunlay** uzilsa — baribir sotib bo'lmaydi |
-| Konflikt yo'q | Foydasi cheklangan |
+| Konflikt yo'q                          | Foydasi cheklangan                                     |
 
 #### Halol xulosa
 
@@ -942,6 +944,7 @@ Kanon §9.2: oversell oldini olish — **bu loyihaning eng nozik joyi**. Variant
 uni ataylab buzadi.
 
 **Boshlang'ich taklif: Variant A (online-only).** Sabablar:
+
 1. Do'kon — bitta (kanon §1). Toshkentda barqaror internet + zaxira (mobil
    modem/4G) — bu **texnik masala**, uni arxitektura bilan hal qilish noto'g'ri.
 2. Variant B ning narxi (kod + xatolar + oversell riski) — juda yuqori.
@@ -961,6 +964,7 @@ Oxirgi dona — sotilmaydi. Bu oversell riskini kamaytiradi, lekin yo'q qilmaydi
 ⚠️ **Bu — yuridik masala** (kanon §10).
 
 O'zbekistonda savdo cheki va fiskal ro'yxatga olish talablari mavjud. Bu:
+
 - qanday chek berilishi kerak;
 - fiskal modul (onlayn-kassa) shartmi;
 - soliq organiga ma'lumot qanday uzatiladi
@@ -1011,6 +1015,7 @@ Do'kon zalida sotuvchi mijozga maslahat beradi: "bu qandil 20 m² xonaga yetadi"
 kerak.
 
 **Atribut qayerda saqlanadi:**
+
 - POS: `PosTransaction.sellerId` — kassada sotuvchi tanlanadi.
 - Telefon buyurtmasi: `Order` da kim kiritgani.
 - Lead: `Lead.assignedToId` → `wonOrderId`.
@@ -1201,7 +1206,7 @@ export interface SalesReportQuery {
 }
 
 export interface SalesReportRow {
-  readonly period: string;              // '2026-07-15' | '2026-W29' | '2026-07'
+  readonly period: string; // '2026-07-15' | '2026-W29' | '2026-07'
   readonly orderCount: number;
   /** Tovar summasi (chegirmadan keyin), tiyin */
   readonly revenue: bigint;
@@ -1246,6 +1251,7 @@ Agar POS alohida DB da bo'lsa (§2.1 dagi "noto'g'ri" variant), bu so'rov
 
 Pareto printsipi: kam sonli mahsulot aylanmaning katta qismini beradi.
 An'anaviy chegaralar:
+
 - **A** — jamlangan aylanmaning ~80% ini beruvchi mahsulotlar
 - **B** — keyingi ~15%
 - **C** — qolgan ~5%
@@ -1254,6 +1260,7 @@ An'anaviy chegaralar:
 > taqsimot **NOMA'LUM**. Chegaralar **konfiguratsiya** bo'lishi kerak.
 
 **Nega foydali:**
+
 - **A** — hech qachon tugamasligi kerak. Rezerv zaxira, ta'minotchi bilan
   mustahkam aloqa (`docs/06-inventory-and-reservations.md`).
 - **C** — pul javonda yotibdi. Chegirma qilib chiqarish yoki buyurtmaga o'tkazish.
@@ -1299,7 +1306,13 @@ export interface AbcThresholds {
  * Juda qisqa davr — tasodifiy natija.
  */
 export function calculateAbc(
-  items: readonly { productId: string; sku: string; name: string; revenue: bigint; unitsSold: number }[],
+  items: readonly {
+    productId: string;
+    sku: string;
+    name: string;
+    revenue: bigint;
+    unitsSold: number;
+  }[],
   thresholds: AbcThresholds = { a: 0.8, b: 0.95 },
 ): readonly AbcItem[] {
   const total = items.reduce((acc, i) => acc + i.revenue, 0n);
@@ -1328,9 +1341,7 @@ export function calculateAbc(
     const cumulativeShare = ratio(cumulative, total);
 
     const abcClass: AbcClass =
-      cumulativeShare <= thresholds.a ? 'A'
-      : cumulativeShare <= thresholds.b ? 'B'
-      : 'C';
+      cumulativeShare <= thresholds.a ? 'A' : cumulativeShare <= thresholds.b ? 'B' : 'C';
 
     result.push({
       productId: item.productId,
@@ -1481,11 +1492,11 @@ Endi qandil sotildi. **Uning tannarxi qancha — 500 000 mi, 550 000 mi?**
 
 #### Uch usul
 
-| Usul | Qanday ishlaydi | Ijobiy | Salbiy |
-|---|---|---|---|
-| **FIFO** (First In, First Out) | Birinchi kelgan — birinchi sotiladi. Yanvardagi 100 dona tugagach, martdagi narx | Real tovar oqimiga mos. Qoldiq qiymati bozor narxiga yaqin | **Partiya kuzatuvi kerak.** Har `StockItem` qaysi partiyadan ekanini bilishi shart. Bu — `docs/06` ga jiddiy qo'shimcha |
-| **O'rtacha tortilgan** (Weighted Average) | Har kirimda qayta hisoblanadi: `(eski_qiymat + yangi_qiymat) / (eski_soni + yangi_soni)` | **Oddiy.** Bitta son. Partiya kerak emas | Real emas. Narx keskin o'zgarsa — o'rtacha haqiqatni yashiradi |
-| **LIFO** (Last In, First Out) | Oxirgi kelgan — birinchi sotiladi | — | Ko'p mamlakatda buxgalteriya uchun taqiqlangan. **Ishlatilmaydi** |
+| Usul                                      | Qanday ishlaydi                                                                          | Ijobiy                                                     | Salbiy                                                                                                                  |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| **FIFO** (First In, First Out)            | Birinchi kelgan — birinchi sotiladi. Yanvardagi 100 dona tugagach, martdagi narx         | Real tovar oqimiga mos. Qoldiq qiymati bozor narxiga yaqin | **Partiya kuzatuvi kerak.** Har `StockItem` qaysi partiyadan ekanini bilishi shart. Bu — `docs/06` ga jiddiy qo'shimcha |
+| **O'rtacha tortilgan** (Weighted Average) | Har kirimda qayta hisoblanadi: `(eski_qiymat + yangi_qiymat) / (eski_soni + yangi_soni)` | **Oddiy.** Bitta son. Partiya kerak emas                   | Real emas. Narx keskin o'zgarsa — o'rtacha haqiqatni yashiradi                                                          |
+| **LIFO** (Last In, First Out)             | Oxirgi kelgan — birinchi sotiladi                                                        | —                                                          | Ko'p mamlakatda buxgalteriya uchun taqiqlangan. **Ishlatilmaydi**                                                       |
 
 #### Qaror: o'rtacha tortilgan
 
@@ -1519,7 +1530,7 @@ bu qaror **o'zgaradi** va bu `docs/06` ga ta'sir qiladi. → **Ochiq savol №10
  */
 export function recalculateAverageCost(input: {
   readonly currentQty: number;
-  readonly currentAvgCost: bigint;   // tiyin, birlik uchun
+  readonly currentAvgCost: bigint; // tiyin, birlik uchun
   readonly incomingQty: number;
   readonly incomingUnitCost: bigint; // tiyin, birlik uchun
 }): bigint {
@@ -1531,7 +1542,7 @@ export function recalculateAverageCost(input: {
 
   // Manfiy qoldiq — bu xato holat, uni yashirmaymiz
   if (input.currentQty < 0 || input.incomingQty <= 0) {
-    throw new Error('recalculateAverageCost: noto\'g\'ri miqdor');
+    throw new Error("recalculateAverageCost: noto'g'ri miqdor");
   }
 
   const currentValue = input.currentAvgCost * BigInt(input.currentQty);
@@ -1587,14 +1598,14 @@ graph TD
 
 **Ma'lumot qayerdan:**
 
-| Bosqich | Manba | Ishonchlilik |
-|---|---|---|
-| Ko'rildi | Frontend event | ⚠️ **Past.** Ad-blocker, bot, JS o'chirilgan |
-| Savatga qo'shildi | `CartItem` (backend) | ✅ Yuqori |
-| Checkout boshlandi | Backend event | ✅ Yuqori |
-| To'lov boshlandi | `PaymentAttempt` (`docs/08`) | ✅ Yuqori |
-| To'lov muvaffaqiyatli | `Payment` | ✅ Yuqori |
-| Yetkazildi | `Shipment.DELIVERED` (`docs/09`) | ✅ Yuqori |
+| Bosqich               | Manba                            | Ishonchlilik                                 |
+| --------------------- | -------------------------------- | -------------------------------------------- |
+| Ko'rildi              | Frontend event                   | ⚠️ **Past.** Ad-blocker, bot, JS o'chirilgan |
+| Savatga qo'shildi     | `CartItem` (backend)             | ✅ Yuqori                                    |
+| Checkout boshlandi    | Backend event                    | ✅ Yuqori                                    |
+| To'lov boshlandi      | `PaymentAttempt` (`docs/08`)     | ✅ Yuqori                                    |
+| To'lov muvaffaqiyatli | `Payment`                        | ✅ Yuqori                                    |
+| Yetkazildi            | `Shipment.DELIVERED` (`docs/09`) | ✅ Yuqori                                    |
 
 > **"Ko'rildi" bosqichi eng ishonchsiz.** Bu bosqichdagi konversiya doim
 > shubhali. Botlar ko'rishni ko'paytiradi → konversiya sun'iy pasayadi.
@@ -1664,11 +1675,11 @@ export interface CustomerMetrics {
 
 **Nima:** mijozlarni uch o'lchov bo'yicha segmentlash:
 
-| O'lcham | Savol | Nega muhim |
-|---|---|---|
-| **R** — Recency | Oxirgi marta **qachon** sotib oldi? | Yaqinda olgan mijoz — faol. Uzoq vaqt olmagani — ketyapti |
-| **F** — Frequency | **Necha marta** sotib oldi? | Ko'p marta olgan — sodiq |
-| **M** — Monetary | **Qancha** pul sarfladi? | Ko'p sarflagan — qimmatli |
+| O'lcham           | Savol                               | Nega muhim                                                |
+| ----------------- | ----------------------------------- | --------------------------------------------------------- |
+| **R** — Recency   | Oxirgi marta **qachon** sotib oldi? | Yaqinda olgan mijoz — faol. Uzoq vaqt olmagani — ketyapti |
+| **F** — Frequency | **Necha marta** sotib oldi?         | Ko'p marta olgan — sodiq                                  |
+| **M** — Monetary  | **Qancha** pul sarfladi?            | Ko'p sarflagan — qimmatli                                 |
 
 **Nega bu real va foydali:** murakkab model emas, faqat uchta oddiy ma'lumot.
 Ular `Order` jadvalida **allaqachon bor**. Hech qanday ML, hech qanday tashqi
@@ -1709,17 +1720,17 @@ export interface RfmScore {
 }
 
 export type RfmSegment =
-  | 'champions'          // 5-5-5 atrofi: eng yaxshi mijozlar
-  | 'loyal'              // tez-tez oladi
+  | 'champions' // 5-5-5 atrofi: eng yaxshi mijozlar
+  | 'loyal' // tez-tez oladi
   | 'potential_loyalist' // yaqinda, lekin hali kam
-  | 'new'                // yangi
-  | 'promising'          // yaqinda oldi, kam sarfladi
-  | 'need_attention'     // o'rtacha, lekin susayyapti
-  | 'about_to_sleep'     // uzoq vaqt yo'q
-  | 'at_risk'            // yaxshi mijoz edi, ketyapti — ENG MUHIM
-  | 'cant_lose'          // eng qimmatli, lekin uzoq yo'q — SHOSHILINCH
-  | 'hibernating'        // deyarli yo'qolgan
-  | 'lost';              // yo'qolgan
+  | 'new' // yangi
+  | 'promising' // yaqinda oldi, kam sarfladi
+  | 'need_attention' // o'rtacha, lekin susayyapti
+  | 'about_to_sleep' // uzoq vaqt yo'q
+  | 'at_risk' // yaxshi mijoz edi, ketyapti — ENG MUHIM
+  | 'cant_lose' // eng qimmatli, lekin uzoq yo'q — SHOSHILINCH
+  | 'hibernating' // deyarli yo'qolgan
+  | 'lost'; // yo'qolgan
 
 /**
  * Massivni kvintillarga bo'lish chegaralarini hisoblaydi.
@@ -1816,10 +1827,7 @@ function bigintQuintileBreaks(
   return [at(0.2), at(0.4), at(0.6), at(0.8)];
 }
 
-function scoreBigint(
-  value: bigint,
-  breaks: readonly [bigint, bigint, bigint, bigint],
-): RfmDigit {
+function scoreBigint(value: bigint, breaks: readonly [bigint, bigint, bigint, bigint]): RfmDigit {
   const [b1, b2, b3, b4] = breaks;
   if (value <= b1) return 1;
   if (value <= b2) return 2;
@@ -1854,13 +1862,13 @@ function classifySegment(r: RfmDigit, f: RfmDigit, m: RfmDigit): RfmSegment {
 
 #### RFM natijasi — amaliy ma'no
 
-| Segment | Nima qilish kerak (**taklif**, kanon qarori emas) |
-|---|---|
-| `champions` | Saqlash. Yangi mahsulotni birinchi ularga ko'rsatish |
+| Segment     | Nima qilish kerak (**taklif**, kanon qarori emas)                            |
+| ----------- | ---------------------------------------------------------------------------- |
+| `champions` | Saqlash. Yangi mahsulotni birinchi ularga ko'rsatish                         |
 | `cant_lose` | **Shoshilinch qo'ng'iroq.** Bu — katta pul sarflagan, lekin ketayotgan mijoz |
-| `at_risk` | Qaytarish urinishi. Nega ketdi — so'rash |
-| `new` | Ikkinchi xaridga undash |
-| `lost` | Deyarli umidsiz. Marketing pulini bu yerga sarflamaslik |
+| `at_risk`   | Qaytarish urinishi. Nega ketdi — so'rash                                     |
+| `new`       | Ikkinchi xaridga undash                                                      |
+| `lost`      | Deyarli umidsiz. Marketing pulini bu yerga sarflamaslik                      |
 
 ⚠️ **Bu jadval — umumiy amaliyot, isbotlangan strategiya emas.** Kelvin uchun
 nima ishlashi — **sinov bilan** aniqlanadi.
@@ -1948,6 +1956,7 @@ model CustomerSegmentMember {
 ```
 
 **Segment nima uchun ishlatiladi:**
+
 - Narx (`docs/07-order-and-checkout.md`): B2B segmentga boshqa `PriceList`
 - Marketing: SMS/Telegram yuborish (⚠️ `marketingConsent` tekshiriladi!)
 - Analitika: segment bo'yicha kesim
@@ -1955,6 +1964,7 @@ model CustomerSegmentMember {
 ### 4.10. ⚠️ Hisobot — og'ir so'rov muammosi
 
 **Muammo:** hisobot so'rovi butun `orders` jadvalini o'qiydi. Bu:
+
 1. **Sekin** — do'kon egasi kutadi.
 2. **Boshqalarni sekinlashtiradi** — bir xil DB da mijozlar savat qo'shyapti,
    checkout qilyapti. Og'ir `GROUP BY` ularning so'rovlarini kutishga majbur qiladi.
@@ -2001,11 +2011,11 @@ CREATE UNIQUE INDEX ON mv_daily_sales (day, channel);
 REFRESH MATERIALIZED VIEW CONCURRENTLY mv_daily_sales;
 ```
 
-| Ijobiy | Salbiy |
-|---|---|
-| Hisobot — millisekundlarda | **Ma'lumot eskiradi.** Yangilash oralig'iga bog'liq |
-| Qo'shimcha infratuzilma yo'q | "Bugungi savdo" real vaqtda emas |
-| PostgreSQL ichida | Yangilash o'zi — og'ir operatsiya |
+| Ijobiy                       | Salbiy                                              |
+| ---------------------------- | --------------------------------------------------- |
+| Hisobot — millisekundlarda   | **Ma'lumot eskiradi.** Yangilash oralig'iga bog'liq |
+| Qo'shimcha infratuzilma yo'q | "Bugungi savdo" real vaqtda emas                    |
+| PostgreSQL ichida            | Yangilash o'zi — og'ir operatsiya                   |
 
 ⚠️ **Eskirish qabul qilinadimi?** Do'kon egasi "hozirgi" savdoni ko'rishni
 xohlasa — yo'q. Kechagi hisobot yetarli bo'lsa — ha.
@@ -2015,12 +2025,12 @@ xohlasa — yo'q. Kechagi hisobot yetarli bo'lsa — ha.
 
 PostgreSQL streaming replication. Hisobotlar replica'ga yo'naltiriladi.
 
-| Ijobiy | Salbiy |
-|---|---|
-| Og'ir so'rov asosiy DB ga **umuman** tegmaydi | **Yangi server** — pul, monitoring, backup |
-| Real vaqt (replication lag — odatda kichik) | **Replication lag** — hisobot bir necha soniya orqada |
-| Ilova kodi deyarli o'zgarmaydi | Prisma'da ikki ulanish kerak |
-| | ⚠️ Lag paytida "buyurtma yaratdim, hisobotda yo'q" — chalkashlik |
+| Ijobiy                                        | Salbiy                                                           |
+| --------------------------------------------- | ---------------------------------------------------------------- |
+| Og'ir so'rov asosiy DB ga **umuman** tegmaydi | **Yangi server** — pul, monitoring, backup                       |
+| Real vaqt (replication lag — odatda kichik)   | **Replication lag** — hisobot bir necha soniya orqada            |
+| Ilova kodi deyarli o'zgarmaydi                | Prisma'da ikki ulanish kerak                                     |
+|                                               | ⚠️ Lag paytida "buyurtma yaratdim, hisobotda yo'q" — chalkashlik |
 
 **Qachon kerak:** ⚠️ **o'lchov bilan.** Mezon: hisobot so'rovlari OLTP so'rovlar
 kechikishiga **o'lchanadigan** ta'sir qilganda. Buni Prometheus (kanon §6) ko'rsatadi.
@@ -2053,9 +2063,7 @@ Shunda replica'ga o'tish — ulanish o'zgarishi, refactoring emas.
  */
 @Injectable()
 export class AnalyticsService {
-  constructor(
-    @Inject(ANALYTICS_DB) private readonly db: PrismaClient,
-  ) {}
+  constructor(@Inject(ANALYTICS_DB) private readonly db: PrismaClient) {}
   // ...
 }
 ```
@@ -2071,23 +2079,23 @@ javob berishi kerak. Javob bermasa — o'chiriladi.
 
 ### 5.2. Vidjetlar
 
-| Vidjet | Savol | Manba | Yangilanish |
-|---|---|---|---|
-| **Bugungi savdo** | Bugun qancha sotdik? | `Order` (bugun) | Real vaqt |
-| **Kanal bo'yicha** | Onlayn/offline nisbati? | `Order.channel` | Real vaqt |
-| **Yangi buyurtma** | Ishlov berilmagan nechta? | `Order.status = PAID` | Real vaqt |
-| **Bugungi yetkazish** | Nechta yetkazish rejada? Bajarildimi? | `Shipment` (`docs/09`) | Real vaqt |
-| **Bugungi o'rnatish** | Ustalar band? | `InstallationJob` (`docs/09`) | Real vaqt |
-| **Ochiq smena** | Kassa ochiqmi? Naqd qancha? | `PosShift` | Real vaqt |
-| **Smena farqi** | Kassada farq bo'ldimi? | `PosShift.cashDiff != 0` | Real vaqt |
-| **Tugayotgan tovar** | Nima tugab qolyapti? | `StockItem` (`docs/06`) | Soatlik |
-| **Yangi lead** | Ishlanmagan lead nechta? | `Lead.status = NEW` | Real vaqt |
-| **Voronka** | Lead qayerda tiqilyapti? | `Lead` | Kunlik |
-| **ABC — C sinfi** | Qaysi tovar javonda yotibdi? | ABC (§4.3) | Kunlik |
-| **O'lik tovar** | Qancha pul muzlagan? | Dead stock (§4.4) | Kunlik |
-| **`cant_lose` mijozlar** | Kimga shoshilinch qo'ng'iroq? | RFM (§4.8) | Kunlik |
-| **Qaytarish sabablari** | Nega qaytaryaptilar? | `docs/09` §8.5 | Kunlik |
-| **Yalpi foyda** | Foyda qancha? | §4.5 ⚠️ **yalpi** | Kunlik |
+| Vidjet                   | Savol                                 | Manba                         | Yangilanish |
+| ------------------------ | ------------------------------------- | ----------------------------- | ----------- |
+| **Bugungi savdo**        | Bugun qancha sotdik?                  | `Order` (bugun)               | Real vaqt   |
+| **Kanal bo'yicha**       | Onlayn/offline nisbati?               | `Order.channel`               | Real vaqt   |
+| **Yangi buyurtma**       | Ishlov berilmagan nechta?             | `Order.status = PAID`         | Real vaqt   |
+| **Bugungi yetkazish**    | Nechta yetkazish rejada? Bajarildimi? | `Shipment` (`docs/09`)        | Real vaqt   |
+| **Bugungi o'rnatish**    | Ustalar band?                         | `InstallationJob` (`docs/09`) | Real vaqt   |
+| **Ochiq smena**          | Kassa ochiqmi? Naqd qancha?           | `PosShift`                    | Real vaqt   |
+| **Smena farqi**          | Kassada farq bo'ldimi?                | `PosShift.cashDiff != 0`      | Real vaqt   |
+| **Tugayotgan tovar**     | Nima tugab qolyapti?                  | `StockItem` (`docs/06`)       | Soatlik     |
+| **Yangi lead**           | Ishlanmagan lead nechta?              | `Lead.status = NEW`           | Real vaqt   |
+| **Voronka**              | Lead qayerda tiqilyapti?              | `Lead`                        | Kunlik      |
+| **ABC — C sinfi**        | Qaysi tovar javonda yotibdi?          | ABC (§4.3)                    | Kunlik      |
+| **O'lik tovar**          | Qancha pul muzlagan?                  | Dead stock (§4.4)             | Kunlik      |
+| **`cant_lose` mijozlar** | Kimga shoshilinch qo'ng'iroq?         | RFM (§4.8)                    | Kunlik      |
+| **Qaytarish sabablari**  | Nega qaytaryaptilar?                  | `docs/09` §8.5                | Kunlik      |
+| **Yalpi foyda**          | Foyda qancha?                         | §4.5 ⚠️ **yalpi**             | Kunlik      |
 
 ### 5.3. Nima KO'RSATILMAYDI
 
@@ -2205,11 +2213,11 @@ graph TB
     end
 ```
 
-| Variant | Ta'siri |
-|---|---|
-| **1 — Kelvin manba** | Eng oddiy. 1C — faqat qabul qiluvchi. Kelvin arxitekturasi **o'zgarmaydi** |
-| **2 — 1C manba** | **Katta o'zgarish.** Kelvin'da mahsulot yaratib bo'lmaydi — u 1C dan keladi. Narx 1C da. Qoldiq 1C da → **kanon §9.2 dagi rezerv mantiqi buziladi**: qoldiq boshqa tizimda bo'lsa, atomik rezerv qilib bo'lmaydi |
-| **3 — Ikki tomonlama** | **Eng qiyin.** Konflikt hal qilish. Buni **oxirgi chora** sifatida ko'rish kerak |
+| Variant                | Ta'siri                                                                                                                                                                                                          |
+| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1 — Kelvin manba**   | Eng oddiy. 1C — faqat qabul qiluvchi. Kelvin arxitekturasi **o'zgarmaydi**                                                                                                                                       |
+| **2 — 1C manba**       | **Katta o'zgarish.** Kelvin'da mahsulot yaratib bo'lmaydi — u 1C dan keladi. Narx 1C da. Qoldiq 1C da → **kanon §9.2 dagi rezerv mantiqi buziladi**: qoldiq boshqa tizimda bo'lsa, atomik rezerv qilib bo'lmaydi |
+| **3 — Ikki tomonlama** | **Eng qiyin.** Konflikt hal qilish. Buni **oxirgi chora** sifatida ko'rish kerak                                                                                                                                 |
 
 ⚠️ **Variant 2 — Kelvin'ni butunlay boshqa loyihaga aylantiradi.** Bu — TZ
 qayta yozilishini talab qiladi. Shuning uchun bu savol **erta** hal qilinishi
@@ -2217,17 +2225,17 @@ kerak.
 
 ### 7.3. Agar kerak bo'lsa — texnik variantlar
 
-| Usul | Qanday | Ijobiy | Salbiy |
-|---|---|---|---|
-| **Fayl almashish** (XML/CSV/JSON) | Papkaga fayl tashlanadi, 1C uni oladi | Eng oddiy. 1C tarafida standart. **Kelvin kodi deyarli o'zgarmaydi** | Real vaqt emas. Xato aniqlash qiyin. Fayl formati kelishilishi kerak |
-| **REST API** (Kelvin → 1C so'raydi) | 1C veb-servis ochadi | Zamonaviy | 1C tarafida ish. Kim yozadi? 1C dasturchisi kerak |
-| **REST API** (1C → Kelvin so'raydi) | Kelvin API si allaqachon bor (kanon §6: OpenAPI) | **Kelvin tarafida qo'shimcha ish deyarli yo'q** | 1C dasturchisi kerak. Auth |
-| **To'g'ridan-to'g'ri DB** | 1C PostgreSQL ga ulanadi | — | ❌ **Qat'iy rad etiladi.** Biznes qoidalari chetlab o'tiladi. Ledger buziladi. Migratsiya imkonsiz bo'ladi |
+| Usul                                | Qanday                                           | Ijobiy                                                               | Salbiy                                                                                                     |
+| ----------------------------------- | ------------------------------------------------ | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **Fayl almashish** (XML/CSV/JSON)   | Papkaga fayl tashlanadi, 1C uni oladi            | Eng oddiy. 1C tarafida standart. **Kelvin kodi deyarli o'zgarmaydi** | Real vaqt emas. Xato aniqlash qiyin. Fayl formati kelishilishi kerak                                       |
+| **REST API** (Kelvin → 1C so'raydi) | 1C veb-servis ochadi                             | Zamonaviy                                                            | 1C tarafida ish. Kim yozadi? 1C dasturchisi kerak                                                          |
+| **REST API** (1C → Kelvin so'raydi) | Kelvin API si allaqachon bor (kanon §6: OpenAPI) | **Kelvin tarafida qo'shimcha ish deyarli yo'q**                      | 1C dasturchisi kerak. Auth                                                                                 |
+| **To'g'ridan-to'g'ri DB**           | 1C PostgreSQL ga ulanadi                         | —                                                                    | ❌ **Qat'iy rad etiladi.** Biznes qoidalari chetlab o'tiladi. Ledger buziladi. Migratsiya imkonsiz bo'ladi |
 
 **Agar 1C kerak bo'lsa, boshlang'ich taklif: fayl almashish + BullMQ job.**
 
-Kanon §6 da allaqachon yozilgan: *"BullMQ (job: hisobot, xabarnoma, rasm qayta
-ishlash, **1C sinxronizatsiya**)"* — ya'ni kanon buni **job** deb ko'rgan.
+Kanon §6 da allaqachon yozilgan: _"BullMQ (job: hisobot, xabarnoma, rasm qayta
+ishlash, **1C sinxronizatsiya**)"_ — ya'ni kanon buni **job** deb ko'rgan.
 
 ```ts
 /**
@@ -2372,34 +2380,34 @@ kerak (audit, integratsiya, tiklash). Shuning uchun bu — **behuda ish emas**.
 
 ## 9. Ochiq savollar
 
-| № | Savol | Kimga | Nega muhim |
-|---|---|---|---|
-| **1** | **Shaxsiy ma'lumot:** ma'lumot O'zbekistonda saqlanishi shartmi? "O'chirish" so'rovi kelsa nima qilinadi? Marketing roziligi matni? Qo'ng'iroq yozuvi uchun rozilik? | ⚖️ **Yurist** | Hosting joyi — infratuzilma qarori. Anonimlashtirish — texnik tayyorgarlik bor, lekin qoidalar noma'lum. Kanon §10: yuridik maslahat berilmaydi. `docs/11-security.md` |
-| **2** | **POS offline rejim kerakmi?** Internet qanchalik tez-tez va qancha uziladi? | Do'kon egasi + o'lchov | **Eng jiddiy arxitektura savoli.** Local-first — oversell muammosini hal qilib bo'lmaydi (kanon §9.2 buziladi). Online-only taklif qilingan, lekin tasdiqlanmagan |
-| **3** | Mijoz telefon raqamini o'zgartirsa? Eski raqam boshqa odamga berilsa — u eski mijoz tarixini ko'radimi? | Do'kon egasi + ⚖️ yurist | **Shaxsiy ma'lumot sizib chiqishi riski.** Telefon — asosiy identifikator (§1.2) |
-| **4** | Telefoniya integratsiyasi kerakmi (avtomatik qo'ng'iroq yozish)? | Do'kon egasi | Kanon §6 da yo'q. Hozir `CALL` qo'lda kiritiladi |
-| **5** | **Fiskal ro'yxatga olish:** chek qanday beriladi? Fiskal modul shartmi? Qaysi provayder? Modul ishlamasa sotuv bloklanadimi? | ⚖️ **Yurist + buxgalter** | Kanon §10. `FiscalProvider` interfeysi — taxmin. `docs/08` |
-| **6** | Smena farqining maqbul chegarasi bormi? (masalan, 1000 so'mgacha — normal) | Do'kon egasi | Hozir: har qanday farq → `DISCREPANCY`. Bu juda qattiq bo'lishi mumkin |
-| **7** | Komissiya to'langandan keyin mijoz qaytarsa — pul qanday qaytarib olinadi? | ⚖️ Yurist + HR | Tizim manfiy balans ko'rsatadi. Qoida — biznes/yuridik |
-| **8** | ABC chegaralari: 80/95 mosmi? Qaysi davr uchun hisoblanadi? Yoritishda mavsumiylik bormi? | Do'kon egasi + o'lchov | 80/95 — an'anaviy, Kelvin uchun tekshirilmagan. Mavsumiylik — **faraz** |
-| **9** | O'lik tovar chegarasi: necha kun sotilmasa "o'lik"? Yoritishda aylanma sekin bo'lishi mumkin | Do'kon egasi | Qandil — ta'mir bilan olinadigan tovar. 90 kun "o'lik"mi yoki normalmi? Noma'lum |
-| **10** | **Tannarx: FIFO yoki o'rtacha tortilgan?** Buxgalteriya FIFO talab qiladimi? | Buxgalter + do'kon egasi | O'rtacha tanlangan (partiya kuzatuvi yo'q). FIFO kerak bo'lsa — **`docs/06` o'zgaradi** (`StockBatch` qo'shiladi). Bu jiddiy |
-| **11** | RFM: minimal mijoz soni qancha? Qanchalik tez-tez hisoblanadi? Segment qoidalari Kelvin uchun mosmi? | O'lchov (ma'lumot kerak) | Kvintil kichik namunada ma'nosiz. Segment qoidalari — sanoat amaliyoti, tekshirilmagan |
-| **12** | Hisobotda ma'lumot eskirishi qabul qilinadimi? Do'kon egasi "hozirgi" savdoni real vaqtda ko'rishni xohlaydimi? | Do'kon egasi | Materialized view'ga o'tish shunga bog'liq |
-| **13** | PDF eksport kerakmi yoki Excel yetarlimi? | Do'kon egasi | PDF — qo'shimcha ish. MVP da `xlsx` + `csv` |
-| **14** | **1C kerakmi?** Agar ha: haqiqat manbai kim — Kelvin yoki 1C? Qaysi ma'lumot? Kim yozadi 1C tarafini? | Do'kon egasi + buxgalter | **Eng katta arxitektura noaniqligi.** "1C manba" varianti Kelvin'ni butunlay boshqa loyihaga aylantiradi (§7.2). Kanon §6: tasdiqlanmagan |
-| **15** | B2B mijozlar (quruvchi, dizayner) bormi? Ularga boshqa narx kerakmi? | Do'kon egasi | `CustomerKind.BUSINESS` va segment tayyor, lekin narx mantig'i `docs/07-order-and-checkout.md` da |
-| **16** | Sotuvchi komissiya sxemasi qanday? Foizmi, qat'iymi? Kategoriyaga bog'liqmi? | Do'kon egasi | Model moslashuvchan, lekin qiymatlar noma'lum |
-| **17** | Xarajatlar (ijara, ish haqi, soliq) tizimga kiritiladimi? | Do'kon egasi | Kiritilmasa — faqat **yalpi** foyda. Bu qamrov kengayishi (kanon §5 da yo'q) |
+| №      | Savol                                                                                                                                                                | Kimga                     | Nega muhim                                                                                                                                                             |
+| ------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **1**  | **Shaxsiy ma'lumot:** ma'lumot O'zbekistonda saqlanishi shartmi? "O'chirish" so'rovi kelsa nima qilinadi? Marketing roziligi matni? Qo'ng'iroq yozuvi uchun rozilik? | ⚖️ **Yurist**             | Hosting joyi — infratuzilma qarori. Anonimlashtirish — texnik tayyorgarlik bor, lekin qoidalar noma'lum. Kanon §10: yuridik maslahat berilmaydi. `docs/11-security.md` |
+| **2**  | **POS offline rejim kerakmi?** Internet qanchalik tez-tez va qancha uziladi?                                                                                         | Do'kon egasi + o'lchov    | **Eng jiddiy arxitektura savoli.** Local-first — oversell muammosini hal qilib bo'lmaydi (kanon §9.2 buziladi). Online-only taklif qilingan, lekin tasdiqlanmagan      |
+| **3**  | Mijoz telefon raqamini o'zgartirsa? Eski raqam boshqa odamga berilsa — u eski mijoz tarixini ko'radimi?                                                              | Do'kon egasi + ⚖️ yurist  | **Shaxsiy ma'lumot sizib chiqishi riski.** Telefon — asosiy identifikator (§1.2)                                                                                       |
+| **4**  | Telefoniya integratsiyasi kerakmi (avtomatik qo'ng'iroq yozish)?                                                                                                     | Do'kon egasi              | Kanon §6 da yo'q. Hozir `CALL` qo'lda kiritiladi                                                                                                                       |
+| **5**  | **Fiskal ro'yxatga olish:** chek qanday beriladi? Fiskal modul shartmi? Qaysi provayder? Modul ishlamasa sotuv bloklanadimi?                                         | ⚖️ **Yurist + buxgalter** | Kanon §10. `FiscalProvider` interfeysi — taxmin. `docs/08`                                                                                                             |
+| **6**  | Smena farqining maqbul chegarasi bormi? (masalan, 1000 so'mgacha — normal)                                                                                           | Do'kon egasi              | Hozir: har qanday farq → `DISCREPANCY`. Bu juda qattiq bo'lishi mumkin                                                                                                 |
+| **7**  | Komissiya to'langandan keyin mijoz qaytarsa — pul qanday qaytarib olinadi?                                                                                           | ⚖️ Yurist + HR            | Tizim manfiy balans ko'rsatadi. Qoida — biznes/yuridik                                                                                                                 |
+| **8**  | ABC chegaralari: 80/95 mosmi? Qaysi davr uchun hisoblanadi? Yoritishda mavsumiylik bormi?                                                                            | Do'kon egasi + o'lchov    | 80/95 — an'anaviy, Kelvin uchun tekshirilmagan. Mavsumiylik — **faraz**                                                                                                |
+| **9**  | O'lik tovar chegarasi: necha kun sotilmasa "o'lik"? Yoritishda aylanma sekin bo'lishi mumkin                                                                         | Do'kon egasi              | Qandil — ta'mir bilan olinadigan tovar. 90 kun "o'lik"mi yoki normalmi? Noma'lum                                                                                       |
+| **10** | **Tannarx: FIFO yoki o'rtacha tortilgan?** Buxgalteriya FIFO talab qiladimi?                                                                                         | Buxgalter + do'kon egasi  | O'rtacha tanlangan (partiya kuzatuvi yo'q). FIFO kerak bo'lsa — **`docs/06` o'zgaradi** (`StockBatch` qo'shiladi). Bu jiddiy                                           |
+| **11** | RFM: minimal mijoz soni qancha? Qanchalik tez-tez hisoblanadi? Segment qoidalari Kelvin uchun mosmi?                                                                 | O'lchov (ma'lumot kerak)  | Kvintil kichik namunada ma'nosiz. Segment qoidalari — sanoat amaliyoti, tekshirilmagan                                                                                 |
+| **12** | Hisobotda ma'lumot eskirishi qabul qilinadimi? Do'kon egasi "hozirgi" savdoni real vaqtda ko'rishni xohlaydimi?                                                      | Do'kon egasi              | Materialized view'ga o'tish shunga bog'liq                                                                                                                             |
+| **13** | PDF eksport kerakmi yoki Excel yetarlimi?                                                                                                                            | Do'kon egasi              | PDF — qo'shimcha ish. MVP da `xlsx` + `csv`                                                                                                                            |
+| **14** | **1C kerakmi?** Agar ha: haqiqat manbai kim — Kelvin yoki 1C? Qaysi ma'lumot? Kim yozadi 1C tarafini?                                                                | Do'kon egasi + buxgalter  | **Eng katta arxitektura noaniqligi.** "1C manba" varianti Kelvin'ni butunlay boshqa loyihaga aylantiradi (§7.2). Kanon §6: tasdiqlanmagan                              |
+| **15** | B2B mijozlar (quruvchi, dizayner) bormi? Ularga boshqa narx kerakmi?                                                                                                 | Do'kon egasi              | `CustomerKind.BUSINESS` va segment tayyor, lekin narx mantig'i `docs/07-order-and-checkout.md` da                                                                      |
+| **16** | Sotuvchi komissiya sxemasi qanday? Foizmi, qat'iymi? Kategoriyaga bog'liqmi?                                                                                         | Do'kon egasi              | Model moslashuvchan, lekin qiymatlar noma'lum                                                                                                                          |
+| **17** | Xarajatlar (ijara, ish haqi, soliq) tizimga kiritiladimi?                                                                                                            | Do'kon egasi              | Kiritilmasa — faqat **yalpi** foyda. Bu qamrov kengayishi (kanon §5 da yo'q)                                                                                           |
 
 ---
 
 ## 10. Bog'liq hujjatlar
 
-| Hujjat | Bog'lanish |
-|---|---|
-| `docs/07-order-and-checkout.md` | `Order.channel`, `Order.sellerId` — POS ham shu `Order` ni ishlatadi. Narx dvigateli: `CustomerSegment` → `PriceList` (B2B narxi) |
+| Hujjat                                  | Bog'lanish                                                                                                                                                                                                 |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/07-order-and-checkout.md`         | `Order.channel`, `Order.sellerId` — POS ham shu `Order` ni ishlatadi. Narx dvigateli: `CustomerSegment` → `PriceList` (B2B narxi)                                                                          |
 | `docs/06-inventory-and-reservations.md` | POS sotuvi `StockMovement` yaratadi. **Oversell — offline rejim savolining o'zagi.** `StockSnapshot`. **Tannarx manbai** — `PurchaseOrder.unitCost` (ABC → xarid rejasi). FIFO kerak bo'lsa — `StockBatch` |
-| `docs/08-payments-and-installments.md` | `LedgerEntry` — POS ham shu ledger'ga. `Refund` → komissiya bekor qilish. **Fiskal chek** |
-| `docs/09-delivery-and-operations.md` | Dashboard: yetkazish/o'rnatish vidjetlari. Qaytarish sabablari statistikasi |
-| `docs/11-security.md` | **Shaxsiy ma'lumot.** RBAC: sotuvchi nimani ko'radi. Eksport URL xavfsizligi |
+| `docs/08-payments-and-installments.md`  | `LedgerEntry` — POS ham shu ledger'ga. `Refund` → komissiya bekor qilish. **Fiskal chek**                                                                                                                  |
+| `docs/09-delivery-and-operations.md`    | Dashboard: yetkazish/o'rnatish vidjetlari. Qaytarish sabablari statistikasi                                                                                                                                |
+| `docs/11-security.md`                   | **Shaxsiy ma'lumot.** RBAC: sotuvchi nimani ko'radi. Eksport URL xavfsizligi                                                                                                                               |

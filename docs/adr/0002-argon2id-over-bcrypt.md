@@ -11,11 +11,11 @@ Ma'lumot bazasi o'g'irlansa, parollar qanchalik himoyalangan bo'lishi kerak? Va 
 
 Loyiha egasining oldingi loyihalarida:
 
-| Loyiha | Hash | Baho |
-|---|---|---|
-| `chess` | bcrypt, cost **7** | 2026 uchun **juda past** |
-| `dorixona` | bcrypt, cost 10 | Chegarada |
-| `donate_service` | bcrypt, cost 12 | Yaxshi |
+| Loyiha           | Hash               | Baho                     |
+| ---------------- | ------------------ | ------------------------ |
+| `chess`          | bcrypt, cost **7** | 2026 uchun **juda past** |
+| `dorixona`       | bcrypt, cost 10    | Chegarada                |
+| `donate_service` | bcrypt, cost 12    | Yaxshi                   |
 
 Va `dorixona` da hardkod qilingan `admin` / `admin123` seeder har ishga tushganda ishlaydi va parolni konsolga chop etadi. Bu — backdoor.
 
@@ -41,12 +41,12 @@ bcrypt (1999) **CPU-og'ir, lekin xotira-yengil**. Zamonaviy GPU minglab bcrypt h
 
 Argon2 (2015, Password Hashing Competition g'olibi) — **memory-hard**. Har hash uchun sozlanadigan xotira. GPU'da 10 000 parallel hash uchun ~190 GB kerak — hujum iqtisodiy jihatdan o'ladi.
 
-| Xususiyat | bcrypt | Argon2id |
-|---|---|---|
-| Memory-hard | **Yo'q** | **Ha** |
-| GPU qarshiligi | Zaif | Kuchli |
-| Parol uzunligi | **72 bayt** (jimgina kesiladi!) | Cheklovsiz |
-| OWASP 2026 | Faqat legacy | **Birinchi tanlov** |
+| Xususiyat      | bcrypt                          | Argon2id            |
+| -------------- | ------------------------------- | ------------------- |
+| Memory-hard    | **Yo'q**                        | **Ha**              |
+| GPU qarshiligi | Zaif                            | Kuchli              |
+| Parol uzunligi | **72 bayt** (jimgina kesiladi!) | Cheklovsiz          |
+| OWASP 2026     | Faqat legacy                    | **Birinchi tanlov** |
 
 **bcrypt'ning 72-bayt cheklovi** alohida xavfli: undan uzun parol **jimgina kesiladi** va foydalanuvchi buni bilmaydi.
 
@@ -69,11 +69,13 @@ To'g'risi: SHA-256. Tez, va bu holatda **yetarli**.
 ## Oqibatlar
 
 **Ijobiy:**
+
 - Baza o'g'irlansa ham parollar amalda ochilmaydi
 - Parol uzunligida cheklov yo'q
 - Refresh endpoint tez va DoS'ga chidamli
 
 **Salbiy:**
+
 - **Har login ~19 MiB xotira.** 100 parallel login = ~2 GB. Bu **sizing va rate limiting'da hisobga olinishi kerak**
 - `argon2` npm paketi — **native binding**. Docker'da build vositalari kerak (multi-stage build bilan hal qilinadi)
 - Parametrlar server quvvatiga bog'liq → **benchmark shart**

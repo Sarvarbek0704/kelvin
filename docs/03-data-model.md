@@ -8,14 +8,14 @@
 
 ## 1. Konvensiyalar
 
-| Qoida | Sabab |
-|---|---|
-| Prisma model: `PascalCase` birlik → DB: `snake_case` ko'plik | TypeScript va PostgreSQL konvensiyalari |
-| PK: **UUID v7** | Vaqt bo'yicha tartiblanadi → index fragmentatsiyasi yo'q. Auto-increment ma'lumot sizdiradi (raqib nechta buyurtmangiz borligini biladi) va enumeration hujumiga ochiq |
-| **Pul: `BigInt`, tiyinda** | [ADR-0003](./adr/0003-money-as-bigint-tiyin.md). Float — jinoyat |
-| Vaqt: `@db.Timestamptz(3)` | Har doim TZ bilan. DB'da UTC, ko'rsatishda `Asia/Tashkent` |
-| Ko'p tilli matn: `Json` | `{ "uz-Latn": "Qandil", "uz-Cyrl": "Қандил", "ru": "Люстра" }` |
-| Soft delete: `deleted_at` | Faqat muhim entity'larda. `stock_movements` da bema'nilik |
+| Qoida                                                        | Sabab                                                                                                                                                                  |
+| ------------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Prisma model: `PascalCase` birlik → DB: `snake_case` ko'plik | TypeScript va PostgreSQL konvensiyalari                                                                                                                                |
+| PK: **UUID v7**                                              | Vaqt bo'yicha tartiblanadi → index fragmentatsiyasi yo'q. Auto-increment ma'lumot sizdiradi (raqib nechta buyurtmangiz borligini biladi) va enumeration hujumiga ochiq |
+| **Pul: `BigInt`, tiyinda**                                   | [ADR-0003](./adr/0003-money-as-bigint-tiyin.md). Float — jinoyat                                                                                                       |
+| Vaqt: `@db.Timestamptz(3)`                                   | Har doim TZ bilan. DB'da UTC, ko'rsatishda `Asia/Tashkent`                                                                                                             |
+| Ko'p tilli matn: `Json`                                      | `{ "uz-Latn": "Qandil", "uz-Cyrl": "Қандил", "ru": "Люстра" }`                                                                                                         |
+| Soft delete: `deleted_at`                                    | Faqat muhim entity'larda. `stock_movements` da bema'nilik                                                                                                              |
 
 ⚠️ `@default(uuid(7))` **Prisma ≥ 5.14** talab qiladi.
 
@@ -74,6 +74,7 @@ Bu bo'lim eng muhim. Har biri kelajakdagi xatoni oldini oladi.
 `Product` — model ("Qandil Aurora"). `ProductVariant` — **sotiladigan birlik** (SKU).
 
 Sabab: bitta qandil 4 rangda (xrom/oltin/qora/nikel), 3 o'lchamda, 2 lampa sonida keladi. Bular:
+
 - Bir xil tavsif, bir xil brend, bir xil kategoriya
 - **Turli narx, turli qoldiq, turli shtrix-kod**
 
@@ -102,18 +103,49 @@ attributes Json @default("{}")
 
 Narxi: yangi "asosiy" atribut qo'shish migration talab qiladi. Bu qabul qilinadi — yoritgich atributlari standart va kam o'zgaradi.
 
-### 3.3. `AttributeValue.rank` — IP darajasi ierarxik
+### 3.3. IP darajasi — qisman tartib, sof raqam EMAS
+
+Bu eng nozik atribut va uni oson xato qilish mumkin.
+
+**Birinchi qadam — `ENUM` yaramaydi.** Mijoz "vannaxona uchun" filtrlab IP44 tanlasa, **IP65 ham ko'rsatilishi kerak** — u IP44 talabini qoplaydi. `WHERE ip_rating = 'IP44'` noto'g'ri javob beradi.
+
+**Ikkinchi qadam — sof raqamli tartib HAM yaramaydi.** Bu hujjatning dastlabki eskizida shunday yozilgan edi:
 
 ```prisma
-rank Int?   // IP20=1, IP44=3, IP54=4, IP65=5, IP67=6
+rank Int?   // IP20=1, IP44=3, IP65=5, IP67=6  → WHERE rank >= 3
 ```
 
-Bu nozik. Mijoz "vannaxona uchun" filtrlab IP44 tanlasa, **IP65 ham ko'rsatilishi kerak** — u IP44 talabini ham qoplaydi.
+**Bu xato.** IP kodining ikkinchi raqami (suv himoyasi) **to'liq tartiblangan emas**:
 
-`WHERE ip_rating = 'IP44'` → **noto'g'ri**.
-`WHERE rank >= 3` → to'g'ri.
+- IPx1…IPx6 — kumulyativ (oqim sinovlari, kattaroq kichigini qoplaydi)
+- **IPx7 va IPx8 — botirish sinovi.** Ular **IPx5/IPx6 ni QAMRAMAYDI**
 
-Oddiy `ENUM` bilan bu ifodalanmaydi. Shuning uchun `AttributeType.ORDINAL` bor.
+Ya'ni IP67 sertifikatiga ega chiroq suv oqimi sinovidan o'tmasligi mumkin. Aynan shuning uchun sanoatda **`IP65/IP67` qo'sh belgilash** mavjud — agar 7 avtomatik 5 ni qoplaganda, bu belgi keraksiz bo'lardi.
+
+```
+IP67 ≥ IP65 ?  →  chang: 6 ≥ 6 ✅  |  suv: 7 ≥ 5 ❌ kafolat YO'Q
+```
+
+**To'g'ri model — qisman tartib (partial order):**
+
+```ts
+const WATER_IMPLIES: Readonly<Record<number, readonly number[]>> = {
+  4: [4, 3, 2, 1, 0],
+  5: [5, 4, 3, 2, 1, 0],
+  6: [6, 5, 4, 3, 2, 1, 0],
+  // 7/8 — botirish. 5/6 (oqim) ni QAMRAMAYDI.
+  7: [7, 4, 3, 2, 1, 0],
+  8: [8, 7, 4, 3, 2, 1, 0],
+};
+```
+
+Index'da (Meilisearch va GIN qisman tartibni bilmaydi) bu **materializatsiya** qilinadi: har variantga `ip_satisfies: ["IP20", "IP44", "IP54", "IP65"]` massivi yoziladi va filtr oddiy `contains` bo'ladi.
+
+⚠️ Yuqoridagi jadval **sanoat amaliyotidan**, IEC 60529 matnining iqtibosi emas. Standart bo'yicha tekshirilishi kerak — [05-catalog-and-search.md](./05-catalog-and-search.md) §13 dagi ochiq savol.
+
+**`AttributeValue.rank`** haqiqiy tartiblangan atributlar uchun qoladi, lekin **IP uchun ishlatilmaydi**.
+
+Bu bo'lim ataylab batafsil: bu aynan "jimgina noto'g'ri javob beradigan" xato turi. Filtr ishlaydi, natija chiqadi, hech qanday xato yo'q — faqat mijozga vannaxona uchun yaramaydigan chiroq ko'rsatiladi.
 
 ### 3.4. `OrderItem` — SNAPSHOT, havola emas
 
@@ -182,10 +214,10 @@ Bu property test bilan tekshiriladi. Nega kerak: "qoldiq nega 3 ta kam?" savolig
 
 Klient 540 000 so'mlik qandil uchun Click orqali to'ladi:
 
-| transactionId | account | direction | amount (tiyin) |
-|---|---|---|---|
-| `019a…` | `cash.click` | DEBIT | 54 000 000 |
-| `019a…` | `revenue.product` | CREDIT | 54 000 000 |
+| transactionId | account           | direction | amount (tiyin) |
+| ------------- | ----------------- | --------- | -------------- |
+| `019a…`       | `cash.click`      | DEBIT     | 54 000 000     |
+| `019a…`       | `revenue.product` | CREDIT    | 54 000 000     |
 
 Ledger **append-only**. Xato bo'lsa teskari yozuv, o'chirish emas. Bu buxgalteriyaning 500 yillik qoidasi.
 
@@ -227,17 +259,17 @@ Kichik detal, lekin real operatsiyada muhim.
 
 Har index yozuvni sekinlashtiradi. Shuning uchun har biri asoslangan.
 
-| Index | Nega |
-|---|---|
-| `product_variants(attributes)` GIN | JSONB atribut filtri |
-| `product_variants(color_temperature)` | Eng ko'p ishlatiladigan filtr |
-| `product_variants(ip_rating)`, `(socket_type)` | Keyingi eng ko'p |
+| Index                                          | Nega                             |
+| ---------------------------------------------- | -------------------------------- |
+| `product_variants(attributes)` GIN             | JSONB atribut filtri             |
+| `product_variants(color_temperature)`          | Eng ko'p ishlatiladigan filtr    |
+| `product_variants(ip_rating)`, `(socket_type)` | Keyingi eng ko'p                 |
 | `stock_items(variant_id, warehouse_id)` unique | Rezerv so'rovi — har checkout'da |
-| `stock_reservations(status, expires_at)` | TTL job — har daqiqada |
-| `outbox_events(status, available_at)` | Worker poll — har 500ms |
-| `orders(status, created_at)` | Admin buyurtma jadvali |
-| `ledger_entries(transaction_id)` | Balans tekshiruvi |
-| `audit_logs(resource_type, resource_id)` | "Bu mahsulotda nima o'zgardi?" |
+| `stock_reservations(status, expires_at)`       | TTL job — har daqiqada           |
+| `outbox_events(status, available_at)`          | Worker poll — har 500ms          |
+| `orders(status, created_at)`                   | Admin buyurtma jadvali           |
+| `ledger_entries(transaction_id)`               | Balans tekshiruvi                |
+| `audit_logs(resource_type, resource_id)`       | "Bu mahsulotda nima o'zgardi?"   |
 
 ---
 
@@ -245,12 +277,12 @@ Har index yozuvni sekinlashtiradi. Shuning uchun har biri asoslangan.
 
 Vaqt bo'yicha bo'linishi kerak — **hozir emas, o'lchov bilan**:
 
-| Jadval | O'sish sababi | Kalit |
-|---|---|---|
-| `stock_movements` | Har sotuv, har kirim | `created_at` (choraklik) |
-| `audit_logs` | Har harakat | `created_at` (oylik) |
-| `notifications` | Har SMS | `created_at` (oylik) |
-| `outbox_events` | Har kritik event | Tozalanadi — partitioning kerak emas |
+| Jadval            | O'sish sababi        | Kalit                                |
+| ----------------- | -------------------- | ------------------------------------ |
+| `stock_movements` | Har sotuv, har kirim | `created_at` (choraklik)             |
+| `audit_logs`      | Har harakat          | `created_at` (oylik)                 |
+| `notifications`   | Har SMS              | `created_at` (oylik)                 |
+| `outbox_events`   | Har kritik event     | Tozalanadi — partitioning kerak emas |
 
 ⚠️ Bu **bitta do'kon**. Bu jadvallar 50M qatorga yetishi ehtimoli past. Oldindan partitioning qilish — over-engineering.
 
@@ -270,15 +302,15 @@ Vaqt bo'yicha bo'linishi kerak — **hozir emas, o'lchov bilan**:
 
 ⚠️ **Yurist bilan tasdiqlanishi kerak.** Quyidagilar taklif, tavsiya emas.
 
-| Ma'lumot | Taklif | Sabab |
-|---|---|---|
-| `Order`, `OrderItem` | Soliq qonuni bo'yicha | **Yurist aniqlaydi** |
-| `LedgerEntry` | Soliq qonuni bo'yicha | **Yurist aniqlaydi** |
-| `StockMovement` | 3+ yil | Inventarizatsiya nizolari |
-| `AuditLog` | 3+ yil | Ichki o'g'irlik tergovi |
-| `Customer` (shaxsiy) | Mijoz so'rasa — o'chirish | **Yurist aniqlaydi** |
-| `Cart` (tashlab ketilgan) | 30 kun | Analitika |
-| `RefreshToken` (expired) | 30 kun | Xavfsizlik |
+| Ma'lumot                  | Taklif                    | Sabab                     |
+| ------------------------- | ------------------------- | ------------------------- |
+| `Order`, `OrderItem`      | Soliq qonuni bo'yicha     | **Yurist aniqlaydi**      |
+| `LedgerEntry`             | Soliq qonuni bo'yicha     | **Yurist aniqlaydi**      |
+| `StockMovement`           | 3+ yil                    | Inventarizatsiya nizolari |
+| `AuditLog`                | 3+ yil                    | Ichki o'g'irlik tergovi   |
+| `Customer` (shaxsiy)      | Mijoz so'rasa — o'chirish | **Yurist aniqlaydi**      |
+| `Cart` (tashlab ketilgan) | 30 kun                    | Analitika                 |
+| `RefreshToken` (expired)  | 30 kun                    | Xavfsizlik                |
 
 ---
 
