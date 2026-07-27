@@ -1,110 +1,107 @@
-import React from "react";
-import Navbar from "../../layout/Navbar";
-import Footer from "../../layout/Footer";
+import React from 'react';
+import styled from 'styled-components';
+import CmsBlock from '../../components/CmsBlock';
+import { Container, Kicker } from '../../components/ui';
 
-import {
-  ReturnWrapper,
-  BreadcrumbLink,
-  BreadcrumbSpan,
-  ContentContainer,
-  LeftColumn,
-  RightColumn,
-  ReturnSection,
-  ReturnSubSection,
-  BlueText,
-  BulletList,
-  BulletListItem,
-} from "./Return.styled.js";
+const Wrap = styled.div`
+  padding: 48px 0 64px;
+  max-width: 720px;
+
+  .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: ${(p) => p.theme.color.deep};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${(p) => p.theme.color.brassDark};
+    margin: 20px 0;
+  }
+
+  h1 {
+    font-size: 40px;
+    margin: 0 0 16px;
+  }
+
+  p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: ${(p) => p.theme.color.bodyTextAlt};
+    margin: 0 0 16px;
+  }
+
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    color: ${(p) => p.theme.color.bodyTextAlt};
+  }
+
+  .step {
+    display: flex;
+    gap: 10px;
+
+    .n {
+      color: ${(p) => p.theme.color.brassDark};
+      font-weight: 600;
+    }
+  }
+
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    padding: 24px 0 40px;
+
+    h1 {
+      font-size: 32px;
+    }
+  }
+`;
 
 function Return() {
   return (
     <div>
-      <Navbar />
-      <ReturnWrapper>
-        <BreadcrumbLink href="/">Главная {">"}</BreadcrumbLink>
-        <BreadcrumbSpan> Возврат</BreadcrumbSpan>
+      <Container>
+        <Wrap>
+          <Kicker as="div">Информация</Kicker>
+          <div className="icon">
+            <svg
+              width="26"
+              height="26"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M4 9h10a5 5 0 0 1 0 10H8" />
+              <path d="m8 5-4 4 4 4" />
+            </svg>
+          </div>
+          <h1>Возврат</h1>
+          <p>
+            Товар можно вернуть в течение <b>14 дней</b>, если он не был в эксплуатации,
+            сохранены упаковка и комплектующие. Свет — хрупкий товар, поэтому проверяйте
+            фикстуру при курьере.
+          </p>
+          <div className="steps">
+            <div className="step">
+              <span className="n">1.</span>Свяжитесь с нами и опишите причину.
+            </div>
+            <div className="step">
+              <span className="n">2.</span>Согласуем самовывоз или доставку.
+            </div>
+            <div className="step">
+              <span className="n">3.</span>Возврат средств тем же способом, 3–5 дней.
+            </div>
+          </div>
+        </Wrap>
+      </Container>
 
-        <ContentContainer>
-          <LeftColumn>
-            <h1>Возврат</h1>
-          </LeftColumn>
-
-          <RightColumn>
-            <ReturnSection>
-              <h2>Обмен и возврат по желанию покупателя</h2>
-              <p>
-                Если товар по каким-то причинам не подошел вам, вы имеете право
-                вернуть его или обменять на другой в течение 7 дней* с момента
-                покупки при соблюдении следующих условий:
-              </p>
-
-              <BulletList>
-                <BulletListItem>
-                  Товар имеет первоначальный вид, имеется товарная кондиция;
-                </BulletListItem>
-                <BulletListItem>
-                  Товар имеет полную комплектацию, включая упаковочные
-                  материалы;
-                </BulletListItem>
-                <BulletListItem>
-                  Товар не имеет следов подключения и не имеет признаков
-                  монтажа;
-                </BulletListItem>
-                <BulletListItem>
-                  Упаковка товара не имеет повреждений, присутствует
-                  первоначальный товарный вид;
-                </BulletListItem>
-                <BulletListItem>
-                  Есть документ, подтверждающий покупку в нашем
-                  интернет-магазине.
-                </BulletListItem>
-                <BulletListItem>
-                  Для возврата товара необходимо привезти его к нам в офис.
-                </BulletListItem>
-                <BulletListItem>
-                  Товар из других городов можно прислать нам транспортной
-                  компанией, при этом услуги транспортной компании оплачиваются
-                  клиентом.
-                </BulletListItem>
-                <BulletListItem>
-                  В течение 14 дней для отдельных брендов. При оформлении заказа
-                  уточните у менеджера.
-                </BulletListItem>
-              </BulletList>
-            </ReturnSection>
-
-            <ReturnSubSection>
-              <h3>Обмен и возврат по ошибке продавца</h3>
-              <p>Причины обмена или возврата по ошибке продавца:</p>
-
-              <BulletList>
-                <BulletListItem>Неполная комплектация товара</BulletListItem>
-                <BulletListItem>Брак или дефект товара</BulletListItem>
-                <BulletListItem>
-                  Если вы выявили дефект, брак или неполную комплектацию товара,
-                  необходимо сделать фото дефекта и отправить на почту{" "}
-                  <BlueText>mail@at-svet.ru</BlueText>, указав краткое описание
-                  характера брака/
-                </BulletListItem>
-                <BulletListItem>
-                  Мы заменим бракованный товар или довезем недостающие части.
-                  Доставка будет осуществлена бесплатно.
-                </BulletListItem>
-              </BulletList>
-            </ReturnSubSection>
-
-            <ReturnSubSection>
-              <h3>Возврат денежных средств</h3>
-              <p>
-                Возврат денежных средств осуществляется путем перевода на
-                банковские реквизиты покупателя при наличии заявления от
-                покупателя.
-              </p>
-            </ReturnSubSection>
-          </RightColumn>
-        </ContentContainer>
-      </ReturnWrapper>
-      <Footer />
+      {/* CMS kontenti (admin boshqaradi) */}
+      <CmsBlock slug="vozvrat" />
     </div>
   );
 }

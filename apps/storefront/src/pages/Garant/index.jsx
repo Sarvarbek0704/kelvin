@@ -1,65 +1,92 @@
-import React from "react";
-import Navbar from "../../layout/Navbar";
-import Footer from "../../layout/Footer";
+import React from 'react';
+import styled from 'styled-components';
+import CmsBlock from '../../components/CmsBlock';
+import { Container, Kicker, IconShield } from '../../components/ui';
 
-import {
-  ReturnWrapper,
-  BreadcrumbLink,
-  BreadcrumbSpan,
-  ContentContainer,
-  LeftColumn,
-  RightColumn,
-  ReturnSection,
-  ReturnSubSection,
-  BlueText,
-  BulletList,
-  BulletListItem,
-} from "./Garant.styled.js";
+const Wrap = styled.div`
+  padding: 48px 0 64px;
+  max-width: 720px;
+
+  .icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 999px;
+    background: ${(p) => p.theme.color.deep};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: ${(p) => p.theme.color.brassDark};
+    margin: 20px 0;
+  }
+
+  h1 {
+    font-size: 40px;
+    margin: 0 0 16px;
+  }
+
+  p {
+    font-size: 15px;
+    line-height: 1.75;
+    color: ${(p) => p.theme.color.bodyTextAlt};
+    margin: 0 0 16px;
+  }
+
+  .list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 14px;
+    color: ${(p) => p.theme.color.bodyTextAlt};
+  }
+
+  .item {
+    display: flex;
+    gap: 10px;
+
+    .b {
+      color: ${(p) => p.theme.color.brassDark};
+    }
+  }
+
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    padding: 24px 0 40px;
+
+    h1 {
+      font-size: 32px;
+    }
+  }
+`;
 
 function Garant() {
   return (
     <div>
-      <Navbar />
-      <ReturnWrapper>
-        <BreadcrumbLink href="/">Главная {">"}</BreadcrumbLink>
-        <BreadcrumbSpan> Гарантии</BreadcrumbSpan>
+      <Container>
+        <Wrap>
+          <Kicker as="div">Информация</Kicker>
+          <div className="icon">
+            <IconShield size={26} />
+          </div>
+          <h1>Гарантия</h1>
+          <p>
+            Официальная гарантия производителя <b>от 12 до 36 месяцев</b> в зависимости от
+            бренда. Распространяется на драйверы, LED-модули и механику фикстур.
+          </p>
+          <div className="list">
+            <div className="item">
+              <span className="b">•</span>Сохраняйте чек и упаковку.
+            </div>
+            <div className="item">
+              <span className="b">•</span>Монтаж нашим электриком продлевает сервис.
+            </div>
+            <div className="item">
+              <span className="b">•</span>Диммеры подбираем совместимые бесплатно.
+            </div>
+          </div>
+        </Wrap>
+      </Container>
 
-        <ContentContainer>
-          <LeftColumn>
-            <h1>Гарантии</h1>
-          </LeftColumn>
-
-          <RightColumn>
-            <ReturnSection>
-              <h2>Обмен и возврат по желанию покупателя</h2>
-              <p>
-                Все товары в магазине «Kelvin» имеют гарантию. Она заявляется
-                производителем и имеет определенный срок действия на различные
-                группы товаров. Если ваше изделие вышло из строя в течение
-                гарантийного срока вы можете обратиться к нам и получить
-                бесплатный ремонт. Для этого нужно:
-              </p>
-
-              <BulletList>
-                <BulletListItem>
-                  Предоставить чек, накладную или сообщить почту или номер
-                  телефона, указанные при оформлении заказа.
-                </BulletListItem>
-                <BulletListItem>
-                  Привезти товар к нам на склад или отправить его транспортной
-                  компанией.
-                </BulletListItem>
-                <BulletListItem>
-                  После товар отправляется на экспертизу и ремонт. Если ремонт
-                  невозможен, мы обменяем изделие на аналогичное либо вернем
-                  деньги за покупку
-                </BulletListItem>
-              </BulletList>
-            </ReturnSection>
-          </RightColumn>
-        </ContentContainer>
-      </ReturnWrapper>
-      <Footer />
+      {/* CMS kontenti (admin boshqaradi) */}
+      <CmsBlock slug="garantiya" />
     </div>
   );
 }
