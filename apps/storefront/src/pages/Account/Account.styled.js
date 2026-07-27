@@ -1,23 +1,17 @@
 import styled from 'styled-components';
 
-/* Mehmon: ikki ustunli auth ekran (chap editorial panel + o'ng forma) —
-   markazlashgan, mo''tadil kenglik, yumshoq soya */
+/* Mehmon: TO'LIQ EKRAN auth — kontent kartasi emas, alohida sahifa his qiladi.
+   Chap editorial panel viewport chetiga yopishadi, o'ngda forma markazda. */
 export const AuthGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1.1fr;
-  min-height: 560px;
-  max-width: 1040px;
-  border: 1px solid ${(p) => p.theme.color.border};
-  border-radius: 18px;
-  overflow: hidden;
-  margin: 48px auto 72px;
+  grid-template-columns: 1fr 1.15fr;
+  min-height: calc(100dvh - 210px); /* shapka balandligini hisobga olib */
+  width: 100%;
   background: ${(p) => p.theme.color.surface};
-  box-shadow: ${(p) => p.theme.shadow.md};
 
   @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
     grid-template-columns: 1fr;
     min-height: 0;
-    margin: 16px auto 40px;
   }
 `;
 
@@ -30,7 +24,7 @@ export const AuthAside = styled.div`
     #e9e0d2 16px,
     #e9e0d2 32px
   );
-  padding: 64px 56px;
+  padding: 64px clamp(32px, 6vw, 96px);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -92,10 +86,16 @@ export const AuthAside = styled.div`
 `;
 
 export const AuthForm = styled.div`
-  padding: 48px 56px;
+  padding: 48px clamp(24px, 6vw, 96px);
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  /* Forma ustuni markazda, o'qiladigan kenglikda */
+  .form-col {
+    width: 100%;
+    max-width: 420px;
+  }
 
   h1 {
     font-size: 38px;
@@ -106,7 +106,6 @@ export const AuthForm = styled.div`
     display: flex;
     flex-direction: column;
     gap: 18px;
-    max-width: 400px;
   }
 
   /* Parol maydoni + ko'rsatish tugmasi */

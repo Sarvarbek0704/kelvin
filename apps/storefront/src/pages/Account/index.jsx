@@ -129,25 +129,25 @@ function Account() {
     );
   }
 
-  // ---------- Mehmon: kirish / ro'yxatdan o'tish ----------
+  // ---------- Mehmon: kirish / ro'yxatdan o'tish (to'liq ekran, karta emas) ----------
   return (
-    <Container>
-      <AuthGrid>
-        <AuthAside>
-          <div className="glow" />
-          <div className="mark">Kelvin</div>
-          <div className="pitch">
-            <div className="title">
-              {t('account.pitch_title_1')}
-              <br />
-              {t('account.pitch_title_2')}
-            </div>
-            <div className="text">{t('account.pitch_text')}</div>
+    <AuthGrid>
+      <AuthAside>
+        <div className="glow" />
+        <div className="mark">Kelvin</div>
+        <div className="pitch">
+          <div className="title">
+            {t('account.pitch_title_1')}
+            <br />
+            {t('account.pitch_title_2')}
           </div>
-          <div className="bar" />
-        </AuthAside>
+          <div className="text">{t('account.pitch_text')}</div>
+        </div>
+        <div className="bar" />
+      </AuthAside>
 
-        <AuthForm>
+      <AuthForm>
+        <div className="form-col">
           <TabToggle role="tablist">
             <button
               type="button"
@@ -261,9 +261,9 @@ function Account() {
               </button>
             )}
           </form>
-        </AuthForm>
-      </AuthGrid>
-    </Container>
+        </div>
+      </AuthForm>
+    </AuthGrid>
   );
 }
 
