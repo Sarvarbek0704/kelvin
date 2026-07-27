@@ -1,229 +1,383 @@
-import React from "react";
-import Navbar from "../../layout/Navbar";
-import Footer from "../../layout/Footer";
-import lyustra from "../../assets/lyustra.png";
+import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Link, useNavigate } from 'react-router-dom';
+import { api, label } from '../../lib/api';
+import { formatSom } from '../../lib/money';
+import { useCart, useCartMutations } from '../../lib/cart';
+import { useDeliveryZones, useDeliveryQuote } from '../../lib/delivery';
+import { useAuth } from '../../lib/auth-context';
 import {
-  BasketPage,
-  BasketContainer,
-  TableContainer,
-  TableHeader,
-  TableRow,
-  ColumnPhoto,
-  ProductImage,
-  ColumnProduct,
-  ProductName,
-  ProductPrice,
-  ColumnDescription,
-  ColumnArticle,
-  ColumnQuantity,
-  QuantityControl,
-  QuantityButton,
-  QuantityValue,
-  ColumnDelete,
-  DeleteButton,
-  OrderFormContainer,
-  OrderFormHeader,
-  FormContent,
-  PersonalInfoForm,
-  FormGroup,
-  FormInput,
-  DeliveryForm,
-  DeliveryTitle,
-  FormTextarea,
-  PaymentSummary,
-  PaymentTitle,
-  PaymentDetails,
-  PaymentRow,
-  BuyButton,
-  PrivacyCheckbox,
-  CheckboxInput,
-  CheckboxLabel,
-  MobileBasketItem,
-  MobileItemHeader,
-  MobileItemImage,
-  MobileItemInfo,
-  MobileItemName,
-  MobileItemPrice,
-  MobileItemDescription,
-  MobileItemArticle,
-  MobileItemActions,
-  MobileQuantityControl,
-  MobileDeleteButton,
-} from "./Basket.styled";
-import { DeleteIcon } from "../../components";
+  Container,
+  Button,
+  Stepper,
+  SpecChip,
+  Input,
+  Textarea,
+  FieldLabel,
+  EmptyState,
+  IconCart,
+  IconClose,
+  IconShield,
+  IconCheck,
+} from '../../components/ui';
+import ProductImage from '../../components/ProductImage';
+import {
+  BasketWrap,
+  CheckoutGrid,
+  Panel,
+  LinesPanel,
+  LineRow,
+  ZoneChips,
+  QuoteNote,
+  FormGrid,
+  PayOptions,
+  Summary,
+  SuccessWrap,
+  ErrorText,
+} from './Basket.styled';
+
+/** So'm matnini raqam + kichik birlikka ajratish (dizayn tipografikasi). */
+const somParts = (tiyin) => formatSom(tiyin).replace(/\s*so'm$/, '');
 
 function Basket() {
-  const basketItems = [
-    {
-      id: 1,
-      name: "Встраиваемый светильник Novotech",
-      price: "6 399  so'm",
-      description:
-        "Светильник RADUGA COMBO XS Промышленное освещение; 50Вт; 230В; S4; XS;",
-      article: "RAD-COMBO-50/XXX/230/XXX/XXX/S4/XS",
-      quantity: 1,
-      image: lyustra,
-    },
-    {
-      id: 2,
-      name: "Встраиваемый светильник Novotech",
-      price: "6 399  so'm",
-      description:
-        "Светильник RADUGA COMBO XS Промышленное освещение; 50Вт; 230В; S4; XS;\n50Br; 230B; S4; XS;",
-      article: "RAD-COMBO-50/XXX/230/XXX/XXX/S4/XS",
-      quantity: 1,
-      image: lyustra,
-    },
-  ];
+  const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
+  const { data: cart, isLoading } = useCart();
+  const { setQuantity, remove, clear } = useCartMutations();
+
+  const lines = cart?.lines ?? [];
+  const busy = setQuantity.isPending || remove.isPending;
+  const [placing, setPlacing] = useState(false);
+  const [placedOrder, setPlacedOrder] = useState(null);
+  const [checkoutErr, setCheckoutErr] = useState(null);
+  const [pickedZoneId, setPickedZoneId] = useState('');
+  const [payMethod, setPayMethod] = useState('cash');
+
+  // --- Yetkazish zonasi + narx (server hisoblaydi) --------------------------
+  const { data: zones } = useDeliveryZones();
+  const zoneId = pickedZoneId || zones?.[0]?.id || '';
+  // ⚠️ Narx hisobi bepul chegara uchun SUBTOTAL bilan (backend ham shunday, §07 §5).
+  const { data: quote } = useDeliveryQuote(zoneId, cart?.subtotal);
+  const activeZone = (zones ?? []).find((z) => z.id === zoneId);
+
+  const deliveryFee = quote?.fee ?? '0';
+  // Yakuniy summa = savat jami (subtotal − chegirma) + yetkazish. Backend AYNAN
+  // shu qiymatni snapshot qiladi (checkout javobidagi totalAmount haqiqiy).
+  const grandTotal = Number(cart?.totalAmount ?? 0) + Number(deliveryFee);
+
+  const checkout = async () => {
+    if (!cart?.cartId) return;
+    setPlacing(true);
+    setCheckoutErr(null);
+    try {
+      const order = await api.post('/orders/checkout', {
+        cartId: cart.cartId,
+        ...(zoneId && { deliveryZoneId: zoneId }),
+      });
+      // Naqd (yetkazishda to'lov): to'lov niyatini yaratamiz — order PENDING_PAYMENT'ga
+      // o'tadi, kuryer pulni olganда xodim tasdiqlaydi (capture). Karta provayderlari
+      // (Click/Payme) hali ulanmagan — "tez orada".
+      if (payMethod === 'cash') {
+        await api.post('/payments', {
+          orderId: order.id,
+          provider: 'CASH',
+          idempotencyKey: crypto.randomUUID(),
+        });
+      } else if (payMethod === 'online') {
+        // ⚠️ Onlayn (DEMO): CLICK to'lovi + MOCK webhook bilan yakunlanadi
+        //    (real Click/Payme merchant blokeri — docs/08 §2.5).
+        const payment = await api.post('/payments', {
+          orderId: order.id,
+          provider: 'CLICK',
+          idempotencyKey: crypto.randomUUID(),
+        });
+        await api.post(`/payments/${payment.id}/simulate-webhook`);
+      }
+      setPlacedOrder({
+        ...order,
+        payMethod,
+        eta: quote ? `${quote.etaDaysMin}–${quote.etaDaysMax} ${t('cart.eta_days')}` : null,
+      });
+      void clear.mutate(); // savatni tozalash (backend allaqachon iste'mol qildi)
+    } catch (e) {
+      setCheckoutErr(e?.problem?.detail || e?.message || 'Xatolik');
+    } finally {
+      setPlacing(false);
+    }
+  };
+
+  const dec = (line) =>
+    setQuantity.mutate({ variantId: line.variantId, quantity: line.quantity - 1 });
+  const inc = (line) =>
+    setQuantity.mutate({ variantId: line.variantId, quantity: line.quantity + 1 });
+
+  // ---------- Buyurtma qabul qilindi ----------
+  if (placedOrder) {
+    return (
+      <Container>
+        <SuccessWrap>
+          <div className="icon">
+            <IconCheck size={40} />
+          </div>
+          <h1>Заказ принят</h1>
+          <div className="lead">Спасибо! Мы позвоним для подтверждения в течение часа.</div>
+          <div className="muted">
+            {placedOrder.payMethod === 'cash'
+              ? 'Оплата при доставке · курьер свяжется перед выездом'
+              : '✓ Оплата принята (demo). Заказ подтверждён.'}
+          </div>
+          <div className="facts">
+            <div>
+              <div className="cap">Номер заказа</div>
+              <div className="val">{placedOrder.number}</div>
+            </div>
+            <div className="sep" />
+            <div>
+              <div className="cap">Сумма</div>
+              <div className="val">{formatSom(placedOrder.totalAmount)}</div>
+            </div>
+            {placedOrder.eta && (
+              <>
+                <div className="sep" />
+                <div>
+                  <div className="cap">Доставка</div>
+                  <div className="val">{placedOrder.eta}</div>
+                </div>
+              </>
+            )}
+          </div>
+          <div className="actions">
+            <Button type="button" onClick={() => navigate('/orders')}>
+              Мои заказы
+            </Button>
+            <Button type="button" $variant="outline" onClick={() => navigate('/catalog')}>
+              В каталог
+            </Button>
+          </div>
+        </SuccessWrap>
+      </Container>
+    );
+  }
+
+  // ---------- Bo'sh savat ----------
+  if (!isLoading && lines.length === 0) {
+    return (
+      <Container>
+        <BasketWrap>
+          <h1>{t('cart.title')}</h1>
+          <div className="bar" />
+          <EmptyState
+            icon={<IconCart size={30} />}
+            title={t('cart.empty')}
+            text="Загляните в каталог — там свет для каждой комнаты."
+            actionLabel="В каталог"
+            onAction={() => navigate('/catalog')}
+          />
+        </BasketWrap>
+      </Container>
+    );
+  }
 
   return (
-    <BasketPage>
-      <Navbar />
-      <BasketContainer>
-        <div className="uvo">
-          <h1>Корзина</h1>
-          <div className="uvo-2">
-            <span>2</span>
-          </div>
-        </div>
+    <Container>
+      <BasketWrap>
+        <h1>Оформление заказа</h1>
+        <div className="bar" />
 
-        <TableContainer>
-          <TableHeader>
-            <div>Фото</div>
-            <div>Товары</div>
-            <div>Описание</div>
-            <div>Артикул</div>
-            <div>Количество</div>
-            <div></div>
-          </TableHeader>
-
-          {basketItems.map((item) => (
-            <TableRow key={item.id}>
-              <ColumnPhoto>
-                <ProductImage src={item.image} alt="Светильник" />
-              </ColumnPhoto>
-              <ColumnProduct>
-                <ProductName>{item.name}</ProductName>
-                <ProductPrice>{item.price}</ProductPrice>
-              </ColumnProduct>
-              <ColumnDescription>
-                {item.description.split("\n").map((line, i) => (
-                  <React.Fragment key={i}>
-                    {line}
-                    {i < item.description.split("\n").length - 1 && <br />}
-                  </React.Fragment>
-                ))}
-              </ColumnDescription>
-              <ColumnArticle>{item.article}</ColumnArticle>
-              <ColumnQuantity>
-                <QuantityControl>
-                  <QuantityButton>-</QuantityButton>
-                  <QuantityValue>{item.quantity}</QuantityValue>
-                  <QuantityButton>+</QuantityButton>
-                </QuantityControl>
-              </ColumnQuantity>
-              <ColumnDelete>
-                <DeleteIcon />
-              </ColumnDelete>
-            </TableRow>
-          ))}
-        </TableContainer>
-
-        {basketItems.map((item) => (
-          <MobileBasketItem key={`mobile-${item.id}`}>
-            <MobileItemHeader>
-              <MobileItemImage src={item.image} alt="Светильник" />
-              <MobileItemInfo>
-                <MobileItemName>{item.name}</MobileItemName>
-                <MobileItemPrice>{item.price}</MobileItemPrice>
-              </MobileItemInfo>
-            </MobileItemHeader>
-            <MobileItemDescription>
-              {item.description.split("\n").map((line, i) => (
-                <React.Fragment key={i}>
-                  {line}
-                  {i < item.description.split("\n").length - 1 && <br />}
-                </React.Fragment>
+        <CheckoutGrid>
+          <div className="left">
+            <LinesPanel>
+              {lines.map((line) => (
+                <LineRow key={line.variantId}>
+                  <div className="photo">
+                    <ProductImage
+                      image={line.image ? { url: line.image } : null}
+                      alt={label(line.name)}
+                      sizes="84px"
+                      placeholder=""
+                    />
+                  </div>
+                  <div className="info">
+                    <div className="name">{label(line.name)}</div>
+                    <div className="chips">
+                      <SpecChip>{line.sku}</SpecChip>
+                    </div>
+                  </div>
+                  <div className="stepper-slot">
+                    <Stepper
+                      value={line.quantity}
+                      size="sm"
+                      disabled={busy}
+                      onDec={() => dec(line)}
+                      onInc={() => inc(line)}
+                    />
+                  </div>
+                  <div className="price">
+                    {somParts(line.unitPrice)} <span className="unit">so'm</span>
+                  </div>
+                  <button
+                    type="button"
+                    className="remove"
+                    disabled={busy}
+                    aria-label={t('cart.remove')}
+                    onClick={() => remove.mutate(line.variantId)}
+                  >
+                    <IconClose size={18} />
+                  </button>
+                </LineRow>
               ))}
-            </MobileItemDescription>
-            <MobileItemArticle>{item.article}</MobileItemArticle>
-            <MobileItemActions>
-              <MobileQuantityControl>
-                <QuantityButton>-</QuantityButton>
-                <QuantityValue>{item.quantity}</QuantityValue>
-                <QuantityButton>+</QuantityButton>
-              </MobileQuantityControl>
-              <DeleteIcon />
-            </MobileItemActions>
-          </MobileBasketItem>
-        ))}
+            </LinesPanel>
 
-        <OrderFormContainer>
-          <OrderFormHeader>Оформление</OrderFormHeader>
-          <FormContent>
-            <PersonalInfoForm>
-              <FormGroup>
-                <FormInput type="text" placeholder="ФИО" />
-              </FormGroup>
-              <FormGroup>
-                <FormInput type="tel" placeholder="Телефон" />
-              </FormGroup>
-              <FormGroup>
-                <FormInput type="email" placeholder="Электронная Почта" />
-              </FormGroup>
-            </PersonalInfoForm>
+            <Panel>
+              <h2>{t('cart.delivery')}</h2>
+              <div className="sub-label">{t('cart.select_zone')}</div>
+              <ZoneChips>
+                {(zones ?? []).map((z) => (
+                  <button
+                    key={z.id}
+                    type="button"
+                    className={z.id === zoneId ? 'active' : ''}
+                    onClick={() => setPickedZoneId(z.id)}
+                  >
+                    {label(z.name)} · {formatSom(z.priceAmount)} · {z.etaDaysMin}–{z.etaDaysMax}{' '}
+                    {t('cart.eta_days')}
+                  </button>
+                ))}
+              </ZoneChips>
+              {quote && (
+                <QuoteNote>
+                  {quote.free ? (
+                    <span className="free">{t('cart.delivery_free_note')}</span>
+                  ) : (
+                    `${t('cart.delivery_cost')}: ${formatSom(quote.fee)}`
+                  )}{' '}
+                  · {quote.etaDaysMin}–{quote.etaDaysMax} {t('cart.eta_days')}
+                </QuoteNote>
+              )}
+            </Panel>
 
-            <DeliveryForm>
-              <DeliveryTitle>Доставка</DeliveryTitle>
-              <FormGroup>
-                <FormInput
-                  type="text"
-                  placeholder="Адрес доставки"
-                  className="oltmish"
-                />
-              </FormGroup>
-              <FormGroup>
-                <FormTextarea placeholder="Комментарий"></FormTextarea>
-              </FormGroup>
-            </DeliveryForm>
-          </FormContent>
-        </OrderFormContainer>
+            <Panel>
+              <h2>Контакты и адрес</h2>
+              <FormGrid>
+                <div>
+                  <FieldLabel htmlFor="co-name">Имя</FieldLabel>
+                  <Input id="co-name" type="text" autoComplete="name" />
+                </div>
+                <div>
+                  <FieldLabel htmlFor="co-phone">Телефон</FieldLabel>
+                  <Input id="co-phone" type="tel" autoComplete="tel" placeholder="+998" />
+                </div>
+                <div className="full">
+                  <FieldLabel htmlFor="co-address">Адрес доставки</FieldLabel>
+                  <Input id="co-address" type="text" autoComplete="street-address" />
+                </div>
+                <div className="full">
+                  <FieldLabel htmlFor="co-comment">Комментарий</FieldLabel>
+                  <Textarea id="co-comment" rows={2} placeholder="Позвоните за час до доставки…" />
+                </div>
+              </FormGrid>
+            </Panel>
 
-        <PaymentSummary>
-          <PaymentTitle>Оплата</PaymentTitle>
-          <PaymentDetails>
-            <div className="flex">
-              <PaymentRow>
-                <span>
-                  Товары............................................. 12 300  so'm
-                </span>
-              </PaymentRow>
-              <PaymentRow>
-                <span>
-                  Доставка.............................................. 580  so'm
-                </span>
-              </PaymentRow>
-            </div>
-
-            <PaymentRow className="total">
-              <span>12 800  so'm</span>
-            </PaymentRow>
-          </PaymentDetails>
-          <div className="flex-2">
-            <BuyButton>Купить</BuyButton>
-
-            <PrivacyCheckbox>
-              <CheckboxInput id="privacy-agreement" defaultChecked />
-              <CheckboxLabel htmlFor="privacy-agreement">
-                Я согласен на обработку моих персональных данных
-              </CheckboxLabel>
-            </PrivacyCheckbox>
+            <Panel>
+              <h2>Оплата</h2>
+              {/* To'lov usuli — naqd ISHLAYDI; onlayn CLICK demo (simulate-webhook);
+                  Payme hali ulanmagan (adapter skeleti, docs/08 §2.5) → "скоро". */}
+              <PayOptions>
+                <label className={payMethod === 'cash' ? 'active' : ''}>
+                  <input
+                    type="radio"
+                    name="payMethod"
+                    value="cash"
+                    checked={payMethod === 'cash'}
+                    onChange={() => setPayMethod('cash')}
+                    style={{ accentColor: '#B08D57' }}
+                  />
+                  <span className="pay-name">{t('cart.pay_cash')}</span>
+                  <span className="pay-note">оплата курьеру</span>
+                </label>
+                <label className={payMethod === 'online' ? 'active' : ''}>
+                  <input
+                    type="radio"
+                    name="payMethod"
+                    value="online"
+                    checked={payMethod === 'online'}
+                    onChange={() => setPayMethod('online')}
+                    style={{ accentColor: '#B08D57' }}
+                  />
+                  <span className="pay-name">Click</span>
+                  <span className="pay-tag">demo</span>
+                </label>
+                <label className="disabled">
+                  <input type="radio" name="payMethod" value="payme" disabled />
+                  <span className="pay-name">Payme</span>
+                  <span className="pay-tag">{t('cart.coming_soon')}</span>
+                </label>
+              </PayOptions>
+            </Panel>
           </div>
-        </PaymentSummary>
-      </BasketContainer>
 
-      <Footer />
-    </BasketPage>
+          <Summary>
+            <h2>Ваш заказ</h2>
+            <div className="rows">
+              <div className="row">
+                <span className="k">Товары ({cart?.itemCount ?? 0})</span>
+                <span className="v">{formatSom(cart?.subtotal)}</span>
+              </div>
+              {cart?.discountTotal && cart.discountTotal !== '0' && (
+                <div className="row">
+                  <span className="k">Скидка</span>
+                  <span className="v green">−{formatSom(cart.discountTotal)}</span>
+                </div>
+              )}
+              <div className="row">
+                <span className="k">
+                  {t('cart.delivery')}
+                  {activeZone ? ` · ${label(activeZone.name)}` : ''}
+                </span>
+                <span className="v">
+                  {quote?.free ? t('cart.delivery_free') : formatSom(deliveryFee)}
+                </span>
+              </div>
+            </div>
+            <div className="div" />
+            <div className="total-row">
+              <span className="k">{t('cart.total')}</span>
+              <span className="v">
+                {somParts(grandTotal * 1)} <span className="unit">so'm</span>
+              </span>
+            </div>
+            {quote && (
+              <div className="note">
+                Доставка {quote.etaDaysMin}–{quote.etaDaysMax} {t('cart.eta_days')} ·{' '}
+                {payMethod === 'cash' ? 'наличными при получении' : 'онлайн-оплата'}
+              </div>
+            )}
+
+            {user ? (
+              <Button type="button" $full disabled={placing || lines.length === 0} onClick={checkout}>
+                {t('cart.checkout')}
+              </Button>
+            ) : (
+              <Button type="button" $full onClick={() => navigate('/account')}>
+                {t('cart.login_to_checkout')}
+              </Button>
+            )}
+            {checkoutErr && <ErrorText>{checkoutErr}</ErrorText>}
+
+            <label className="privacy">
+              <input type="checkbox" defaultChecked style={{ accentColor: '#B08D57' }} />
+              <span>Я согласен на обработку моих персональных данных</span>
+            </label>
+
+            <div className="secure">
+              <IconShield size={15} />
+              Безопасная оплата · гарантия брендов
+            </div>
+          </Summary>
+        </CheckoutGrid>
+      </BasketWrap>
+    </Container>
   );
 }
 

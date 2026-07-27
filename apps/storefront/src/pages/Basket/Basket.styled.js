@@ -1,508 +1,487 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-export const BasketPage = styled.div`
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  background-color: white;
-`;
-
-export const BasketContainer = styled.div`
-  flex: 1;
-  margin: 40px 200px;
-  padding: 40px 0;
+export const BasketWrap = styled.div`
+  padding: 36px 0 56px;
 
   h1 {
-    color: rgba(69, 69, 69, 1);
-    font-size: 40px;
-    font-weight: 700;
-    margin-bottom: 40px;
+    font-size: 44px;
+    margin: 0 0 4px;
   }
 
-  .uvo {
-    position: relative;
+  .bar {
+    height: 5px;
+    border-radius: 999px;
+    background: ${(p) => p.theme.gradient};
+    margin: 16px 0 32px;
+    max-width: 240px;
+  }
 
-    .uvo-2 {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 15px;
-      height: 16px;
-      font-size: 10px;
-      padding: 5px;
-      border-radius: 100%;
-      color: white;
-      background-color: rgba(198, 60, 60, 1);
-      top: 5px;
-      left: 160px;
-      position: absolute;
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    padding: 20px 0 40px;
+
+    h1 {
+      font-size: 32px;
+    }
+
+    .bar {
+      margin: 12px 0 20px;
+      max-width: 160px;
+    }
+  }
+`;
+
+export const CheckoutGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 32px;
+  align-items: start;
+
+  .left {
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
+    grid-template-columns: 1fr;
+
+    .left {
+      gap: 18px;
+    }
+  }
+`;
+
+export const Panel = styled.div`
+  background: ${(p) => p.theme.color.surface};
+  border: 1px solid ${(p) => p.theme.color.border};
+  border-radius: ${(p) => p.theme.radius.card};
+  padding: 26px;
+
+  h2 {
+    font-size: 26px;
+    margin: 0 0 18px;
+  }
+
+  .sub-label {
+    font-size: 13px;
+    color: ${(p) => p.theme.color.bodyText};
+    margin-bottom: 10px;
+  }
+
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    padding: 18px;
+  }
+`;
+
+export const LinesPanel = styled.div`
+  background: ${(p) => p.theme.color.surface};
+  border: 1px solid ${(p) => p.theme.color.border};
+  border-radius: ${(p) => p.theme.radius.card};
+  padding: 8px 24px;
+
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    padding: 4px 16px;
+  }
+`;
+
+export const LineRow = styled.div`
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  padding: 20px 0;
+
+  & + & {
+    border-top: 1px solid rgba(138, 106, 59, 0.1);
+  }
+
+  .photo {
+    width: 84px;
+    height: 96px;
+    border-radius: 10px;
+    overflow: hidden;
+    flex: none;
+  }
+
+  .info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .name {
+    font-family: ${(p) => p.theme.font.serif};
+    font-size: 22px;
+    color: ${(p) => p.theme.color.ink};
+    margin: 2px 0 6px;
+  }
+
+  .chips {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .price {
+    width: 150px;
+    text-align: right;
+    font-size: 17px;
+    font-weight: 600;
+    white-space: nowrap;
+
+    .unit {
+      font-size: 12px;
+      color: ${(p) => p.theme.color.inkMuted};
+      font-weight: 500;
     }
   }
 
-  @media screen and (max-width: 1024px) {
-    margin: 40px 100px;
-    padding: 30px 0;
+  .remove {
+    border: 0;
+    background: none;
+    padding: 6px;
+    color: ${(p) => p.theme.color.outOfStock};
+    cursor: pointer;
+    line-height: 0;
+
+    &:hover {
+      color: ${(p) => p.theme.color.error};
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
   }
 
-  @media screen and (max-width: 768px) {
-    margin: 30px 50px;
-    padding: 25px 0;
-  }
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    flex-wrap: wrap;
+    gap: 12px;
 
-  @media screen and (max-width: 480px) {
-    margin: 25px 20px;
-    padding: 20px 0;
-  }
+    .photo {
+      width: 72px;
+      height: 82px;
+    }
 
-  @media screen and (max-width: 375px) {
-    margin: 20px 15px;
-    padding: 15px 0;
-  }
-`;
+    .name {
+      font-size: 19px;
+    }
 
-export const TableContainer = styled.div`
-  background-color: rgba(242, 242, 242, 1);
-  border-radius: 15px;
-  overflow: hidden;
-  margin-bottom: 40px;
-  border: 1px solid rgba(217, 217, 217, 1);
+    .price {
+      width: auto;
+      margin-left: auto;
+      order: 3;
+    }
 
-  @media screen and (min-width: 769px) {
-    display: block;
-  }
+    .stepper-slot {
+      order: 4;
+    }
 
-  @media screen and (max-width: 768px) {
-    display: none;
-  }
-`;
-
-export const TableHeader = styled.div`
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr 2fr 1.5fr 1fr 0.5fr;
-  background-color: rgba(242, 242, 242, 1);
-  padding: 20px;
-  font-weight: 500;
-  color: rgba(69, 69, 69, 1);
-  opacity: 50%;
-  font-size: 16px;
-  text-align: center;
-  border-bottom: 1px solid rgba(69, 69, 69, 0.3);
-`;
-
-export const TableRow = styled.div`
-  display: grid;
-  grid-template-columns: 0.8fr 1.2fr 2fr 1.5fr 1fr 0.5fr;
-  padding: 20px;
-  border-bottom: 1px solid rgba(217, 217, 217, 1);
-  align-items: center;
-  background-color: rgba(242, 242, 242, 1);
-
-  &:last-child {
-    border-bottom: none;
+    .remove {
+      order: 2;
+    }
   }
 `;
 
-export const ColumnPhoto = styled.div`
+/* Zona chiplari */
+export const ZoneChips = styled.div`
   display: flex;
-  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 14px;
+
+  button {
+    padding: 12px 18px;
+    border-radius: ${(p) => p.theme.radius.button};
+    border: 1px solid ${(p) => p.theme.color.borderStrong};
+    background: transparent;
+    font-family: ${(p) => p.theme.font.sans};
+    font-size: 14px;
+    color: ${(p) => p.theme.color.ink};
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
+
+    &.active {
+      border: 1.5px solid ${(p) => p.theme.color.brass};
+      background: rgba(176, 141, 87, 0.12);
+      color: ${(p) => p.theme.color.linkHover};
+      font-weight: 600;
+    }
+  }
 `;
 
-export const ProductImage = styled.img`
-  width: 60px;
-  height: 60px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: #f5f5f5;
+export const QuoteNote = styled.p`
+  font-size: 13px;
+  color: ${(p) => p.theme.color.inkMuted};
+  margin: 0;
+
+  .free {
+    color: ${(p) => p.theme.color.success};
+    font-weight: 600;
+  }
 `;
 
-export const ColumnProduct = styled.div`
+export const FormGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  .full {
+    grid-column: 1 / -1;
+  }
+
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    grid-template-columns: 1fr;
+
+    .full {
+      grid-column: auto;
+    }
+  }
+`;
+
+/* To'lov usuli kartalari */
+export const PayOptions = styled.div`
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  padding-left: 10px;
-`;
+  gap: 12px;
 
-export const ProductName = styled.div`
-  font-size: 16px;
-  font-weight: 600;
-  color: rgba(69, 69, 69, 1);
-  margin-bottom: 5px;
-  line-height: 1.3;
-`;
-
-export const ProductPrice = styled.div`
-  font-size: 16px;
-  font-weight: 700;
-  color: rgba(69, 69, 69, 1);
-  margin-top: 5px;
-`;
-
-export const ColumnDescription = styled.div`
-  font-size: 14px;
-  color: rgba(69, 69, 69, 1);
-  line-height: 1.4;
-  padding: 0 10px;
-`;
-
-export const ColumnArticle = styled.div`
-  font-size: 13px;
-  color: rgba(159, 159, 159, 1);
-  line-height: 1.4;
-  padding: 0 10px;
-  font-weight: 500;
-  text-align: center;
-`;
-
-export const ColumnQuantity = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const QuantityControl = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  background-color: rgba(242, 242, 242, 1);
-  border-radius: 100px;
-  padding: 5px 15px;
-`;
-
-export const QuantityButton = styled.button`
-  width: 25px;
-  height: 25px;
-  border: none;
-  border-radius: 50%;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-`;
-
-export const QuantityValue = styled.span`
-  border-radius: 10px;
-  padding: 14px 20px;
-  border: 1px solid rgba(69, 69, 69, 0.2);
-  min-width: 20px;
-  text-align: center;
-  font-weight: 600;
-  font-size: 16px;
-  color: rgba(69, 69, 69, 1);
-`;
-
-export const ColumnDelete = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-export const DeleteButton = styled.button`
-  width: 30px;
-  height: 30px;
-  border: 1px solid rgba(217, 217, 217, 1);
-  background: white;
-  border-radius: 50%;
-  font-size: 18px;
-  color: rgba(159, 159, 159, 1);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-export const MobileBasketItem = styled.div`
-  @media screen and (min-width: 769px) {
-    display: none;
-  }
-
-  @media screen and (max-width: 768px) {
-    display: block;
-    background-color: rgba(242, 242, 242, 1);
-    border-radius: 15px;
-    border: 1px solid rgba(217, 217, 217, 1);
-    margin-bottom: 20px;
-    padding: 20px;
-  }
-`;
-
-export const MobileItemHeader = styled.div`
-  display: flex;
-  gap: 15px;
-  margin-bottom: 15px;
-`;
-
-export const MobileItemImage = styled.img`
-  width: 80px;
-  height: 80px;
-  object-fit: cover;
-  border-radius: 8px;
-`;
-
-export const MobileItemInfo = styled.div`
-  flex: 1;
-`;
-
-export const MobileItemName = styled.div`
-  font-size: 16px;
-  font-weight: 600;
-  color: rgba(69, 69, 69, 1);
-  margin-bottom: 5px;
-  line-height: 1.3;
-`;
-
-export const MobileItemPrice = styled.div`
-  font-size: 16px;
-  font-weight: 700;
-  color: rgba(69, 69, 69, 1);
-`;
-
-export const MobileItemDescription = styled.div`
-  font-size: 14px;
-  color: rgba(69, 69, 69, 1);
-  line-height: 1.4;
-  margin-bottom: 15px;
-`;
-
-export const MobileItemArticle = styled.div`
-  font-size: 12px;
-  color: rgba(159, 159, 159, 1);
-  margin-bottom: 15px;
-  font-weight: 500;
-`;
-
-export const MobileItemActions = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 15px;
-`;
-
-export const MobileQuantityControl = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  border-radius: 100px;
-  padding: 5px 15px;
-`;
-
-export const MobileDeleteButton = styled.button`
-  padding: 8px 16px;
-  border: 1px solid rgba(217, 217, 217, 1);
-  background: white;
-  border-radius: 100px;
-  font-size: 14px;
-  color: rgba(159, 159, 159, 1);
-`;
-
-export const OrderFormContainer = styled.div`
-  background-color: rgba(242, 242, 242, 1);
-  border-radius: 15px;
-  overflow: hidden;
-  border: 1px solid rgba(217, 217, 217, 1);
-`;
-
-export const OrderFormHeader = styled.h3`
-  background-color: rgba(242, 242, 242, 1);
-  padding: 20px;
-  font-size: 24px;
-  font-weight: 700;
-  color: rgba(69, 69, 69, 1);
-  margin: 0;
-`;
-
-export const FormContent = styled.div`
-  padding: 30px;
-`;
-
-export const PersonalInfoForm = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 20px;
-  margin-bottom: 30px;
-
-  @media screen and (max-width: 768px) {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-`;
-
-export const FormGroup = styled.div`
-  width: 100%;
-
-  .oltmish {
-    width: 60% !important;
-  }
-`;
-
-export const FormInput = styled.input`
-  width: 100%;
-  padding: 12px 20px;
-  border: 1px solid rgba(69, 69, 69, 1);
-  border-radius: 100px;
-  font-size: 14px;
-  outline: none;
-  background: none;
-  box-sizing: border-box;
-
-  &::placeholder {
-    color: rgba(69, 69, 69, 1);
-  }
-`;
-
-export const DeliveryForm = styled.div`
-  border-top: 1px solid rgba(217, 217, 217, 1);
-  padding-top: 30px;
-`;
-
-export const DeliveryTitle = styled.h4`
-  font-size: 20px;
-  font-weight: 700;
-  color: rgba(69, 69, 69, 1);
-  margin: 0 0 20px 0;
-`;
-
-export const FormTextarea = styled.textarea`
-  margin-top: 25px;
-  width: 60%;
-  padding: 15px 20px;
-  border: 1px solid rgba(69, 69, 69, 1);
-  border-radius: 15px;
-  font-size: 14px;
-  outline: none;
-  background: none;
-  box-sizing: border-box;
-  min-height: 100px;
-  resize: vertical;
-
-  &::placeholder {
-    color: rgba(69, 69, 69, 1);
-  }
-`;
-
-export const PaymentSummary = styled.div`
-  background-color: rgba(242, 242, 242, 1);
-  border-radius: 15px;
-  overflow: hidden;
-  border: 1px solid rgba(217, 217, 217, 1);
-  margin-top: 40px;
-  padding: 30px;
-
-  .flex-2 {
+  label {
     display: flex;
     align-items: center;
-    gap: 30px;
+    gap: 12px;
+    padding: 16px;
+    border-radius: ${(p) => p.theme.radius.button};
+    border: 1px solid ${(p) => p.theme.color.borderStrong};
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease;
 
-    @media (max-width: 580px) {
-      flex-direction: column;
+    &.active {
+      border: 1.5px solid ${(p) => p.theme.color.brass};
+      background: rgba(176, 141, 87, 0.07);
     }
-  }
-`;
 
-export const PaymentTitle = styled.h3`
-  font-size: 24px;
-  font-weight: 700;
-  color: rgba(69, 69, 69, 1);
-  margin: 0 0 25px 0;
-  padding-bottom: 10px;
-`;
-
-export const PaymentDetails = styled.div`
-  margin-bottom: 25px;
-  .flex {
-    display: flex;
-    gap: 25px;
-    opacity: 50%;
-  }
-`;
-
-export const PaymentRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 15px;
-  font-size: 16px;
-  color: rgba(69, 69, 69, 1);
-
-  &.total {
-    font-size: 20px;
-    font-weight: 700;
-    margin-top: 20px;
-    padding-top: 20px;
-  }
-`;
-
-export const BuyButton = styled.button`
-  width: 30%;
-  padding: 16px;
-  background-color: rgba(69, 69, 69, 1);
-  color: white;
-  border: none;
-  border-radius: 100px;
-  font-size: 18px;
-  font-weight: 600;
-  margin: 20px 0;
-
-  @media (max-width: 580px) {
-    width: 100%;
-  }
-`;
-
-export const PrivacyCheckbox = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-export const CheckboxInput = styled.input.attrs({ type: "checkbox" })`
-  appearance: none;
-
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  border: 2px solid rgba(69, 69, 69, 1);
-  background: white;
-  position: relative;
-
-  &:checked::after {
-    content: "✓";
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -55%);
-    color: rgba(69, 69, 69, 1);
-    font-size: 14px;
-    font-weight: 700;
-    line-height: 1;
-  }
-
-  @media (max-width: 768px) {
-    width: 18px;
-    height: 18px;
-
-    &:checked::after {
-      font-size: 12px;
+    &.disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
     }
   }
 
-  @media (max-width: 480px) {
-    width: 16px;
-    height: 16px;
-
-    &:checked::after {
-      font-size: 11px;
-    }
+  .pay-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: ${(p) => p.theme.color.ink};
   }
-`;
 
-export const CheckboxLabel = styled.label`
-  font-size: 14px;
-  opacity: 50%;
-  color: rgba(69, 69, 69, 1);
-
-  @media (max-width: 768px) {
+  .pay-note {
+    margin-left: auto;
     font-size: 13px;
+    color: ${(p) => p.theme.color.inkMuted};
   }
 
-  @media (max-width: 480px) {
+  .pay-tag {
+    margin-left: auto;
+    padding: 5px 12px;
+    border-radius: 8px;
+    background: ${(p) => p.theme.color.deep};
     font-size: 12px;
+    font-weight: 600;
+    color: ${(p) => p.theme.color.brassDark};
   }
+`;
+
+/* O'ng ustun — buyurtma xulosasi (sticky) */
+export const Summary = styled.div`
+  position: sticky;
+  top: 20px;
+  background: ${(p) => p.theme.color.surface};
+  border: 1px solid ${(p) => p.theme.color.border};
+  border-radius: ${(p) => p.theme.radius.card};
+  padding: 28px;
+
+  h2 {
+    font-size: 26px;
+    margin: 0 0 20px;
+  }
+
+  .rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    font-size: 15px;
+  }
+
+  .row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+
+    .k {
+      color: ${(p) => p.theme.color.bodyText};
+    }
+
+    .v {
+      white-space: nowrap;
+    }
+
+    .green {
+      color: ${(p) => p.theme.color.success};
+    }
+  }
+
+  .div {
+    height: 1px;
+    background: rgba(138, 106, 59, 0.16);
+    margin: 20px 0;
+  }
+
+  .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+
+    .k {
+      font-size: 17px;
+      font-weight: 600;
+    }
+
+    .v {
+      font-size: 26px;
+      font-weight: 700;
+      white-space: nowrap;
+
+      .unit {
+        font-size: 15px;
+        color: ${(p) => p.theme.color.inkMuted};
+        font-weight: 500;
+      }
+    }
+  }
+
+  .note {
+    font-size: 13px;
+    color: ${(p) => p.theme.color.inkMuted};
+    margin-bottom: 22px;
+  }
+
+  .secure {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 16px;
+    font-size: 12px;
+    color: ${(p) => p.theme.color.inkMuted};
+  }
+
+  .privacy {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-top: 14px;
+    font-size: 12px;
+    color: ${(p) => p.theme.color.inkMuted};
+  }
+
+  @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
+    position: static;
+  }
+`;
+
+/* Buyurtma qabul qilindi */
+export const SuccessWrap = styled.div`
+  padding: 72px 0;
+  text-align: center;
+
+  .icon {
+    width: 84px;
+    height: 84px;
+    border-radius: 999px;
+    background: ${(p) => p.theme.color.deep};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 26px;
+    color: ${(p) => p.theme.color.success};
+  }
+
+  h1 {
+    font-size: 48px;
+    margin: 0 0 12px;
+  }
+
+  .lead {
+    font-size: 17px;
+    color: ${(p) => p.theme.color.bodyText};
+    margin-bottom: 4px;
+  }
+
+  .muted {
+    font-size: 14px;
+    color: ${(p) => p.theme.color.inkMuted};
+    margin-bottom: 32px;
+  }
+
+  .facts {
+    display: inline-flex;
+    gap: 40px;
+    background: ${(p) => p.theme.color.surface};
+    border: 1px solid ${(p) => p.theme.color.border};
+    border-radius: ${(p) => p.theme.radius.card};
+    padding: 24px 40px;
+    text-align: left;
+
+    .sep {
+      width: 1px;
+      background: rgba(138, 106, 59, 0.16);
+    }
+
+    .cap {
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: ${(p) => p.theme.color.inkMuted};
+    }
+
+    .val {
+      font-family: ${(p) => p.theme.font.serif};
+      font-size: 30px;
+      margin-top: 4px;
+      color: ${(p) => p.theme.color.ink};
+    }
+  }
+
+  .actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    margin-top: 32px;
+    flex-wrap: wrap;
+  }
+
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    padding: 44px 0;
+
+    h1 {
+      font-size: 34px;
+    }
+
+    .facts {
+      flex-direction: column;
+      gap: 16px;
+      padding: 20px 24px;
+
+      .sep {
+        display: none;
+      }
+
+      .val {
+        font-size: 24px;
+      }
+    }
+  }
+`;
+
+export const ErrorText = styled.p`
+  color: ${(p) => p.theme.color.error};
+  font-size: 14px;
+  margin: 10px 0 0;
 `;
