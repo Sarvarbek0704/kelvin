@@ -1,66 +1,65 @@
-import React from "react";
-import catalogIcon from "../../assets/catalog-icon.png";
-import { DostavkaIcon, MedalIcon, TangaIcon, YuklarIcon } from "../icons";
-import {
-  ReasonsContainer,
-  ReasonsHeader,
-  ReasonsTitle,
-  AboutButton,
-  CardsContainer,
-  Card,
-  IconWrapper,
-  CardText,
-  CardTitle,
-  CardDescription,
-} from "./Reason.styled";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Container, Kicker, IconTruck, IconShield } from '../ui';
+import { ReasonsSection, CardsRow, ReasonCard } from './Reason.styled';
 
+// O'rnatish ikonkasi (kalит) — dizayn mockupidan, boshqa joyda ishlatilmaydi.
+const InstallIcon = () => (
+  <svg
+    width="26"
+    height="26"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M14 3l-1 4 4 4-3 3-4-4-4 1 1-4" />
+    <path d="m10 14-6 6" />
+  </svg>
+);
+
+const REASONS = [
+  {
+    icon: <IconTruck size={26} />,
+    title: 'Доставка по зонам',
+    text: 'По Ташкенту и области, с расчётом по зоне и бережной упаковкой хрупких люстр.',
+  },
+  {
+    icon: <InstallIcon />,
+    title: 'Установка',
+    text: 'Монтаж тяжёлых и потолочных фикстур нашими электриками — свет под ключ.',
+  },
+  {
+    icon: <IconShield size={26} />,
+    title: 'Гарантия',
+    text: 'Официальная гарантия брендов и сервис. Диммеры и драйверы подберём совместимые.',
+  },
+];
+
+/** "Почему Kelvin" — salon uch ustuni (dostavka / o'rnatish / kafolat). */
 function Reasons() {
-  const reasonsData = [
-    {
-      icon: <MedalIcon />,
-      title: "Только проверенные бренды",
-      description: "Бренды, проверенные временем и качеством",
-    },
-    {
-      icon: <TangaIcon />,
-      title: "Самые низкие цены",
-      description: "Ниже не будет нигде",
-    },
-    {
-      icon: <DostavkaIcon />,
-      title: "Быстрая доставка",
-      description: "Доставляем по всей РФ за 1-10 дней",
-    },
-    {
-      icon: <YuklarIcon />,
-      title: "Большой ассортимент",
-      description: "Более 1000 товаров",
-    },
-  ];
-
   return (
-    <ReasonsContainer>
-      <ReasonsHeader>
-        <ReasonsTitle>Почему Kelvin?</ReasonsTitle>
-        <Link to="/about-us" className="link">
-          <AboutButton>
-            О компании <img src={catalogIcon} alt="catalogIcon" />
-          </AboutButton>
-        </Link>
-      </ReasonsHeader>
-      <CardsContainer>
-        {reasonsData.map((reason, index) => (
-          <Card key={index}>
-            <IconWrapper>{reason.icon}</IconWrapper>
-            <CardText>
-              <CardTitle>{reason.title}</CardTitle>
-              <CardDescription>{reason.description}</CardDescription>
-            </CardText>
-          </Card>
-        ))}
-      </CardsContainer>
-    </ReasonsContainer>
+    <ReasonsSection>
+      <Container>
+        <div className="head">
+          <Kicker as="div">Почему Kelvin</Kicker>
+          <h2>Салон, а не маркетплейс</h2>
+        </div>
+        <CardsRow>
+          {REASONS.map((reason) => (
+            <ReasonCard key={reason.title}>
+              <div className="icon">{reason.icon}</div>
+              <div>
+                <div className="title">{reason.title}</div>
+                <div className="text">{reason.text}</div>
+              </div>
+            </ReasonCard>
+          ))}
+        </CardsRow>
+      </Container>
+    </ReasonsSection>
   );
 }
 

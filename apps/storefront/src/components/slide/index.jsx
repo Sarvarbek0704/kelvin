@@ -1,67 +1,60 @@
-import React from "react";
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination, Mousewheel } from "swiper/modules";
-import slideImage from "../../assets/slideImage.png";
-import {
-  SlideContainer,
-  SlideContent,
-  ImageContainer,
-  SlideImage,
-  SlideIcon,
-  TextsContainer,
-  MainText,
-  Fevral,
-} from "./Slide.styled";
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import lyustra from '../../assets/lyustra.png';
+import { api, label } from '../../lib/api';
+import { Button } from '../ui';
+import { Hero, HeroText, HeroVisual, HeroCard } from './Slide.styled';
 
-import "swiper/css";
-import "swiper/css/pagination";
-
+/**
+ * Bosh sahifa hero — editorial sarlavha + signature gradient + o'ng panelda
+ * iliq nur ostidagi lyustra va real mahsulotga olib boruvchi karta
+ * (ommaviy /products ro'yxatining birinchisi — narx TO'QILMAYDI).
+ */
 function Slide() {
-  const slides = Array.from({ length: 8 }).map((_, index) => ({
-    id: index + 1,
-    title: "Скидка 15%\nна все подвесные\nсветильники",
-    date: "до 5 февраля",
-    image: slideImage,
-  }));
+  const navigate = useNavigate();
+  const { data } = useQuery({
+    queryKey: ['products', 'popular'],
+    queryFn: () => api.get('/products?limit=8'),
+  });
+  const featured = data?.items?.[0];
 
   return (
-    <SlideContainer>
-      <Swiper
-        modules={[Pagination, Mousewheel]}
-        mousewheel={{
-          forceToAxis: true,
-          sensitivity: 0.3,
-          thresholdDelta: 50,
-          thresholdTime: 300,
-          releaseOnEdges: true,
-        }}
-        pagination={{
-          clickable: true,
-          el: ".custom-pagination",
-          renderBullet: function (index, className) {
-            return `<span class="${className} custom-bullet"></span>`;
-          },
-        }}
-        className="mySwiper"
-      >
-        {slides.map((slide) => (
-          <SwiperSlide key={slide.id}>
-            <SlideContent>
-              <ImageContainer>
-                <SlideImage src={slide.image} alt="slide image" />
-              </ImageContainer>
-              <TextsContainer>
-                <MainText>{slide.title}</MainText>
-                <Fevral>{slide.date}</Fevral>
-              </TextsContainer>
-            </SlideContent>
-          </SwiperSlide>
-        ))}
-      </Swiper>
-      <div className="custom-pagination-container">
-        <div className="custom-pagination"></div>
-      </div>
-    </SlideContainer>
+    <Hero>
+      <HeroText>
+        <div className="kicker">Салон света · Ташкент</div>
+        <h1>
+          Свет, подобранный
+          <br />
+          по температуре
+        </h1>
+        <p className="lead">
+          От тёплых 2700K для спальни до дневных 6500K для мастерской. Кураторская коллекция
+          люстр, бра и технического света — как в дизайнерском шоуруме.
+        </p>
+        <div className="bar" />
+        <div className="ctas">
+          <Button type="button" onClick={() => navigate('/catalog')}>
+            Смотреть каталог
+          </Button>
+          <Button type="button" $variant="outline" onClick={() => navigate('/search')}>
+            Подобрать по комнате
+          </Button>
+        </div>
+      </HeroText>
+
+      <HeroVisual>
+        <div className="glow" />
+        <img src={lyustra} alt="Сигнатурная люстра Kelvin" />
+        {featured && (
+          <HeroCard as={Link} to={`/product/${featured.slug}`}>
+            {featured.brand && <div className="brand">{featured.brand}</div>}
+            <div className="name">{label(featured.name)}</div>
+            <div className="more">Смотреть →</div>
+          </HeroCard>
+        )}
+      </HeroVisual>
+    </Hero>
   );
 }
 

@@ -1,67 +1,48 @@
-import React from "react";
-import lyustra from "../../assets/lyustra.png";
-import { CartIcon, HeartIcon } from "../icons";
-import catalogIcon from "../../assets/catalog-icon.png";
-import {
-  ManageProductContainer,
-  ProductHeader,
-  ProductSubtitle,
-  AllProductsLink,
-  AllProductsButton,
-  ProductCardsContainer,
-  ProductCard,
-  ProductImage,
-  ProductTitle,
-  ProductCardFooter,
-  PriceContainer,
-  OldPrice,
-  NewPrice,
-  CartButton,
-} from "./Products.styled";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
+import { api, label } from '../../lib/api';
+import ProductCard from '../ProductCard';
+import { Container, SectionHead, TextLink } from '../ui';
+import { ProductsSection, ProductsGrid } from './Products.styled';
 
+/**
+ * "Популярные товары" vitrinasi — real API (/products?limit=8).
+ * Narx katalog javobida yo'q — karta "Уточняйте" ko'rsatadi (to'qilmaydi).
+ */
 function Products() {
-  const products = Array(8).fill({
-    title: "Встраиваемый светильник Novotech",
-    oldPrice: "7 000 so'm",
-    newPrice: "6 399 so'm",
-    image: lyustra,
+  const { data } = useQuery({
+    queryKey: ['products', 'popular'],
+    queryFn: () => api.get('/products?limit=8'),
   });
 
-  return (
-    <ManageProductContainer>
-      <ProductHeader>
-        <ProductSubtitle>Популярные товары</ProductSubtitle>
-        <AllProductsLink to="/all-products">
-          <AllProductsButton>
-            Все товары <img src={catalogIcon} alt="catalogIcon" />
-          </AllProductsButton>
-        </AllProductsLink>
-      </ProductHeader>
-      <ProductCardsContainer>
-        {products.map((product, index) => (
-          <Link to="/product-detail" className="link">
-            <ProductCard key={index}>
-              <div className="heart-icon">
-                <HeartIcon />
-              </div>
+  const products = data?.items ?? [];
 
-              <ProductImage src={product.image} alt={product.title} />
-              <ProductTitle>{product.title}</ProductTitle>
-              <ProductCardFooter>
-                <PriceContainer>
-                  <OldPrice>{product.oldPrice}</OldPrice>
-                  <NewPrice>{product.newPrice}</NewPrice>
-                </PriceContainer>
-                <CartButton>
-                  <CartIcon color="white" width="12" height="16" />
-                </CartButton>
-              </ProductCardFooter>
-            </ProductCard>
-          </Link>
-        ))}
-      </ProductCardsContainer>
-    </ManageProductContainer>
+  return (
+    <ProductsSection>
+      <Container>
+        <SectionHead
+          kicker="Витрина"
+          title="Популярные товары"
+          action={
+            <TextLink as={Link} to="/search">
+              Все товары →
+            </TextLink>
+          }
+        />
+        <ProductsGrid>
+          {products.map((product) => (
+            <ProductCard
+              key={product.id}
+              slug={product.slug}
+              name={label(product.name)}
+              brand={product.brand}
+              image={product.media?.[0]}
+            />
+          ))}
+        </ProductsGrid>
+      </Container>
+    </ProductsSection>
   );
 }
 
