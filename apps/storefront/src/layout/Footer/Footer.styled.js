@@ -1,294 +1,142 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
-export const FooterWrapper = styled.footer`
-  padding: 40px 200px;
-  background-color: rgba(242, 242, 242, 1);
-  display: flex;
-  gap: 150px;
-  color: rgba(69, 69, 69, 1);
+export const FooterWrap = styled.footer`
+  background: ${(p) => p.theme.color.footerInk};
+  color: ${(p) => p.theme.color.footerText};
+  margin-top: 96px;
 
-  @media screen and (max-width: 1024px) {
-    padding: 40px 100px;
-    gap: 80px;
-    flex-wrap: wrap;
-  }
-
-  @media screen and (max-width: 768px) {
-    padding: 30px 50px;
-    gap: 50px;
-    flex-direction: column;
-  }
-
-  @media screen and (max-width: 480px) {
-    padding: 25px 20px;
-    gap: 40px;
-  }
-
-  @media screen and (max-width: 375px) {
-    padding: 20px 15px;
-    gap: 30px;
-  }
-
-  @media screen and (min-width: 1440px) {
-    padding: 50px 250px;
-    gap: 180px;
+  .edge {
+    height: 4px;
+    background: ${(p) => p.theme.gradient};
   }
 `;
 
-export const FooterSectionOne = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex: 1;
-  min-width: 200px;
+export const FooterGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1.4fr 1fr 1fr 1.2fr;
+  gap: 40px;
+  padding-top: 48px;
+  padding-bottom: 36px;
 
-  @media screen and (max-width: 1024px) {
-    width: 100%;
-    flex-direction: row;
-    flex-wrap: wrap;
-    justify-content: space-between;
-    align-items: center;
-    gap: 30px;
-    margin-bottom: 40px;
+  @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
+    grid-template-columns: 1fr 1fr;
   }
 
-  @media screen and (max-width: 768px) {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 20px;
-    margin-bottom: 30px;
-  }
-
-  @media screen and (max-width: 480px) {
-    align-items: left;
-    text-align: center;
-    gap: 15px;
+  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
+    grid-template-columns: 1fr;
+    gap: 28px;
+    padding-top: 36px;
   }
 `;
 
-export const LogoFooter = styled.img`
-  height: 50px;
-  width: auto;
-  object-fit: contain;
-
-  @media screen and (max-width: 1024px) {
-    order: 1;
+export const BrandCol = styled.div`
+  .mark {
+    font-family: ${(p) => p.theme.font.serif};
+    font-weight: 600;
+    font-size: 34px;
+    color: ${(p) => p.theme.color.base};
   }
 
-  @media screen and (max-width: 768px) {
-    order: 1;
-    height: 40px;
+  .tagline {
+    font-family: ${(p) => p.theme.font.serif};
+    font-style: italic;
+    font-size: 17px;
+    color: ${(p) => p.theme.color.inkMuted};
+    margin: 6px 0 18px;
   }
 
-  @media screen and (max-width: 480px) {
-    height: 35px;
+  .details {
+    font-size: 13px;
+    line-height: 1.7;
   }
 
-  @media screen and (max-width: 375px) {
-    height: 30px;
-  }
-`;
+  a {
+    color: ${(p) => p.theme.color.footerText};
 
-export const FooterPhone = styled.a`
-  text-decoration: none;
-  font-size: 20px;
-  font-weight: 700;
-  color: rgba(69, 69, 69, 1);
-  margin-bottom: 10px;
-
-  @media screen and (max-width: 1024px) {
-    order: 2;
-    font-size: 22px;
-  }
-
-  @media screen and (max-width: 768px) {
-    order: 2;
-    font-size: 20px;
-  }
-
-  @media screen and (max-width: 480px) {
-    font-size: 18px;
-  }
-
-  @media screen and (max-width: 375px) {
-    font-size: 16px;
-  }
-`;
-
-export const PaymentLogos = styled.img`
-  width: 200px;
-  height: auto;
-  object-fit: contain;
-
-  @media screen and (max-width: 1024px) {
-    order: 3;
-    width: 180px;
-  }
-
-  @media screen and (max-width: 768px) {
-    order: 4;
-    width: 160px;
-  }
-
-  @media screen and (max-width: 480px) {
-    width: 140px;
-  }
-
-  @media screen and (max-width: 375px) {
-    width: 120px;
-  }
-`;
-
-export const FooterLink = styled.a`
-  color: rgba(69, 69, 69, 1);
-  font-size: 16px;
-  font-weight: 600;
-  opacity: 50%;
-  text-decoration: none;
-
-  &:nth-of-type(1) {
-    @media screen and (max-width: 1024px) {
-      order: 4;
+    &:hover {
+      color: ${(p) => p.theme.color.base};
     }
   }
+`;
 
-  &:nth-of-type(2) {
-    @media screen and (max-width: 1024px) {
-      order: 4;
-    }
+export const FooterCol = styled.div`
+  .head {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: ${(p) => p.theme.color.brassDark};
+    margin-bottom: 16px;
   }
 
-  @media screen and (max-width: 375px) {
-    font-size: 14px;
+  .links {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    font-size: 13px;
+  }
+
+  a {
+    color: ${(p) => p.theme.color.footerText};
+
+    &:hover {
+      color: ${(p) => p.theme.color.base};
+    }
   }
 `;
 
-export const VkIconsContainer = styled.div`
+export const PayChips = styled.div`
+  display: flex;
+  gap: 10px;
+  margin-bottom: 22px;
+  flex-wrap: wrap;
+
+  span {
+    padding: 8px 14px;
+    border: 1px solid rgba(201, 191, 169, 0.25);
+    border-radius: 8px;
+    font-size: 13px;
+    color: ${(p) => p.theme.color.footerText};
+
+    &.strong {
+      font-weight: 600;
+      color: ${(p) => p.theme.color.base};
+    }
+  }
+`;
+
+export const Socials = styled.div`
   display: flex;
   gap: 12px;
-  margin-top: 10px;
 
-  @media screen and (max-width: 1024px) {
-    order: 5;
-    margin-top: 0;
-  }
-
-  @media screen and (max-width: 768px) {
-    order: 3;
-    margin-top: 0;
-  }
-
-  @media screen and (max-width: 480px) {
+  a {
+    width: 36px;
+    height: 36px;
+    border-radius: 999px;
+    border: 1px solid rgba(201, 191, 169, 0.25);
+    display: flex;
+    align-items: center;
     justify-content: center;
+    color: ${(p) => p.theme.color.footerText};
+
+    &:hover {
+      color: ${(p) => p.theme.color.base};
+      border-color: rgba(201, 191, 169, 0.5);
+    }
   }
 `;
 
-export const FooterSectionTwo = styled.div`
-  white-space: nowrap;
-  width: max-content;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex: 1;
-  min-width: 150px;
+export const BottomBar = styled.div`
+  border-top: 1px solid rgba(201, 191, 169, 0.14);
 
-  @media screen and (max-width: 1024px) {
-    min-width: auto;
-    flex: 1;
-  }
-
-  @media screen and (max-width: 768px) {
-    width: 100%;
-  }
-
-  @media screen and (max-width: 480px) {
-    align-items: left;
-    text-align: left;
-  }
-`;
-
-export const FooterSectionThree = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  flex: 2;
-  min-width: 300px;
-
-  @media screen and (max-width: 1024px) {
-    min-width: auto;
-    flex: 1;
-  }
-
-  @media screen and (max-width: 768px) {
-    width: 100%;
-  }
-
-  @media screen and (max-width: 480px) {
-    align-items: left;
-    text-align: left;
-  }
-`;
-
-export const FooterTitle = styled.h3`
-  font-size: 20px;
-  font-weight: 700;
-  margin: 0 0 10px 0;
-  color: rgba(69, 69, 69, 1);
-
-  @media screen and (max-width: 375px) {
-    font-size: 18px;
-  }
-`;
-
-export const SectionTwoLink = styled.a`
-  text-decoration: none;
-  font-size: 16px;
-  color: rgba(69, 69, 69, 1);
-  opacity: 50%;
-
-  @media screen and (max-width: 375px) {
-    font-size: 14px;
-    white-space: normal;
-    text-align: left;
-  }
-`;
-
-export const ProductsGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-
-  @media screen and (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    gap: 15px;
-  }
-
-  @media screen and (max-width: 768px) {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 15px;
-  }
-
-  @media screen and (max-width: 480px) {
-    grid-template-columns: 1fr;
+  .inner {
+    padding-top: 18px;
+    padding-bottom: 18px;
+    display: flex;
+    justify-content: space-between;
     gap: 12px;
-    width: 100%;
-  }
-`;
-
-export const ProductLink = styled.a`
-  text-decoration: none;
-  font-size: 16px;
-  color: rgba(69, 69, 69, 1);
-  opacity: 50%;
-  white-space: nowrap;
-
-  @media screen and (max-width: 480px) {
-    white-space: normal;
-    text-align: left;
-    padding: 5px 0;
-  }
-
-  @media screen and (max-width: 375px) {
-    font-size: 14px;
+    flex-wrap: wrap;
+    font-size: 12px;
+    color: ${(p) => p.theme.color.inkMuted};
   }
 `;
