@@ -94,7 +94,7 @@ function Navbar() {
                 <span className="label">{user.firstName ?? t('account.account')}</span>
               </button>
             ) : (
-              <button className="action login" onClick={() => navigate('/account')}>
+              <button className="action login" onClick={() => navigate('/auth')}>
                 <IconUser size={20} />
                 <span className="label">{t('account.login')}</span>
               </button>
@@ -171,7 +171,7 @@ function Navbar() {
 
         <div className="group-label">{t('account.account')}</div>
         <div className="drawer-links">
-          <Link to="/account" onClick={() => setOpen(false)}>
+          <Link to={user ? '/account' : '/auth'} onClick={() => setOpen(false)}>
             {user ? t('account.account') : t('account.login')}
           </Link>
           <Link to="/favorites" onClick={() => setOpen(false)}>{t('nav.favorites')}</Link>

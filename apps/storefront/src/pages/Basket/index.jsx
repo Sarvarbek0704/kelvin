@@ -359,7 +359,7 @@ function Basket() {
                 {t('cart.checkout')}
               </Button>
             ) : (
-              <Button type="button" $full onClick={() => navigate('/account')}>
+              <Button type="button" $full onClick={() => navigate('/auth')}>
                 {t('cart.login_to_checkout')}
               </Button>
             )}

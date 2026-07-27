@@ -114,7 +114,7 @@ function Orders() {
             text={t('orders.login_text')}
           />
           <p style={{ textAlign: 'center', marginTop: -8 }}>
-            <Link to="/account" style={{ fontWeight: 600 }}>
+            <Link to="/auth" style={{ fontWeight: 600 }}>
               {t('account.login')} →
             </Link>
           </p>
