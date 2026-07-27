@@ -64,3 +64,7 @@ yarn.lock
 
 # --- Local ---------------------------------------------------------------
 docker-compose.override.yml
+
+# --- Dizayn referens (lokal — public repo'ga kirmaydi) -------------------
+design-handoff/
+*.zip

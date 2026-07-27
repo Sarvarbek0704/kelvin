@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /account
+Disallow: /basket
+Disallow: /orders
+Disallow: /*?
+
+Sitemap: https://kelvin.uz/sitemap.xml

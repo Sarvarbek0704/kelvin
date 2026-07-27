@@ -30,7 +30,9 @@ BigInt.prototype.toJSON = function (this: bigint): string {
 };
 
 async function bootstrap(): Promise<void> {
-  const app = await NestFactory.create(AppModule, { bufferLogs: true });
+  // ⚠️ rawBody: to'lov webhook imzosi RAW body ustidan tekshiriladi (docs/08 §11.3).
+  //    Parse qilingan JSON qayta serializatsiya imzoni buzadi.
+  const app = await NestFactory.create(AppModule, { bufferLogs: true, rawBody: true });
 
   app.useLogger(app.get(Logger));
 

@@ -203,7 +203,7 @@ describe('Money', () => {
       expect(downPayment.amount + sum).toBe(total.amount);
     });
 
-    it('12% foiz bilan umumiy to\'lanadigan summa', () => {
+    it("12% foiz bilan umumiy to'lanadigan summa", () => {
       const principal = Money.fromMajor(2_000_000, 'UZS');
       const interest = principal.percentage(1200n); // 1200 bp = 12%
       const totalPayable = principal.add(interest);

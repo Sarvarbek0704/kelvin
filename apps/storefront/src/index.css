@@ -1,4 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&display=swap");
+/* ⚠️ Font endi index.html'da async yuklanadi (preconnect + media=print trick) —
+   render-blocking @import olib tashlandi (docs/13 §10.10 arzon yutuq). */
 
 * {
   padding: 0;
@@ -6,8 +7,12 @@
   box-sizing: border-box;
 }
 
+/* Redizayn: asosiy shrift Golos Text (GlobalStyle ham qo'llaydi; bu esa
+   styled-components yuklanmasдан oldingi lahzada ham to'g'ri ko'rinsin uchun). */
 body {
-  font-family: "Manrope", sans-serif;
+  font-family: "Golos Text", system-ui, -apple-system, sans-serif;
+  background: #F5F1EA;
+  color: #575147;
 }
 
 .container {

@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react';
 
 const CatalogIcon = (props) => (
   <svg
@@ -9,8 +9,8 @@ const CatalogIcon = (props) => (
     viewBox="0 0 25 16"
     {...props}
   >
-    <path stroke={props.color ?? "#fff"} strokeWidth={2} d="M0 1h25M0 8h18M0 15h25" />
+    <path stroke={props.color ?? '#fff'} strokeWidth={2} d="M0 1h25M0 8h18M0 15h25" />
   </svg>
-)
+);
 
-export default CatalogIcon
+export default CatalogIcon;

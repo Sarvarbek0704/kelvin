@@ -1,12 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 const OkIcon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={22}
-    height={21}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={22} height={21} fill="none" {...props}>
     <rect width={22} height={21} fill="#4C4C4C" rx={10.5} />
     <path
       fill="#fff"

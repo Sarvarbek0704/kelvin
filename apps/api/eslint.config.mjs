@@ -90,8 +90,11 @@ export default tseslint.config(
   {
     files: ['**/*.spec.ts', '**/*.test.ts', 'test/**/*.ts'],
     rules: {
+      // Testlar untyped JSON javob tanasi (`res.body: any`) bilan ishlaydi.
       '@typescript-eslint/no-unsafe-assignment': 'off',
       '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-non-null-assertion': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
     },

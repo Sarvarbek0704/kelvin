@@ -1,60 +1,112 @@
 import 'reflect-metadata';
 
 import { NestFactory } from '@nestjs/core';
+import { ConfigService } from '@nestjs/config';
 import { Logger } from 'nestjs-pino';
+import { Worker } from 'bullmq';
 
 import { AppModule } from './app.module';
+import { type AppConfig } from './config/configuration';
+import { OutboxRelayService, type OutboxJobData } from './shared/outbox/outbox-relay.service';
+import { OUTBOX_QUEUE_NAME } from './shared/outbox/outbox.constants';
+import { MediaProcessingService } from './modules/catalog/media/media-processing.service';
+import { SearchIndexerService } from './modules/catalog/product/search-indexer.service';
+import { OrderService } from './modules/order/order.service';
 
 /**
  * Background worker — alohida process.
  *
- * ═══════════════════════════════════════════════════════════════════════════
- *  ⚠️  SKELET. Job'lar hali implementatsiya qilinmagan.
- * ═══════════════════════════════════════════════════════════════════════════
+ * Faza 0 da ishlaydigan ish:
+ *   1. Outbox relay — PENDING event'larni BullMQ'ga publish qiladi (poll).
+ *   2. Outbox consumer — BullMQ'dan olib, event tipiga qarab dispatch qiladi.
+ *      (Faza 0 da consumer faqat ACK/log qiladi; haqiqiy handler'lar keyingi
+ *      fazalarda: search.reindex (Faza 2), reservation.releaseExpired (Faza 3)...)
  *
- * Nega API'dan ALOHIDA process:
+ * ⚠️ HAR JOB IDEMPOTENT BO'LISHI SHART — at-least-once (ADR-0004).
  *
- *  1. `media.processImage` — 1000 mahsulot × 5 rasm resize/webp. CPU og'ir.
- *     API bilan bir processda bo'lsa, HTTP javob vaqti buziladi.
- *
- *  2. `report.export` — katta ma'lumot bo'yicha Excel/PDF. Sekin.
- *
- *  3. `reservation.releaseExpired` — har daqiqa ishlaydigan cron.
- *     Muddati tugagan rezervlarni bo'shatadi. Bu ishlamasa — tovar
- *     bekorga bloklanadi va sotilmaydi.
- *
- *  4. Mustaqil masshtablash: aksiya kunida worker'lar ko'paytiriladi.
- *
- * Rejalashtirilgan job'lar (docs/02-architecture.md §7):
- *
- *   outbox.publish            — transactional outbox        (Faza 0)  ← ADR-0004
- *   media.processImage        — resize, webp, blur          (Faza 1)
- *   search.reindexVariant     — Meilisearch sinxronizatsiya (Faza 2)
- *   reservation.releaseExpired — TTL tugagan rezerv          (Faza 3)  ← kritik
- *   cart.abandonedReminder    — tashlab ketilgan savat       (Faza 3)
- *   payment.reconcile         — provayder hisoboti solishtirish (Faza 4)
- *   installment.dueReminder   — rassrochka eslatmasi (SMS)   (Faza 5)
- *   installment.markOverdue   — kechikkan to'lov             (Faza 5)
- *   notification.send         — SMS (Eskiz) / Telegram       (Faza 3)
- *   report.export             — Excel / PDF                  (Faza 9)
- *   analytics.computeRfm      — mijoz segmentatsiyasi        (Faza 9)
- *
- * ⚠️  HAR JOB IDEMPOTENT BO'LISHI SHART. BullMQ retry qiladi, tarmoq
- *     uziladi, worker yiqiladi. Ikki marta bajarilgan job natijani
- *     buzmasligi kerak — ayniqsa `payment.*` va `reservation.*`.
- *     Bu talab, tavsiya emas. docs/adr/0004-transactional-outbox.md
+ * @see docs/02-architecture.md §7
  */
-async function bootstrap(): Promise<void> {
-  // HTTP server yo'q — bu faqat worker.
-  const app = await NestFactory.createApplicationContext(AppModule, { bufferLogs: true });
+const RELAY_INTERVAL_MS = 500;
 
+async function bootstrap(): Promise<void> {
+  const app = await NestFactory.createApplicationContext(AppModule, { bufferLogs: true });
   const logger = app.get(Logger);
   app.useLogger(logger);
-
-  // BullMQ job'lar tugashi uchun graceful shutdown majburiy.
   app.enableShutdownHooks();
 
-  logger.log('Kelvin worker ishga tushdi — hozircha job registratsiya qilinmagan');
+  const config = app.get(ConfigService<AppConfig, true>);
+  const redis = config.get('redis', { infer: true });
+  const relay = app.get(OutboxRelayService);
+  const mediaProcessing = app.get(MediaProcessingService);
+  const searchIndexer = app.get(SearchIndexerService);
+  const orderService = app.get(OrderService);
+
+  // --- 1. Outbox relay poller ------------------------------------------------
+  let running = true;
+  const poll = async (): Promise<void> => {
+    while (running) {
+      try {
+        const published = await relay.processBatch();
+        // Ish bo'lsa darhol yana, bo'lmasa biroz kutamiz.
+        if (published === 0) {
+          await sleep(RELAY_INTERVAL_MS);
+        }
+      } catch (err) {
+        logger.error(err instanceof Error ? err.message : String(err), 'OutboxRelay');
+        await sleep(RELAY_INTERVAL_MS);
+      }
+    }
+  };
+
+  // --- 2. Outbox consumer ----------------------------------------------------
+  const consumer = new Worker<OutboxJobData>(
+    OUTBOX_QUEUE_NAME,
+    async (job) => {
+      logger.log(`Outbox event: ${job.data.eventType} (${job.data.aggregateId})`);
+      // Event tipiga qarab dispatch (idempotent handler'lar).
+      switch (job.data.eventType) {
+        case 'MediaUploaded':
+          await mediaProcessing.process(job.data.aggregateId);
+          break;
+        case 'ProductPublished':
+        case 'ProductVariantsGenerated':
+        case 'ProductUpdated':
+          // Meilisearch reindex (ACTIVE bo'lmasa indeksdan olib tashlanadi).
+          await searchIndexer.indexProduct(job.data.aggregateId);
+          break;
+        case 'PaymentSucceeded':
+          // ⚠️ Order sagasi (durability): IDEMPOTENT — allaqachon CONFIRMED bo'lsa no-op.
+          //    Sinxron fast-path'ga qo'shimcha (process yiqilsa relay qayta uradi).
+          await orderService.onPaymentSucceeded(job.data.aggregateId);
+          break;
+        default:
+          break;
+      }
+    },
+    {
+      connection: {
+        host: redis.host,
+        port: redis.port,
+        db: redis.db,
+        ...(redis.password !== undefined && { password: redis.password }),
+      },
+    },
+  );
+
+  const shutdown = async (): Promise<void> => {
+    running = false;
+    await consumer.close();
+    await app.close();
+  };
+  process.on('SIGTERM', () => void shutdown());
+  process.on('SIGINT', () => void shutdown());
+
+  logger.log('Kelvin worker ishga tushdi — outbox relay + consumer faol');
+  void poll();
+}
+
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
 void bootstrap();

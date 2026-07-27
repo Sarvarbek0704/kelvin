@@ -1,4 +1,4 @@
-import * as React from "react"
+import * as React from 'react';
 
 const NetworkIcon = (props) => (
   <svg
@@ -10,13 +10,13 @@ const NetworkIcon = (props) => (
     {...props}
   >
     <path
-      stroke={props.color ?? "#454545"}
+      stroke={props.color ?? '#454545'}
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={2}
       d="M1 21v-5m6.667 5V11m6.666 10V6M21 21V1"
     />
   </svg>
-)
+);
 
-export default NetworkIcon
+export default NetworkIcon;

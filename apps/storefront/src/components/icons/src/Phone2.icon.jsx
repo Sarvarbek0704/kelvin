@@ -1,12 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 const Phone2Icon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={21}
-    height={21}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={21} height={21} fill="none" {...props}>
     <rect width={21} height={21} fill="#E5E5E5" rx={10.5} />
     <path
       fill="#fff"

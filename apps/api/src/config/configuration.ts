@@ -114,6 +114,32 @@ class EnvironmentVariables {
   @IsOptional()
   MEILISEARCH_API_KEY?: string;
 
+  // --- Object storage (S3-mos, MinIO) — docs/05 §1.5 -----------------------
+  @IsString()
+  S3_ENDPOINT = 'http://localhost:9000';
+
+  @IsString()
+  S3_REGION = 'us-east-1';
+
+  @IsString()
+  S3_BUCKET = 'kelvin-dev';
+
+  @IsString()
+  S3_ACCESS_KEY = 'kelvin';
+
+  @IsString()
+  S3_SECRET_KEY = 'kelvin_dev_only';
+
+  /** MinIO uchun path-style majburiy (virtual-host emas). */
+  @IsBoolean()
+  @IsOptional()
+  S3_FORCE_PATH_STYLE = true;
+
+  /** Ommaviy URL bazasi (CDN/MinIO). Bo'sh bo'lsa endpoint+bucket ishlatiladi. */
+  @IsString()
+  @IsOptional()
+  S3_PUBLIC_URL?: string;
+
   // --- Rezerv (docs/06-inventory-and-reservations.md §3) -------------------
   /**
    * Savat rezervi qancha yashaydi (sekundda).
@@ -161,9 +187,60 @@ export interface AppConfig {
   };
   argon2: { memoryCost: number; timeCost: number; parallelism: number };
   search: { host: string; apiKey?: string };
+  storage: {
+    endpoint: string;
+    region: string;
+    bucket: string;
+    accessKey: string;
+    secretKey: string;
+    forcePathStyle: boolean;
+    publicUrl?: string;
+  };
   inventory: { reservationTtlSeconds: number };
   observability: { logLevel: string; otelEnabled: boolean; sentryDsn?: string };
   throttle: { ttl: number; limit: number };
+}
+
+/**
+ * Env qiymatlari — matn. Bu maydonlar son/boolean ga aylantiriladi.
+ *
+ * ⚠️ Nega qo'lda: `enableImplicitConversion` `emitDecoratorMetadata` ga tayanadi.
+ *    tsc uni emit qiladi, lekin esbuild/tsx va ba'zi ts-jest rejimlarida yo'q —
+ *    natijada "6380" string qolib, @IsInt yiqiladi. Aniq coerce transpiler'dan
+ *    MUSTAQIL: ilova ham (tsc), test ham (tsx/ts-jest) bir xil ishlaydi.
+ */
+const NUMERIC_ENV_KEYS = [
+  'PORT',
+  'REDIS_PORT',
+  'REDIS_DB',
+  'ARGON2_MEMORY_COST',
+  'ARGON2_TIME_COST',
+  'ARGON2_PARALLELISM',
+  'RESERVATION_TTL_SECONDS',
+  'THROTTLE_TTL',
+  'THROTTLE_LIMIT',
+] as const;
+
+const BOOLEAN_ENV_KEYS = ['OTEL_ENABLED', 'S3_FORCE_PATH_STYLE'] as const;
+
+function coerceEnv(raw: Record<string, unknown>): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...raw };
+  for (const key of NUMERIC_ENV_KEYS) {
+    const value = out[key];
+    if (typeof value === 'string' && value.trim() !== '') {
+      const num = Number(value);
+      if (!Number.isNaN(num)) {
+        out[key] = num;
+      }
+    }
+  }
+  for (const key of BOOLEAN_ENV_KEYS) {
+    const value = out[key];
+    if (typeof value === 'string') {
+      out[key] = value.toLowerCase() === 'true' || value === '1';
+    }
+  }
+  return out;
 }
 
 /**
@@ -172,7 +249,7 @@ export interface AppConfig {
  * Xato bo'lsa — ilova ishga tushmaydi va sabab aniq ko'rsatiladi.
  */
 export function validateEnv(raw: Record<string, unknown>): EnvironmentVariables {
-  const validated = plainToInstance(EnvironmentVariables, raw, {
+  const validated = plainToInstance(EnvironmentVariables, coerceEnv(raw), {
     enableImplicitConversion: true,
   });
 
@@ -234,6 +311,15 @@ export function loadConfig(): AppConfig {
     search: {
       host: env.MEILISEARCH_HOST,
       ...(env.MEILISEARCH_API_KEY !== undefined && { apiKey: env.MEILISEARCH_API_KEY }),
+    },
+    storage: {
+      endpoint: env.S3_ENDPOINT,
+      region: env.S3_REGION,
+      bucket: env.S3_BUCKET,
+      accessKey: env.S3_ACCESS_KEY,
+      secretKey: env.S3_SECRET_KEY,
+      forcePathStyle: env.S3_FORCE_PATH_STYLE,
+      ...(env.S3_PUBLIC_URL !== undefined && { publicUrl: env.S3_PUBLIC_URL }),
     },
     inventory: { reservationTtlSeconds: env.RESERVATION_TTL_SECONDS },
     observability: {

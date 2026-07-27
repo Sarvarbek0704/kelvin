@@ -1,0 +1,29 @@
+{
+  "name": "@kelvin/config",
+  "version": "0.1.0",
+  "description": "Kelvin — umumiy tsconfig / eslint / prettier presetlari",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./tsconfig.base.json": "./tsconfig.base.json",
+    "./eslint.base.mjs": "./eslint.base.mjs",
+    "./prettier": "./prettier.config.mjs"
+  },
+  "files": [
+    "tsconfig.base.json",
+    "eslint.base.mjs",
+    "prettier.config.mjs"
+  ],
+  "scripts": {
+    "lint": "echo \"config: nothing to lint\"",
+    "typecheck": "echo \"config: nothing to typecheck\"",
+    "test": "echo \"no tests\"",
+    "test:unit": "echo \"no tests\"",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "peerDependencies": {
+    "eslint": "^9.17.0",
+    "typescript": "^5.7.2",
+    "typescript-eslint": "^8.18.0"
+  }
+}

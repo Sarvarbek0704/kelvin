@@ -1,12 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 const YuklarIcon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={48}
-    height={48}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={48} height={48} fill="none" {...props}>
     <g fill="#fff" clipPath="url(#a)">
       <path d="M15.866 36.703H6.728V25.406H0V48h22.594V25.406h-6.728v11.297Z" />
       <path d="M9.54 25.406h3.513v8.485H9.541v-8.485Zm31.732 11.297h-9.138V25.406h-6.728V48H48V25.406h-6.728v11.297Z" />

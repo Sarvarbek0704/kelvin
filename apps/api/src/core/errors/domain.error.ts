@@ -68,8 +68,72 @@ export class ConflictError extends DomainError {
   readonly httpStatus = 409;
 }
 
+/**
+ * Yetkazib berish sloti to'lgan — bron qilib bo'lmadi (docs/07 §8).
+ * ⚠️ Oversell bilan bir xil race: atomik shartli UPDATE 0 qator qaytardi. 409.
+ */
+export class SlotUnavailableError extends DomainError {
+  readonly code = 'SLOT_UNAVAILABLE';
+  readonly httpStatus = 409;
+
+  constructor(slotId: string) {
+    super('Yetkazib berish sloti band', { slotId });
+  }
+}
+
+/**
+ * Yetarli qoldiq yo'q — rezerv qilib bo'lmadi (oversell'ga qarshi).
+ *
+ * ⚠️ Bu KUTILGAN holat, bug emas: atomik shartli UPDATE 0 qator qaytardi
+ *    (docs/06 §2.4). Deadlock/timeout EMAS — aniq "qoldiq yetmadi". 409.
+ */
+export class InsufficientStockError extends DomainError {
+  readonly code = 'INSUFFICIENT_STOCK';
+  readonly httpStatus = 409;
+
+  constructor(variantId: string, requested: number) {
+    super('Yetarli qoldiq yo‘q', { variantId, requested });
+  }
+}
+
 /** Autentifikatsiya bor, lekin ruxsat yo'q. */
 export class ForbiddenError extends DomainError {
   readonly code = 'FORBIDDEN';
   readonly httpStatus = 403;
+}
+
+/**
+ * Webhook hodisasi replay oynasidan tashqarida (docs/08 §11.4).
+ * ⚠️ Juda eski YOKI kelajakdan — takroriy hujum (replay) signali. 400.
+ */
+export class ReplayAttackError extends DomainError {
+  readonly code = 'REPLAY_REJECTED';
+  readonly httpStatus = 400;
+
+  constructor(reason: string) {
+    super('Webhook hodisasi replay oynasidan tashqarida', { reason });
+  }
+}
+
+/**
+ * Webhook noma'lum tranzaksiyaga ishora qiladi (docs/08 §5.5).
+ * ⚠️ Provayder ID'si bo'yicha to'lov topilmadi — yetim webhook. 404.
+ */
+export class UnknownTransactionError extends DomainError {
+  readonly code = 'UNKNOWN_TRANSACTION';
+  readonly httpStatus = 404;
+
+  constructor(providerTransactionId: string) {
+    super('Noma‘lum to‘lov tranzaksiyasi', { providerTransactionId });
+  }
+}
+
+/** So'ralgan to'lov provayderi ro'yxatda yo'q (docs/08 §2.4). 404. */
+export class UnknownProviderError extends DomainError {
+  readonly code = 'UNKNOWN_PROVIDER';
+  readonly httpStatus = 404;
+
+  constructor(code: string) {
+    super('Noma‘lum to‘lov provayderi', { provider: code });
+  }
 }

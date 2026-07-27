@@ -9,6 +9,7 @@ import {
 import { ApiExcludeController } from '@nestjs/swagger';
 
 import { PrismaService } from '../../shared/prisma/prisma.service';
+import { Public } from '../../shared/auth/auth.decorators';
 
 /**
  * Health check.
@@ -28,6 +29,7 @@ import { PrismaService } from '../../shared/prisma/prisma.service';
  * @see docs/12-infrastructure.md §4
  */
 @ApiExcludeController()
+@Public()
 @Controller('health')
 export class HealthController {
   constructor(

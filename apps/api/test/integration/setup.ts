@@ -1,3 +1,8 @@
+// ⚠️ MAJBURIY va BIRINCHI: class-transformer'ning enableImplicitConversion'i
+// design-type metadata'ni o'qiydi. Reflect polyfill'siz env validatsiyasi
+// (configuration.ts) string→int konversiyani bajara olmaydi va yiqiladi.
+import 'reflect-metadata';
+
 /**
  * Integration testlar uchun global sozlash.
  *

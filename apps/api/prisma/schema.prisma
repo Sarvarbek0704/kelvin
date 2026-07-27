@@ -417,6 +417,11 @@ model Product {
   /// O'rnatish xizmati taklif qilinadimi (elektrik kerak)
   requiresInstallation Boolean @default(false) @map("requires_installation")
 
+  /// Variant matritsasi o'qlari (sxemasi): [{ attributeCode, valueCodes }].
+  /// Admin matritsani qayta ochishi va regeneratsiya uchun.
+  /// docs/05-catalog-and-search.md §1.3
+  variantAxes Json @default("[]") @map("variant_axes")
+
   metaTitle       Json? @map("meta_title")
   metaDescription Json? @map("meta_description")
 
@@ -1469,8 +1474,108 @@ model PosShift {
 
   user User @relation(fields: [userId], references: [id], onDelete: Restrict)
 
+  transactions PosTransaction[]
+
   @@index([userId, status])
   @@map("pos_shifts")
+}
+
+/// POS sotuvi (offline kassa, docs/15 §10). ⚠️ Fiskal chek YO'Q (yuridik — keyingi ish).
+model PosTransaction {
+  id      String @id @default(uuid(7)) @db.Uuid
+  shiftId String @map("shift_id") @db.Uuid
+  number  String @unique
+
+  /// CASH | CARD
+  paymentMethod String @map("payment_method")
+  /// TIYINDA
+  totalAmount BigInt @map("total_amount")
+  currency    String @default("UZS")
+
+  /// COMPLETED | VOIDED
+  status String @default("COMPLETED")
+
+  /// Qaysi ombordan sotildi (do'kon zali — onlayndan ajratilgan)
+  warehouseId String @map("warehouse_id") @db.Uuid
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  shift PosShift             @relation(fields: [shiftId], references: [id], onDelete: Restrict)
+  items PosTransactionItem[]
+
+  @@index([shiftId])
+  @@map("pos_transactions")
+}
+
+model PosTransactionItem {
+  id            String @id @default(uuid(7)) @db.Uuid
+  transactionId String @map("transaction_id") @db.Uuid
+  variantId     String @map("variant_id") @db.Uuid
+  sku           String
+  quantity      Int
+  /// TIYINDA
+  unitAmount  BigInt @map("unit_amount")
+  totalAmount BigInt @map("total_amount")
+
+  transaction PosTransaction @relation(fields: [transactionId], references: [id], onDelete: Cascade)
+
+  @@index([transactionId])
+  @@map("pos_transaction_items")
+}
+
+/// Mijoz segmenti (docs/10 §9.1, §9.3). MANUAL yoki RFM.
+model CustomerSegment {
+  id   String @id @default(uuid(7)) @db.Uuid
+  code String @unique
+  name Json
+  description String?
+
+  /// MANUAL | RFM
+  kind String @default("MANUAL")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  members CustomerSegmentMember[]
+
+  @@map("customer_segments")
+}
+
+model CustomerSegmentMember {
+  id         String @id @default(uuid(7)) @db.Uuid
+  segmentId  String @map("segment_id") @db.Uuid
+  /// ⚠️ Plain UUID (Customer relation qo'shilmaydi — churn'dan qochish)
+  customerId String @map("customer_id") @db.Uuid
+
+  /// RFM skori (masalan "5-4-3"), segment RFM bo'lsa
+  rfmScore String? @map("rfm_score")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  segment CustomerSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+
+  @@unique([segmentId, customerId])
+  @@index([customerId])
+  @@map("customer_segment_members")
+}
+
+/// Banner (docs/10 §9.5). Bosh sahifa/kategoriya reklama bloklari.
+model Banner {
+  id       String  @id @default(uuid(7)) @db.Uuid
+  title    Json
+  imageUrl String  @map("image_url")
+  linkUrl  String? @map("link_url")
+
+  /// HOME_HERO | HOME_STRIP | CATEGORY
+  position  String @default("HOME_HERO")
+  sortOrder Int    @default(0) @map("sort_order")
+  isActive  Boolean @default(true) @map("is_active")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([position, isActive])
+  @@map("banners")
 }
 
 // ============================================================================

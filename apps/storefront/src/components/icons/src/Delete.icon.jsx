@@ -1,12 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 const DeleteIcon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={21}
-    height={26}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={21} height={26} fill="none" {...props}>
     <path
       fill="#454545"
       d="M18.667 7A1.167 1.167 0 0 0 17.5 8.167v13.056a2.24 2.24 0 0 1-2.345 2.11h-9.31a2.24 2.24 0 0 1-2.345-2.11V8.167a1.167 1.167 0 0 0-2.333 0v13.056a4.57 4.57 0 0 0 4.678 4.444h9.31a4.57 4.57 0 0 0 4.678-4.444V8.167A1.167 1.167 0 0 0 18.667 7Zm1.166-3.5h-4.666V1.167A1.167 1.167 0 0 0 14 0H7a1.167 1.167 0 0 0-1.167 1.167V3.5H1.167a1.167 1.167 0 0 0 0 2.333h18.666a1.167 1.167 0 1 0 0-2.333Zm-11.666 0V2.333h4.666V3.5H8.167Z"

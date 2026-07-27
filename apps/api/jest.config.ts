@@ -10,7 +10,7 @@ import type { Config } from 'jest';
  * Nega ajratilgan: `pnpm test:unit` har saqlashda ishlashi mumkin.
  * Integration testlar CI'da va commit oldidan.
  *
- * @see docs/13-testing-strategy.md
+ * @see docs/14-testing-strategy.md
  */
 const config: Config = {
   projects: [
@@ -48,8 +48,11 @@ const config: Config = {
         '^@config/(.*)$': '<rootDir>/src/config/$1',
         '^@test/(.*)$': '<rootDir>/test/$1',
       },
+      // ⚠️ isolatedModules YO'Q: NestJS/class-validator emitDecoratorMetadata
+      //    ga tayanadi (env validatsiyasi string→int konversiyasi). isolatedModules
+      //    design-type metadata'ni buzadi. Integration sekinroq, lekin to'g'ri.
       transform: {
-        '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json', isolatedModules: true }],
+        '^.+\\.ts$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.json' }],
       },
     },
   ],
@@ -69,9 +72,9 @@ const config: Config = {
   // Coverage — VOSITA, maqsad emas. Bu chegaralar past sifatli testni
   // yozishga majburlash uchun emas, regressiyani ushlash uchun.
   //
-  // core/ (pairing, Glicko-2, money) uchun chegara YUQORI, chunki u yerda
-  // xato jimgina o'tadi va qimmatga tushadi.
-  // docs/13-testing-strategy.md §10
+  // core/ (Money, narx qoidalari, holat mashinalari) uchun chegara YUQORI,
+  // chunki u yerda xato jimgina o'tadi va qimmatga tushadi.
+  // docs/14-testing-strategy.md §10
   coverageThreshold: {
     global: {
       branches: 60,

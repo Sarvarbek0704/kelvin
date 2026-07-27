@@ -1,12 +1,6 @@
-import * as React from "react";
+import * as React from 'react';
 const MedalIcon = (props) => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width={56}
-    height={60}
-    fill="none"
-    {...props}
-  >
+  <svg xmlns="http://www.w3.org/2000/svg" width={56} height={60} fill="none" {...props}>
     <path
       fill="#fff"
       d="M27.496 47.646c13.157 0 23.823-10.666 23.823-23.823S40.653 0 27.496 0 3.673 10.666 3.673 23.823 14.34 47.646 27.496 47.646Z"

@@ -132,6 +132,44 @@ Ya'ni eskirgan index **noqulaylik** keltiradi, **pul yo'qotmaydi**. Bu farq muhi
 
 **Birinchi qator eng ehtimolli.** Agar do'konda 300 ta chiroq bo'lsa, bu ADR bekor qilinadi va bu **normal** — qaror o'lchovsiz qabul qilingan edi va o'lchov uni bekor qildi.
 
+## Qanday o'lchanadi (protokol)
+
+Bu ADR shartli — uni **faqat real katalog ma'lumoti** bilan hal qilish mumkin.
+Raqamlar to'qib bo'lmaydi. Real (yoki realistik sintetik) SKU to'plami bo'lgach,
+quyidagi **bir xil ish yuki** ikkala backend'da o'lchanadi va solishtiriladi.
+
+**Old shart — realistik ma'lumot:** N ∈ {300, 1 000, 5 000, 20 000} SKU, har biri
+15+ atribut bilan (production taqsimotiga yaqin — ba'zi atributlar siyrak).
+`PostgresSearchAdapter` bir xil `SearchPort` ortida amalga oshiriladi (JSONB+GIN,
+`pg_trgm`, agregat facet count).
+
+**Ish yuki (har N uchun, har backend'da):**
+
+| Stsenariy                     | Nima o'lchanadi                                                     |
+| ----------------------------- | ------------------------------------------------------------------ |
+| Bo'sh so'rov + barcha facet   | facet count'li birinchi sahifa **p50/p95/p99 latensiya**           |
+| 3 filtr tanlangan (o'zini-istisno) | facet qayta hisoblash latensiyasi (eng og'ir yo'l)            |
+| Matn qidiruv (typo bilan)     | latensiya + relevanslik (qo'lda 20 so'rov reyting)                 |
+| Yozuv o'tkazuvchanligi        | 1 000 mahsulot indekslash/reindeks vaqti                           |
+
+**Resurs va operatsion metrikalar:**
+
+- Meilisearch **RAM** (N bo'yicha; indeks xotirada) va disk
+- Postgres **indeks hajmi** (GIN) va `EXPLAIN ANALYZE` — facet so'rovlar indeksdan foydalanyaptimi
+- Sinxronizatsiya **lag** (outbox → indeks) p95 — faqat Meili yo'lida
+
+**Qaror qoidasi (o'lchovdan keyin):**
+
+- Agar N < 500 **va** Postgres facet p95 < ~150 ms bo'lsa → **Meilisearch olib tashlanadi**
+  (§ "Qachon qayta ko'riladi" 1-qator). Kamroq servis = kamroq operatsion yuk.
+- Agar 500 ≤ N ≤ 5 000 bo'lsa → p95 va operatsion narx solishtiriladi; teng bo'lsa
+  Postgres afzal (u allaqachon bor).
+- Agar N > 5 000 **yoki** Postgres facet p95 sezilarli yomon bo'lsa → **Meilisearch qoladi**.
+
+**Ishga tushirish:** benchmark reproduksiya qilinadigan skript bo'lishi shart (seed →
+ikkala adapter → `autocannon`/`k6` bir xil so'rovlar → jadval). Natija shu ADR'ga
+qo'shimcha (yoki bekor qiluvchi) sifatida yoziladi. **O'lchovsiz bu ADR o'zgармaydi.**
+
 ## Havolalar
 
 - [05-catalog-and-search.md](../05-catalog-and-search.md)

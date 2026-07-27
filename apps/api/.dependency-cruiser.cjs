@@ -1,5 +1,5 @@
 /**
- * FARZIN — arxitektura chegaralari.
+ * KELVIN — arxitektura chegaralari.
  *
  * Bu fayl ADR-0001 (modular monolith) ni MAJBURLAYDI.
  * Modul chegarasi niyat bilan emas, CI bilan saqlanadi.
@@ -15,7 +15,7 @@ module.exports = {
   forbidden: [
     // -----------------------------------------------------------------------
     //  ENG MUHIM QOIDA
-    //  core/ — sof domen mantiqi: pairing engine, Glicko-2, chess rules.
+    //  core/ — sof domen mantiqi: Money, narx qoidalari, holat mashinalari.
     //  U NestJS'ni ham, Prisma'ni ham, HTTP'ni ham BILMAYDI.
     //
     //  Sabab: bu kod eng qimmatli va eng uzoq yashaydi. Uni ORM
