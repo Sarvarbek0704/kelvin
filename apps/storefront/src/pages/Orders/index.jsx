@@ -23,25 +23,25 @@ import {
   TotalsPanel,
 } from './Orders.styled';
 
-// Holat → rus yorlig'i + chip toni
-const STATUS_MAP = {
-  DRAFT: { label: 'Черновик', tone: 'muted' },
-  PENDING_PAYMENT: { label: 'Ожидает оплаты', tone: 'warning' },
-  PAYMENT_FAILED: { label: 'Оплата не прошла', tone: 'muted' },
-  PAID: { label: 'Оплачен', tone: 'success' },
-  CONFIRMED: { label: 'Подтверждён', tone: 'success' },
-  PICKING: { label: 'Собирается', tone: 'warning' },
-  PACKED: { label: 'Собран', tone: 'warning' },
-  SHIPPED: { label: 'В доставке', tone: 'warning' },
-  DELIVERED: { label: 'Доставлен', tone: 'success' },
-  COMPLETED: { label: 'Завершён', tone: 'success' },
-  CANCELLED: { label: 'Отменён', tone: 'muted' },
-  RETURNED: { label: 'Возврат', tone: 'muted' },
-  PARTIALLY_RETURNED: { label: 'Частичный возврат', tone: 'muted' },
+// Holat → chip toni (yorliq i18n'dan: orders.st.<STATUS>)
+const STATUS_TONE = {
+  DRAFT: 'muted',
+  PENDING_PAYMENT: 'warning',
+  PAYMENT_FAILED: 'muted',
+  PAID: 'success',
+  CONFIRMED: 'success',
+  PICKING: 'warning',
+  PACKED: 'warning',
+  SHIPPED: 'warning',
+  DELIVERED: 'success',
+  COMPLETED: 'success',
+  CANCELLED: 'muted',
+  RETURNED: 'muted',
+  PARTIALLY_RETURNED: 'muted',
 };
 
-// Vaqt chizig'i bosqichlari — buyurtma holatidan nechta bosqich o'tganini hisoblash
-const TIMELINE_STEPS = ['Оформлен', 'Подтверждён', 'В доставке', 'Доставлен'];
+// Vaqt chizig'i bosqich kalitlari
+const TIMELINE_KEYS = ['orders.tl_placed', 'orders.tl_confirmed', 'orders.tl_shipping', 'orders.tl_delivered'];
 function doneCount(status) {
   if (['DELIVERED', 'COMPLETED'].includes(status)) return 4;
   if (status === 'SHIPPED') return 2; // "В доставке" joriy
@@ -52,7 +52,7 @@ const isCurrentStep = (status, i) =>
   (status === 'SHIPPED' && i === 2) ||
   (['CONFIRMED', 'PICKING', 'PACKED', 'PAID'].includes(status) && i === 1);
 
-function OrderTimeline({ status }) {
+function OrderTimeline({ status, t }) {
   if (['CANCELLED', 'RETURNED', 'PARTIALLY_RETURNED', 'DRAFT', 'PENDING_PAYMENT', 'PAYMENT_FAILED'].includes(status)) {
     return null;
   }
@@ -61,12 +61,13 @@ function OrderTimeline({ status }) {
   return (
     <Timeline>
       <div className="steps">
-        {TIMELINE_STEPS.map((label, i) => {
+        {TIMELINE_KEYS.map((key, i) => {
+          const label = t(key);
           const state = i < done ? (isCurrentStep(status, i) ? 'current' : 'done') : isCurrentStep(status, i) ? 'current' : 'pending';
           return (
             <div className={`step ${state}`} key={label}>
               {i > 0 && <div className={`line-left ${i < done ? 'done' : ''}`} />}
-              {i < TIMELINE_STEPS.length - 1 && (
+              {i < TIMELINE_KEYS.length - 1 && (
                 <div className={`line-right ${i + 1 < done ? 'done' : ''}`} />
               )}
               <div className="node">
@@ -110,7 +111,7 @@ function Orders() {
           <EmptyState
             icon={<IconCart size={30} />}
             title={t('orders.title')}
-            text="Войдите, чтобы видеть историю заказов."
+            text={t('orders.login_text')}
           />
           <p style={{ textAlign: 'center', marginTop: -8 }}>
             <Link to="/account" style={{ fontWeight: 600 }}>
@@ -134,7 +135,7 @@ function Orders() {
             </div>
           </div>
           <div className="nav">
-            <Link to="/account">Профиль</Link>
+            <Link to="/account">{t('account.profile')}</Link>
             <button type="button" className="active">
               {t('account.my_orders')}
             </button>
@@ -149,12 +150,13 @@ function Orders() {
             <EmptyState
               icon={<IconCart size={30} />}
               title={t('orders.empty')}
-              text="Соберите первый заказ — свет уже ждёт."
+              text={t('orders.empty_text')}
             />
           ) : (
             <OrderList>
               {list.map((o) => {
-                const st = STATUS_MAP[o.status] ?? { label: o.status, tone: 'muted' };
+                const tone = STATUS_TONE[o.status] ?? 'muted';
+                const stLabel = t(`orders.st.${o.status}`, { defaultValue: o.status });
                 return (
                   <OrderCard
                     key={o.id}
@@ -164,17 +166,21 @@ function Orders() {
                     <div>
                       <div className="head">
                         <span className="num">{o.number}</span>
-                        <StatusChip $tone={st.tone}>{st.label}</StatusChip>
+                        <StatusChip $tone={tone}>{stLabel}</StatusChip>
                       </div>
                       <div className="meta">
                         {o.items.length}{' '}
-                        {o.items.length === 1 ? 'товар' : o.items.length < 5 ? 'товара' : 'товаров'}
+                        {o.items.length === 1
+                          ? t('orders.item_one')
+                          : o.items.length < 5
+                            ? t('orders.item_few')
+                            : t('orders.item_many')}
                       </div>
                     </div>
                     <div className="right">
                       <div className="total">{formatSom(o.totalAmount)}</div>
                       <span className="more">
-                        {o.id === openId ? 'Свернуть' : 'Подробнее →'}
+                        {o.id === openId ? t('common.collapse') : t('common.more')}
                       </span>
                     </div>
                   </OrderCard>
@@ -185,8 +191,10 @@ function Orders() {
 
           {open && (
             <>
-              <h2 style={{ fontSize: 32, margin: '0 0 20px' }}>Заказ {open.number}</h2>
-              <OrderTimeline status={open.status} />
+              <h2 style={{ fontSize: 32, margin: '0 0 20px' }}>
+                {t('orders.order')} {open.number}
+              </h2>
+              <OrderTimeline status={open.status} t={t} />
               <DetailGrid>
                 <ItemsPanel>
                   {open.items.map((it) => (
@@ -194,7 +202,7 @@ function Orders() {
                       <div>
                         <div className="sku">{it.sku}</div>
                         <div className="qty">
-                          {formatSom(it.unitAmount)} × {it.quantity} шт
+                          {formatSom(it.unitAmount)} × {it.quantity} {t('orders.pcs')}
                         </div>
                       </div>
                       <div className="sum">{formatSom(it.totalAmount)}</div>
@@ -203,12 +211,12 @@ function Orders() {
                 </ItemsPanel>
                 <TotalsPanel>
                   <div className="row">
-                    <span className="k">Товары</span>
+                    <span className="k">{t('cart.items')}</span>
                     <span>{formatSom(open.subtotalAmount)}</span>
                   </div>
                   {open.discountAmount !== '0' && (
                     <div className="row">
-                      <span className="k">Скидка</span>
+                      <span className="k">{t('cart.discount')}</span>
                       <span className="green">−{formatSom(open.discountAmount)}</span>
                     </div>
                   )}

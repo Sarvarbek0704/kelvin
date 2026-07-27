@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Container, Kicker, IconTruck, IconShield } from '../ui';
 import { ReasonsSection, CardsRow, ReasonCard } from './Reason.styled';
 
@@ -21,39 +22,28 @@ const InstallIcon = () => (
 );
 
 const REASONS = [
-  {
-    icon: <IconTruck size={26} />,
-    title: 'Доставка по зонам',
-    text: 'По Ташкенту и области, с расчётом по зоне и бережной упаковкой хрупких люстр.',
-  },
-  {
-    icon: <InstallIcon />,
-    title: 'Установка',
-    text: 'Монтаж тяжёлых и потолочных фикстур нашими электриками — свет под ключ.',
-  },
-  {
-    icon: <IconShield size={26} />,
-    title: 'Гарантия',
-    text: 'Официальная гарантия брендов и сервис. Диммеры и драйверы подберём совместимые.',
-  },
+  { icon: <IconTruck size={26} />, key: 'delivery' },
+  { icon: <InstallIcon />, key: 'install' },
+  { icon: <IconShield size={26} />, key: 'warranty' },
 ];
 
 /** "Почему Kelvin" — salon uch ustuni (dostavka / o'rnatish / kafolat). */
 function Reasons() {
+  const { t } = useTranslation();
   return (
     <ReasonsSection>
       <Container>
         <div className="head">
-          <Kicker as="div">Почему Kelvin</Kicker>
-          <h2>Салон, а не маркетплейс</h2>
+          <Kicker as="div">{t('home.why_kicker')}</Kicker>
+          <h2>{t('home.why_title')}</h2>
         </div>
         <CardsRow>
           {REASONS.map((reason) => (
-            <ReasonCard key={reason.title}>
+            <ReasonCard key={reason.key}>
               <div className="icon">{reason.icon}</div>
               <div>
-                <div className="title">{reason.title}</div>
-                <div className="text">{reason.text}</div>
+                <div className="title">{t(`home.why_${reason.key}_title`)}</div>
+                <div className="text">{t(`home.why_${reason.key}_text`)}</div>
               </div>
             </ReasonCard>
           ))}

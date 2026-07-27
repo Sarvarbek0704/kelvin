@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { api, label } from '../../lib/api';
 import { Container, SectionHead, TextLink } from '../ui';
-import { KatalogSection, CategoriesGrid, Tile, FeaturedTile } from './Katalog.styled';
+import { KatalogSection, CategoriesGrid, Tile } from './Katalog.styled';
 
 import katalog1 from '../../assets/katalog1.png';
 import katalog2 from '../../assets/katalog2.png';
@@ -33,52 +34,42 @@ const IMAGES = [
 ];
 
 /**
- * Bosh sahifa kategoriya mozaikasi — jonli /categories daraxti; birinchi
- * kategoriya (Люстры) 2 ustunli featured plitka.
+ * Bosh sahifa kategoriya mozaikasi — rasm to'liq fon + overlay nom.
+ * Birinchi kategoriya 2 ustunli featured plitka; jonli /categories daraxti.
  */
 function Katalog() {
+  const { t } = useTranslation();
   const { data: tree } = useQuery({
     queryKey: ['categories', 'tree'],
     queryFn: () => api.get('/categories'),
   });
   const roots = Array.isArray(tree) ? tree : [];
-  const [featured, ...rest] = roots;
 
   return (
     <KatalogSection>
       <Container>
         <SectionHead
-          kicker="Каталог"
-          title="Категории света"
+          kicker={t('home.categories_kicker')}
+          title={t('home.categories_title')}
           action={
             <TextLink as={Link} to="/catalog">
-              Весь каталог →
+              {t('common.all_catalog')}
             </TextLink>
           }
         />
         <CategoriesGrid>
-          {featured && (
-            <FeaturedTile as={Link} to={`/search?category=${encodeURIComponent(featured.slug)}`}>
+          {roots.map((cat, i) => (
+            <Tile
+              key={cat.id}
+              as={Link}
+              to={`/search?category=${encodeURIComponent(cat.slug)}`}
+              $featured={i === 0}
+            >
+              <img src={IMAGES[i % IMAGES.length]} alt="" loading="lazy" />
+              <div className="shade" />
               <div className="info">
-                <div>
-                  <div className="name">{label(featured.name)}</div>
-                  <div className="sub">Хрусталь, латунь, LED</div>
-                </div>
-                <span className="more">Смотреть →</span>
-              </div>
-              <div className="thumb">
-                <img src={IMAGES[0]} alt="" loading="lazy" />
-              </div>
-            </FeaturedTile>
-          )}
-          {rest.map((cat, i) => (
-            <Tile key={cat.id} as={Link} to={`/search?category=${encodeURIComponent(cat.slug)}`}>
-              <div className="thumb">
-                <img src={IMAGES[(i + 1) % IMAGES.length]} alt="" loading="lazy" />
-              </div>
-              <div className="body">
                 <div className="name">{label(cat.name)}</div>
-                <div className="more">Смотреть →</div>
+                <div className="more">{t('common.view')}</div>
               </div>
             </Tile>
           ))}

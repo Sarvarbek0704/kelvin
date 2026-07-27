@@ -1,18 +1,21 @@
 import styled from 'styled-components';
 
+/* Hero — konteyner ichida (shapka bilan bir tekisda), o'ng panel yumaloq */
 export const Hero = styled.section`
   display: grid;
   grid-template-columns: 1.05fr 1fr;
+  gap: 40px;
   align-items: stretch;
-  border-bottom: 1px solid ${(p) => p.theme.color.border};
+  padding: 48px 0 64px;
 
   @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
     grid-template-columns: 1fr;
+    gap: 18px;
+    padding: 24px 0 32px;
   }
 `;
 
 export const HeroText = styled.div`
-  padding: 76px 56px 76px ${(p) => p.theme.layout.pagePad};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -27,7 +30,7 @@ export const HeroText = styled.div`
   }
 
   h1 {
-    font-size: 72px;
+    font-size: clamp(40px, 5vw, 68px);
     line-height: 1.02;
     letter-spacing: -0.01em;
     margin: 0;
@@ -56,15 +59,8 @@ export const HeroText = styled.div`
   }
 
   @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
-    padding: 28px ${(p) => p.theme.layout.pagePadMobile} 24px;
-
     .kicker {
       margin-bottom: 14px;
-    }
-
-    h1 {
-      font-size: 40px;
-      line-height: 1.04;
     }
 
     .lead {
@@ -89,10 +85,12 @@ export const HeroText = styled.div`
 
 export const HeroVisual = styled.div`
   position: relative;
-  min-height: 520px;
+  min-height: 480px;
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 18px;
+  border: 1px solid ${(p) => p.theme.color.border};
   background: repeating-linear-gradient(
     135deg,
     #efe8dc,
@@ -105,36 +103,42 @@ export const HeroVisual = styled.div`
   .glow {
     position: absolute;
     inset: 0;
-    background: radial-gradient(50% 42% at 62% 40%, rgba(255, 180, 107, 0.35), transparent 72%);
+    background: radial-gradient(55% 48% at 55% 42%, rgba(255, 180, 107, 0.38), transparent 72%);
   }
 
   img {
     position: relative;
-    max-width: 74%;
-    max-height: 86%;
+    max-width: 72%;
+    max-height: 82%;
     object-fit: contain;
+    mix-blend-mode: multiply;
+    filter: drop-shadow(0 24px 40px rgba(83, 66, 40, 0.25));
   }
 
   @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
-    min-height: 420px;
+    min-height: 380px;
   }
 
   @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
     min-height: 0;
     aspect-ratio: 16 / 11;
-    margin: 0 ${(p) => p.theme.layout.pagePadMobile} 18px;
     border-radius: ${(p) => p.theme.radius.image};
   }
 `;
 
 export const HeroCard = styled.div`
   position: absolute;
-  left: 32px;
-  bottom: 32px;
+  left: 24px;
+  bottom: 24px;
   background: rgba(251, 248, 242, 0.94);
   border-radius: 12px;
   padding: 14px 18px;
   box-shadow: 0 16px 40px -18px rgba(83, 66, 40, 0.4);
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+  }
 
   .brand {
     font-size: 11px;
@@ -157,8 +161,8 @@ export const HeroCard = styled.div`
   }
 
   @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
-    left: 14px;
-    bottom: 14px;
+    left: 12px;
+    bottom: 12px;
     padding: 10px 14px;
 
     .name {

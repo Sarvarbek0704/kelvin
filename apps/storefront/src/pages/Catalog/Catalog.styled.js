@@ -97,20 +97,33 @@ export const MosaicTile = styled.div`
     background: radial-gradient(50% 55% at 50% 38%, rgba(255, 180, 107, 0.3), transparent 72%);
   }
 
+  /* Matn o'qilishi uchun pastki iliq qoraytirish */
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(33, 28, 22, 0) 42%,
+      rgba(33, 28, 22, 0.16) 62%,
+      rgba(33, 28, 22, 0.62) 100%
+    );
+  }
+
   .info {
     position: relative;
-    color: ${(p) => p.theme.color.ink};
+    color: ${(p) => p.theme.color.base};
   }
 
   .name {
     font-family: ${(p) => p.theme.font.serif};
     font-size: ${(p) => (p.$featured ? '40px' : '26px')};
     line-height: 1.1;
+    text-shadow: 0 1px 12px rgba(33, 28, 22, 0.35);
   }
 
   .more {
     font-size: 14px;
-    color: ${(p) => p.theme.color.brassDark};
+    color: #ffd3a5;
     font-weight: 600;
     margin-top: 10px;
     display: inline-block;

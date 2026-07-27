@@ -1,9 +1,10 @@
 import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import lyustra from '../../assets/lyustra.png';
 import { api, label } from '../../lib/api';
-import { Button } from '../ui';
+import { Button, Container } from '../ui';
 import { Hero, HeroText, HeroVisual, HeroCard } from './Slide.styled';
 
 /**
@@ -12,6 +13,7 @@ import { Hero, HeroText, HeroVisual, HeroCard } from './Slide.styled';
  * (ommaviy /products ro'yxatining birinchisi — narx TO'QILMAYDI).
  */
 function Slide() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { data } = useQuery({
     queryKey: ['products', 'popular'],
@@ -20,41 +22,40 @@ function Slide() {
   const featured = data?.items?.[0];
 
   return (
-    <Hero>
-      <HeroText>
-        <div className="kicker">Салон света · Ташкент</div>
-        <h1>
-          Свет, подобранный
-          <br />
-          по температуре
-        </h1>
-        <p className="lead">
-          От тёплых 2700K для спальни до дневных 6500K для мастерской. Кураторская коллекция
-          люстр, бра и технического света — как в дизайнерском шоуруме.
-        </p>
-        <div className="bar" />
-        <div className="ctas">
-          <Button type="button" onClick={() => navigate('/catalog')}>
-            Смотреть каталог
-          </Button>
-          <Button type="button" $variant="outline" onClick={() => navigate('/search')}>
-            Подобрать по комнате
-          </Button>
-        </div>
-      </HeroText>
+    <Container>
+      <Hero>
+        <HeroText>
+          <div className="kicker">{t('home.kicker')}</div>
+          <h1>
+            {t('home.hero_title_1')}
+            <br />
+            {t('home.hero_title_2')}
+          </h1>
+          <p className="lead">{t('home.hero_lead')}</p>
+          <div className="bar" />
+          <div className="ctas">
+            <Button type="button" onClick={() => navigate('/catalog')}>
+              {t('home.cta_catalog')}
+            </Button>
+            <Button type="button" $variant="outline" onClick={() => navigate('/search')}>
+              {t('home.cta_room')}
+            </Button>
+          </div>
+        </HeroText>
 
-      <HeroVisual>
-        <div className="glow" />
-        <img src={lyustra} alt="Сигнатурная люстра Kelvin" />
-        {featured && (
-          <HeroCard as={Link} to={`/product/${featured.slug}`}>
-            {featured.brand && <div className="brand">{featured.brand}</div>}
-            <div className="name">{label(featured.name)}</div>
-            <div className="more">Смотреть →</div>
-          </HeroCard>
-        )}
-      </HeroVisual>
-    </Hero>
+        <HeroVisual>
+          <div className="glow" />
+          <img src={lyustra} alt="Kelvin" />
+          {featured && (
+            <HeroCard as={Link} to={`/product/${featured.slug}`}>
+              {featured.brand && <div className="brand">{featured.brand}</div>}
+              <div className="name">{label(featured.name)}</div>
+              <div className="more">{t('common.view')}</div>
+            </HeroCard>
+          )}
+        </HeroVisual>
+      </Hero>
+    </Container>
   );
 }
 

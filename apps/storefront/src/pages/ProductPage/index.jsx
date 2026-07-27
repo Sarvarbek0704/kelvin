@@ -142,20 +142,20 @@ function ProductPage() {
   // Xususiyatlar jadvali — faqat mavjud qiymatlar (hech narsa to'qilmaydi)
   const specs = activeVariant
     ? [
-        ['Артикул', activeVariant.sku],
-        activeVariant.colorTemperature && ['Цветовая температура', `${activeVariant.colorTemperature}K`],
-        activeVariant.socketType && ['Цоколь', activeVariant.socketType],
-        activeVariant.ipRating && ['Защита', activeVariant.ipRating],
+        [t('product.sku'), activeVariant.sku],
+        activeVariant.colorTemperature && [t('search.facet_temp'), `${activeVariant.colorTemperature}K`],
+        activeVariant.socketType && [t('search.facet_socket'), activeVariant.socketType],
+        activeVariant.ipRating && [t('search.facet_ip'), activeVariant.ipRating],
         activeVariant.luminousFlux && [
-          'Световой поток',
+          t('search.facet_flux'),
           `${Number(activeVariant.luminousFlux).toLocaleString('ru-RU')} lm`,
         ],
-        activeVariant.power && ['Мощность', `${Number(activeVariant.power)} Вт`],
+        activeVariant.power && [t('product.power'), `${Number(activeVariant.power)} W`],
         activeVariant.cri && ['CRI', `≥ ${activeVariant.cri}`],
-        activeVariant.voltage && ['Напряжение', `${activeVariant.voltage} В`],
-        activeVariant.lightSource && ['Источник света', activeVariant.lightSource],
-        ['Диммируемый', activeVariant.dimmable ? 'Да' : 'Нет'],
-        product.isFragile && ['Особое', 'Хрупкий — бережная доставка'],
+        activeVariant.voltage && [t('search.facet_voltage'), `${activeVariant.voltage} V`],
+        activeVariant.lightSource && [t('search.facet_light'), activeVariant.lightSource],
+        [t('search.dimmable'), activeVariant.dimmable ? t('product.yes') : t('product.no')],
+        product.isFragile && [t('product.special'), t('product.fragile_full')],
       ].filter(Boolean)
     : [];
 
@@ -169,9 +169,9 @@ function ProductPage() {
     <>
       <Container>
         <Crumbs style={{ paddingTop: 24 }}>
-          <Link to="/">Главная</Link>
+          <Link to="/">{t('common.home')}</Link>
           <span>/</span>
-          <Link to="/catalog">Каталог</Link>
+          <Link to="/catalog">{t('nav.catalog')}</Link>
           {product.category && (
             <>
               <span>/</span>
@@ -234,16 +234,22 @@ function ProductPage() {
               <div className="meta-row">
                 <Rating value={reviewSummary.average} size={18} />
                 <span className="score">{reviewSummary.average.toFixed(1)}</span>
-                <span className="muted">· {reviewSummary.count} отзывов</span>
+                <span className="muted">
+                  · {reviewSummary.count} {t('product.reviews_suffix')}
+                </span>
               </div>
             )}
 
-            {activeVariant && <div className="sku-line">Артикул: {activeVariant.sku}</div>}
+            {activeVariant && (
+              <div className="sku-line">
+                {t('product.sku')}: {activeVariant.sku}
+              </div>
+            )}
 
             {temps.length > 0 && (
               <div className="sel-block">
                 <div className="sel-label">
-                  <span className="cap">Цветовая температура</span>
+                  <span className="cap">{t('product.temp_label')}</span>
                   {shownTemp && (
                     <span className="val">
                       {shownTemp}K{TEMP_DESC[shownTemp] ? ` · ${TEMP_DESC[shownTemp]}` : ''}
@@ -307,10 +313,10 @@ function ProductPage() {
             <DeliveryNote>
               <IconTruck size={22} style={{ flex: 'none' }} />
               <div>
-                <div className="title">Доставка по Ташкенту 1–2 дня</div>
+                <div className="title">{t('product.delivery_title')}</div>
                 <div className="sub">
-                  Установка электриком
-                  {product.isFragile && ' · хрупкий товар, бережная упаковка'}
+                  {t('product.delivery_sub')}
+                  {product.isFragile && ` · ${t('product.fragile_note')}`}
                 </div>
               </div>
             </DeliveryNote>
@@ -319,7 +325,7 @@ function ProductPage() {
 
         <InfoGrid>
           <div>
-            <h2>Характеристики</h2>
+            <h2>{t('product.specs')}</h2>
             <Hairline style={{ margin: '14px 0 22px' }} />
             <SpecTable>
               {specs.map(([k, v]) => (
@@ -332,7 +338,7 @@ function ProductPage() {
           </div>
           {description && (
             <div>
-              <h2>Описание</h2>
+              <h2>{t('product.description')}</h2>
               <Hairline style={{ margin: '14px 0 22px' }} />
               <p className="desc">{description}</p>
             </div>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { api, label } from '../../lib/api';
 import ProductCard from '../ProductCard';
 import { Container, SectionHead, TextLink } from '../ui';
@@ -11,6 +12,7 @@ import { ProductsSection, ProductsGrid } from './Products.styled';
  * Narx katalog javobida yo'q — karta "Уточняйте" ko'rsatadi (to'qilmaydi).
  */
 function Products() {
+  const { t } = useTranslation();
   const { data } = useQuery({
     queryKey: ['products', 'popular'],
     queryFn: () => api.get('/products?limit=8'),
@@ -22,11 +24,11 @@ function Products() {
     <ProductsSection>
       <Container>
         <SectionHead
-          kicker="Витрина"
-          title="Популярные товары"
+          kicker={t('home.popular_kicker')}
+          title={t('home.popular_title')}
           action={
             <TextLink as={Link} to="/search">
-              Все товары →
+              {t('action.allProducts')} →
             </TextLink>
           }
         />

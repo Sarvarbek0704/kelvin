@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { useReviewSummary, useProductReviews, useSubmitReview } from '../../lib/reviews';
 import { useAuth } from '../../lib/auth-context';
 import {
@@ -128,6 +129,7 @@ const FormWrap = styled.form`
 `;
 
 function ReviewForm({ productId }) {
+  const { t } = useTranslation();
   const submit = useSubmitReview(productId);
   const [rating, setRating] = useState(5);
   const [title, setTitle] = useState('');
@@ -136,7 +138,11 @@ function ReviewForm({ productId }) {
   const [err, setErr] = useState('');
 
   if (sent) {
-    return <p className="ok" style={{ color: '#6E7D52', marginTop: 14 }}>✓ Отзыв отправлен на модерацию. Спасибо!</p>;
+    return (
+      <p className="ok" style={{ color: '#6E7D52', marginTop: 14 }}>
+        {t('reviews.sent')}
+      </p>
+    );
   }
 
   const onSubmit = async (e) => {
@@ -169,12 +175,12 @@ function ReviewForm({ productId }) {
       <Input
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        placeholder="Заголовок (необязательно)"
+        placeholder={t('reviews.title_ph')}
       />
       <Textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        placeholder="Ваш отзыв"
+        placeholder={t('reviews.body_ph')}
         required
         rows={3}
       />
@@ -184,7 +190,7 @@ function ReviewForm({ productId }) {
         disabled={!body || submit.isPending}
         style={{ alignSelf: 'flex-start' }}
       >
-        {submit.isPending ? 'Отправка…' : 'Оставить отзыв'}
+        {submit.isPending ? t('common.sending') : t('reviews.submit')}
       </Button>
       {err && <FieldError>{err}</FieldError>}
     </FormWrap>
@@ -192,6 +198,7 @@ function ReviewForm({ productId }) {
 }
 
 function ProductReviews({ productId }) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: summary } = useReviewSummary(productId);
   const { data: reviews } = useProductReviews(productId);
@@ -201,7 +208,7 @@ function ProductReviews({ productId }) {
   return (
     <Section>
       <div className="head-row">
-        <h2>Отзывы</h2>
+        <h2>{t('reviews.title')}</h2>
       </div>
       <Hairline style={{ margin: '14px 0 18px' }} />
 
@@ -209,7 +216,9 @@ function ProductReviews({ productId }) {
         <Rating value={summary?.average ?? 0} size={16} />
         <span className="score">{summary?.count ? summary.average.toFixed(1) : ''}</span>
         <span className="muted">
-          {summary?.count ? `· ${summary.count} отзыв(ов)` : 'Пока нет отзывов'}
+          {summary?.count
+            ? `· ${summary.count} ${t('product.reviews_suffix')}`
+            : t('reviews.none')}
         </span>
       </div>
 
@@ -219,7 +228,7 @@ function ProductReviews({ productId }) {
             <div className="top">
               <div className="who">
                 <Rating value={r.rating} size={13} />
-                {r.isVerifiedPurchase && <span className="verified">✓ Проверенная покупка</span>}
+                {r.isVerifiedPurchase && <span className="verified">{t('reviews.verified')}</span>}
               </div>
               <span className="date">{formatDate(r.createdAt)}</span>
             </div>
@@ -232,9 +241,7 @@ function ProductReviews({ productId }) {
       {user ? (
         <ReviewForm productId={productId} />
       ) : (
-        <p style={{ marginTop: 16, color: '#8A8175', fontSize: 14 }}>
-          Войдите, чтобы оставить отзыв.
-        </p>
+        <p style={{ marginTop: 16, color: '#8A8175', fontSize: 14 }}>{t('reviews.login')}</p>
       )}
     </Section>
   );

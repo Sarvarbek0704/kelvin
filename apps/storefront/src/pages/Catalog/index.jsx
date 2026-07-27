@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { api, label } from '../../lib/api';
 import { Container, Kicker } from '../../components/ui';
 import { CatalogHead, Mosaic, MosaicTile } from './Catalog.styled';
@@ -28,6 +29,7 @@ const spanFor = (i) => (i === 0 ? 3 : i <= 2 ? 3 : 2);
  * Har plitka qidiruvga kategoriya filtri bilan olib boradi.
  */
 function Catalog() {
+  const { t } = useTranslation();
   const { data: tree } = useQuery({
     queryKey: ['categories', 'tree'],
     queryFn: () => api.get('/categories'),
@@ -38,8 +40,8 @@ function Catalog() {
   return (
     <Container>
       <CatalogHead>
-        <Kicker as="div">Каталог</Kicker>
-        <h1>Свет для каждой комнаты</h1>
+        <Kicker as="div">{t('nav.catalog')}</Kicker>
+        <h1>{t('catalog.title')}</h1>
         <div className="bar" />
       </CatalogHead>
 
@@ -57,9 +59,10 @@ function Catalog() {
               <img src={IMAGES[i % IMAGES.length]} alt="" loading="lazy" />
             </div>
             <div className="glow" />
+            <div className="shade" />
             <div className="info">
               <div className="name">{label(cat.name)}</div>
-              {i === 0 && <span className="more">Смотреть категорию →</span>}
+              {i === 0 && <span className="more">{t('common.view_category')}</span>}
             </div>
           </MosaicTile>
         ))}

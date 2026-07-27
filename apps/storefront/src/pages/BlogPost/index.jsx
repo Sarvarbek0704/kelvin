@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { useBlogPost } from '../../lib/content';
 import { label } from '../../lib/api';
@@ -151,6 +152,7 @@ const ArticleWrap = styled.article`
 
 // Nashr etilgan maqola sahifasi (/blog/:slug) — content moduli (docs/13).
 function BlogPost() {
+  const { t } = useTranslation();
   const { slug } = useParams();
   const { data: post, isLoading, isError } = useBlogPost(slug);
 
@@ -179,9 +181,9 @@ function BlogPost() {
     return (
       <Container>
         <div style={{ maxWidth: 680, margin: '56px auto', textAlign: 'center' }}>
-          <p style={{ color: '#8A8175', marginBottom: 16 }}>Статья не найдена.</p>
+          <p style={{ color: '#8A8175', marginBottom: 16 }}>{t('blog.not_found')}</p>
           <Link to="/blog" style={{ fontWeight: 600 }}>
-            ← Все статьи
+            {t('blog.all_articles')}
           </Link>
         </div>
       </Container>
@@ -195,7 +197,7 @@ function BlogPost() {
       <ArticleWrap>
         <div className="head">
           <div className="meta">
-            <Link to="/blog">Журнал</Link> · {formatDate(post.publishedAt)}
+            <Link to="/blog">{t('home.journal_kicker')}</Link> · {formatDate(post.publishedAt)}
           </div>
           <h1>{label(post.title)}</h1>
           <div className="bar" />
@@ -224,8 +226,8 @@ function BlogPost() {
         <div className="author">
           <div className="avatar">K</div>
           <div>
-            <div className="name">Редакция Kelvin</div>
-            <div className="sub">Салон света · Ташкент</div>
+            <div className="name">{t('blog.editorial')}</div>
+            <div className="sub">{t('blog.editorial_sub')}</div>
           </div>
         </div>
       </ArticleWrap>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { api, label } from '../../lib/api';
 import { Container } from '../../components/ui';
 import {
@@ -18,6 +19,7 @@ import {
  * brend/manzil · Каталог (jonli kategoriyalar) · Информация · Оплата/soc.
  */
 function Footer() {
+  const { t } = useTranslation();
   const { data: tree } = useQuery({
     queryKey: ['categories', 'tree'],
     queryFn: () => api.get('/categories'),
@@ -31,48 +33,48 @@ function Footer() {
         <FooterGrid>
           <BrandCol>
             <div className="mark">Kelvin</div>
-            <div className="tagline">Салон света</div>
+            <div className="tagline">{t('footer.tagline')}</div>
             <div className="details">
-              Ташкент, ул. Амира Темура, 42
+              {t('footer.address')}
               <br />
-              Ежедневно 10:00 — 20:00
+              {t('footer.hours')}
               <br />
               <a href="tel:+998712004000">+998 (71) 200-40-00</a>
             </div>
           </BrandCol>
 
           <FooterCol>
-            <div className="head">Каталог</div>
+            <div className="head">{t('footer.catalog')}</div>
             <div className="links">
               {categories.map((cat) => (
                 <Link key={cat.id} to={`/search?category=${encodeURIComponent(cat.slug)}`}>
                   {label(cat.name)}
                 </Link>
               ))}
-              <Link to="/catalog">Все категории</Link>
+              <Link to="/catalog">{t('common.all_categories')}</Link>
             </div>
           </FooterCol>
 
           <FooterCol>
-            <div className="head">Информация</div>
+            <div className="head">{t('footer.info')}</div>
             <div className="links">
-              <Link to="/about-us">О компании</Link>
-              <Link to="/delivery-payment">Доставка и оплата</Link>
-              <Link to="/return">Возврат</Link>
-              <Link to="/garant">Гарантии</Link>
-              <Link to="/blog">Блог</Link>
-              <Link to="/contacts">Контакты</Link>
+              <Link to="/about-us">{t('nav.about')}</Link>
+              <Link to="/delivery-payment">{t('nav.delivery')}</Link>
+              <Link to="/return">{t('nav.return')}</Link>
+              <Link to="/garant">{t('nav.warranty')}</Link>
+              <Link to="/blog">{t('nav.blog')}</Link>
+              <Link to="/contacts">{t('nav.contacts')}</Link>
             </div>
           </FooterCol>
 
           <FooterCol>
-            <div className="head">Оплата</div>
+            <div className="head">{t('footer.payment')}</div>
             <PayChips>
               <span className="strong">Click</span>
               <span className="strong">Payme</span>
-              <span>Наличные</span>
+              <span>{t('footer.cash')}</span>
             </PayChips>
-            <div className="head">Соцсети</div>
+            <div className="head">{t('footer.socials')}</div>
             <Socials>
               <a href="https://t.me/kelvin_uz" aria-label="Telegram" target="_blank" rel="noreferrer">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
@@ -107,8 +109,8 @@ function Footer() {
       <BottomBar>
         <Container>
           <div className="inner">
-            <span>© 2026 Kelvin. Все права защищены.</span>
-            <span>Ташкент · Узбекистан</span>
+            <span>{t('footer.rights')}</span>
+            <span>{t('footer.city')}</span>
           </div>
         </Container>
       </BottomBar>

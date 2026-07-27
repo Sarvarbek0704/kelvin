@@ -50,14 +50,14 @@ function ProductCard({
         <ProductImage className="img-frame" image={image} alt={name} sizes="(max-width: 768px) 50vw, 300px" />
         <span className="glow" />
         {outOfStock ? (
-          <Badge $tone="oos">Нет в наличии</Badge>
+          <Badge $tone="oos">{t('product.oos')}</Badge>
         ) : (
           discount > 0 && <Badge>−{discount}%</Badge>
         )}
         <FavButton
           type="button"
           aria-pressed={fav}
-          aria-label={fav ? 'Убрать из избранного' : 'В избранное'}
+          aria-label={t('nav.favorites')}
           onClick={() => toggle(slug)}
         >
           <IconHeart size={18} filled={fav} style={{ color: '#B08D57' }} />
@@ -83,7 +83,7 @@ function ProductCard({
               </div>
             </Footer>
             <NotifyButton type="button" onClick={() => navigate(`/product/${slug}`)}>
-              Сообщить о поступлении
+              {t('product.notify')}
             </NotifyButton>
           </>
         ) : (

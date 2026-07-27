@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useBlogPosts } from '../../lib/content';
 import { label } from '../../lib/api';
 import { Container, SectionHead, TextLink } from '../ui';
@@ -35,6 +36,7 @@ const FALLBACK_POSTS = [
 
 /** Jurnal teaseri — nashr etilgan maqolalar (/blog), bo'lmasa namuna kartalar. */
 function Blog() {
+  const { t } = useTranslation();
   const { data: apiPosts } = useBlogPosts(3);
 
   const posts =
@@ -53,11 +55,11 @@ function Blog() {
     <BlogSection>
       <Container>
         <SectionHead
-          kicker="Журнал"
-          title="Как выбирать свет"
+          kicker={t('home.journal_kicker')}
+          title={t('home.journal_title')}
           action={
             <TextLink as={Link} to="/blog">
-              В журнал →
+              {t('home.to_journal')}
             </TextLink>
           }
         />

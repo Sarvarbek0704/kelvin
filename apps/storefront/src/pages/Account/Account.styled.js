@@ -1,20 +1,23 @@
 import styled from 'styled-components';
 
-/* Mehmon: ikki ustunli auth ekran (chap editorial panel + o'ng forma) */
+/* Mehmon: ikki ustunli auth ekran (chap editorial panel + o'ng forma) —
+   markazlashgan, mo''tadil kenglik, yumshoq soya */
 export const AuthGrid = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  min-height: 620px;
+  grid-template-columns: 1fr 1.1fr;
+  min-height: 560px;
+  max-width: 1040px;
   border: 1px solid ${(p) => p.theme.color.border};
   border-radius: 18px;
   overflow: hidden;
-  margin: 40px 0 64px;
+  margin: 48px auto 72px;
   background: ${(p) => p.theme.color.surface};
+  box-shadow: ${(p) => p.theme.shadow.md};
 
   @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
     grid-template-columns: 1fr;
     min-height: 0;
-    margin: 16px 0 40px;
+    margin: 16px auto 40px;
   }
 `;
 
@@ -89,7 +92,7 @@ export const AuthAside = styled.div`
 `;
 
 export const AuthForm = styled.div`
-  padding: 56px;
+  padding: 48px 56px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -106,11 +109,48 @@ export const AuthForm = styled.div`
     max-width: 400px;
   }
 
+  /* Parol maydoni + ko'rsatish tugmasi */
+  .pass-wrap {
+    position: relative;
+
+    input {
+      padding-right: 48px;
+    }
+
+    .eye {
+      position: absolute;
+      right: 8px;
+      bottom: 6px;
+      width: 36px;
+      height: 36px;
+      border: 0;
+      background: none;
+      color: ${(p) => p.theme.color.inkMuted};
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+
+      &:hover {
+        color: ${(p) => p.theme.color.brassDark};
+      }
+    }
+  }
+
   .forgot {
-    text-align: center;
+    align-self: flex-start;
     font-size: 13px;
     color: ${(p) => p.theme.color.brassDark};
     font-weight: 600;
+    background: none;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+
+    &:hover {
+      color: ${(p) => p.theme.color.linkHover};
+    }
   }
 
   @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {

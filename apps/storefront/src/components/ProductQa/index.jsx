@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import styled from 'styled-components';
+import { useTranslation } from 'react-i18next';
 import { useProductQuestions, useAskQuestion } from '../../lib/qa';
 import { useAuth } from '../../lib/auth-context';
 import { Hairline, Button, Textarea, FieldError } from '../ui';
@@ -72,13 +73,14 @@ const AskWrap = styled.form`
 `;
 
 function AskForm({ productId }) {
+  const { t } = useTranslation();
   const ask = useAskQuestion(productId);
   const [body, setBody] = useState('');
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState('');
 
   if (sent) {
-    return <p style={{ color: '#6E7D52', marginTop: 14, fontSize: 14 }}>✓ Вопрос отправлен на модерацию.</p>;
+    return <p style={{ color: '#6E7D52', marginTop: 14, fontSize: 14 }}>{t('qa.sent')}</p>;
   }
 
   const submit = async (e) => {
@@ -97,7 +99,7 @@ function AskForm({ productId }) {
       <Textarea
         value={body}
         onChange={(e) => setBody(e.target.value)}
-        placeholder="Ваш вопрос о товаре"
+        placeholder={t('qa.body_ph')}
         required
         rows={2}
       />
@@ -108,7 +110,7 @@ function AskForm({ productId }) {
         disabled={!body || ask.isPending}
         style={{ alignSelf: 'flex-start' }}
       >
-        {ask.isPending ? 'Отправка…' : 'Задать вопрос'}
+        {ask.isPending ? t('common.sending') : t('qa.ask')}
       </Button>
       {err && <FieldError>{err}</FieldError>}
     </AskWrap>
@@ -116,13 +118,14 @@ function AskForm({ productId }) {
 }
 
 function ProductQa({ productId }) {
+  const { t } = useTranslation();
   const { user } = useAuth();
   const { data: questions } = useProductQuestions(productId);
   if (!productId) return null;
 
   return (
     <Section>
-      <h2>Вопросы и ответы</h2>
+      <h2>{t('qa.title')}</h2>
       <Hairline style={{ margin: '14px 0 18px' }} />
 
       <div className="cards">
@@ -141,7 +144,7 @@ function ProductQa({ productId }) {
         ))}
         {(questions ?? []).length === 0 && (
           <QaCard>
-            <div className="empty-hint">Пока нет вопросов. Задайте первый!</div>
+            <div className="empty-hint">{t('qa.none')}</div>
           </QaCard>
         )}
       </div>
@@ -149,9 +152,7 @@ function ProductQa({ productId }) {
       {user ? (
         <AskForm productId={productId} />
       ) : (
-        <p style={{ marginTop: 16, color: '#8A8175', fontSize: 14 }}>
-          Войдите, чтобы задать вопрос.
-        </p>
+        <p style={{ marginTop: 16, color: '#8A8175', fontSize: 14 }}>{t('qa.login')}</p>
       )}
     </Section>
   );

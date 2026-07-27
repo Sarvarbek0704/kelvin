@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import blog1 from '../../assets/blog1.png';
 import blog2 from '../../assets/blog2.png';
 import blog3 from '../../assets/blog3.png';
@@ -13,6 +14,7 @@ const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString('ru-RU') : '
 
 /** Jurnal indeksi — featured split maqola + 3 ustunli to'r (jonli /blog). */
 function Blog() {
+  const { t } = useTranslation();
   const { data: apiPosts } = useBlogPosts(24);
 
   // Serverdan nashr etilgan maqolalar; yo'q bo'lsa — namuna (dizayn buzilmasin).
@@ -49,11 +51,9 @@ function Blog() {
   return (
     <Container>
       <JournalHead>
-        <Kicker as="div">Журнал</Kicker>
-        <h1>Как выбирать свет</h1>
-        <div className="lead">
-          Гиды по температуре, IP-защите и сценариям освещения — простым языком.
-        </div>
+        <Kicker as="div">{t('home.journal_kicker')}</Kicker>
+        <h1>{t('home.journal_title')}</h1>
+        <div className="lead">{t('blog.lead')}</div>
         <div className="bar" />
       </JournalHead>
 
@@ -66,10 +66,10 @@ function Blog() {
               <div className="glow" />
             </div>
             <div className="content">
-              <div className="meta">{featured.meta || 'Главное'}</div>
+              <div className="meta">{featured.meta || t('blog.featured')}</div>
               <h2>{featured.title}</h2>
               {featured.excerpt && <p className="excerpt">{featured.excerpt}</p>}
-              <span className="read">Читать статью →</span>
+              <span className="read">{t('common.read_article')}</span>
             </div>
           </Featured>,
         )}

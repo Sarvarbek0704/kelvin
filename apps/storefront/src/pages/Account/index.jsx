@@ -19,6 +19,25 @@ import {
   ProfileCards,
 } from './Account.styled';
 
+/* Ko'z ikonkasi — parolni ko'rsatish/yashirish */
+const EyeIcon = ({ off }) => (
+  <svg
+    width="18"
+    height="18"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="1.5"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    aria-hidden="true"
+  >
+    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6-10-6-10-6Z" />
+    <circle cx="12" cy="12" r="2.6" />
+    {off && <path d="m4 4 16 16" />}
+  </svg>
+);
+
 function Account() {
   const { t } = useTranslation();
   const { user, login, register, logout } = useAuth();
@@ -26,6 +45,7 @@ function Account() {
 
   const [mode, setMode] = useState('login'); // 'login' | 'register'
   const [form, setForm] = useState({ identifier: '', phone: '', password: '', firstName: '' });
+  const [showPass, setShowPass] = useState(false);
   const [err, setErr] = useState(null);
   const [busy, setBusy] = useState(false);
 
@@ -33,6 +53,7 @@ function Account() {
 
   const submit = async (e) => {
     e.preventDefault();
+    if (busy) return; // ikki marta yuborishdan himoya
     setErr(null);
     setBusy(true);
     try {
@@ -72,7 +93,7 @@ function Account() {
             </div>
             <div className="nav">
               <button type="button" className="active">
-                Профиль
+                {t('account.profile')}
               </button>
               <Link to="/orders">{t('account.my_orders')}</Link>
               <Link to="/favorites">{t('nav.favorites')}</Link>
@@ -83,14 +104,14 @@ function Account() {
           </ProfileNav>
 
           <div>
-            <h1>Профиль</h1>
+            <h1>{t('account.profile')}</h1>
             <ProfileCards>
               <div className="card">
                 <div className="cap">{t('account.first_name')}</div>
                 <div className="val">{user.firstName || '—'}</div>
               </div>
               <div className="card">
-                <div className="cap">Телефон</div>
+                <div className="cap">{t('account.phone')}</div>
                 <div className="val">{user.phone || '—'}</div>
               </div>
               <div className="card">
@@ -98,7 +119,7 @@ function Account() {
                 <div className="val">{user.email || '—'}</div>
               </div>
               <div className="card">
-                <div className="cap">Роль</div>
+                <div className="cap">{t('account.role')}</div>
                 <div className="val">{user.roles?.join(', ') || '—'}</div>
               </div>
             </ProfileCards>
@@ -117,14 +138,11 @@ function Account() {
           <div className="mark">Kelvin</div>
           <div className="pitch">
             <div className="title">
-              Ваш свет —
+              {t('account.pitch_title_1')}
               <br />
-              под рукой
+              {t('account.pitch_title_2')}
             </div>
-            <div className="text">
-              Сохраняйте избранное, следите за заказами и получайте персональные подборки по
-              температуре.
-            </div>
+            <div className="text">{t('account.pitch_text')}</div>
           </div>
           <div className="bar" />
         </AuthAside>
@@ -151,7 +169,7 @@ function Account() {
             </button>
           </TabToggle>
 
-          <h1>{mode === 'login' ? 'С возвращением' : 'Добро пожаловать'}</h1>
+          <h1>{mode === 'login' ? t('account.welcome_back') : t('account.welcome')}</h1>
 
           <form onSubmit={submit}>
             {mode === 'login' ? (
@@ -160,10 +178,12 @@ function Account() {
                 <Input
                   id="acc-id"
                   type="text"
+                  autoComplete="username"
                   value={form.identifier}
                   onChange={set('identifier')}
                   placeholder="+998 90 123 45 67"
                   required
+                  $error={Boolean(err)}
                 />
               </div>
             ) : (
@@ -173,51 +193,73 @@ function Account() {
                   <Input
                     id="acc-name"
                     type="text"
+                    autoComplete="given-name"
                     value={form.firstName}
                     onChange={set('firstName')}
-                    placeholder="Ваше имя"
+                    placeholder={t('account.name_ph')}
                   />
                 </div>
                 <div>
-                  <FieldLabel htmlFor="acc-phone">Телефон</FieldLabel>
+                  <FieldLabel htmlFor="acc-phone">{t('account.phone')}</FieldLabel>
                   <Input
                     id="acc-phone"
                     type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
                     value={form.phone}
                     onChange={set('phone')}
                     placeholder="+998901234567"
+                    pattern="\+998\d{9}"
+                    title="+998XXXXXXXXX"
                     required
+                    $error={Boolean(err)}
                   />
                 </div>
               </>
             )}
 
-            <div>
+            <div className="pass-wrap">
               <FieldLabel htmlFor="acc-pass">{t('account.password')}</FieldLabel>
               <Input
                 id="acc-pass"
-                type="password"
+                type={showPass ? 'text' : 'password'}
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
                 value={form.password}
                 onChange={set('password')}
                 required
                 minLength={8}
+                $error={Boolean(err)}
               />
+              <button
+                type="button"
+                className="eye"
+                aria-label={showPass ? t('account.hide_password') : t('account.show_password')}
+                onClick={() => setShowPass((s) => !s)}
+              >
+                <EyeIcon off={showPass} />
+              </button>
             </div>
 
             {mode === 'register' && (
               <label
                 style={{ display: 'flex', alignItems: 'center', gap: 10, fontSize: 14, cursor: 'pointer' }}
               >
-                <input type="checkbox" required defaultChecked style={{ accentColor: '#B08D57' }} />
-                Согласен с условиями и политикой
+                <input type="checkbox" required style={{ accentColor: '#B08D57' }} />
+                {t('account.terms')}
               </label>
             )}
 
-            {err && <FieldError>{err}</FieldError>}
+            {err && <FieldError role="alert">{err}</FieldError>}
 
             <Button type="submit" disabled={busy} style={{ marginTop: 4 }}>
               {mode === 'login' ? t('account.login') : t('account.register')}
             </Button>
+
+            {mode === 'login' && (
+              <button type="button" className="forgot" onClick={() => navigate('/contacts')}>
+                {t('account.forgot')}
+              </button>
+            )}
           </form>
         </AuthForm>
       </AuthGrid>

@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { api, label } from '../../lib/api';
 import { useFavorites } from '../../lib/favorites';
@@ -74,25 +75,26 @@ function FavoriteCard({ slug }) {
 }
 
 function Favorites() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const { slugs } = useFavorites();
 
   return (
     <Container>
       <Wrap>
-        <Kicker as="div">Ваша подборка</Kicker>
-        <h1>Избранное</h1>
+        <Kicker as="div">{t('fav.kicker')}</Kicker>
+        <h1>{t('fav.title')}</h1>
         <div className="count">
-          {slugs.length > 0 ? `Сохранено: ${slugs.length}` : ''}
+          {slugs.length > 0 ? t('fav.saved', { count: slugs.length }) : ''}
         </div>
         <Hairline style={{ marginTop: 18 }} />
 
         {slugs.length === 0 ? (
           <EmptyState
             icon={<IconHeart size={30} />}
-            title="В избранном пусто"
-            text="Нажимайте на сердечко на карточке товара — соберите свою подборку света."
-            actionLabel="В каталог"
+            title={t('fav.empty_title')}
+            text={t('fav.empty_text')}
+            actionLabel={t('common.to_catalog')}
             onAction={() => navigate('/catalog')}
           />
         ) : (

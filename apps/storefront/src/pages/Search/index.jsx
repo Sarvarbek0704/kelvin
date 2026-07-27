@@ -40,21 +40,21 @@ import {
 const IP_ORDER = ['IP20', 'IP44', 'IP54', 'IP65', 'IP67'];
 const CT_ORDER = [2700, 3000, 4000, 5000, 6500];
 
-// Filtr param → facet kaliti va sarlavha (checkbox guruhlari)
+// Filtr param → facet kaliti va sarlavha kaliti (checkbox guruhlari)
 const CHECK_FACETS = [
-  { param: 'socket', facet: 'socket_type', title: 'Цоколь' },
-  { param: 'light', facet: 'light_source', title: 'Источник света' },
-  { param: 'mount', facet: 'mount_type', title: 'Крепление' },
-  { param: 'voltage', facet: 'voltage', title: 'Напряжение' },
-  { param: 'brand', facet: 'brand', title: 'Бренд' },
+  { param: 'socket', facet: 'socket_type', titleKey: 'search.facet_socket' },
+  { param: 'light', facet: 'light_source', titleKey: 'search.facet_light' },
+  { param: 'mount', facet: 'mount_type', titleKey: 'search.facet_mount' },
+  { param: 'voltage', facet: 'voltage', titleKey: 'search.facet_voltage' },
+  { param: 'brand', facet: 'brand', titleKey: 'search.facet_brand' },
 ];
 
 const SORT_OPTIONS = [
-  { value: 'relevance', label: 'По популярности' },
-  { value: 'new', label: 'Новинки' },
-  { value: 'flux_desc', label: 'Яркость: сначала ярче' },
-  { value: 'flux_asc', label: 'Яркость: сначала мягче' },
-  { value: 'cri_desc', label: 'Лучший CRI' },
+  { value: 'relevance', labelKey: 'search.sort_relevance' },
+  { value: 'new', labelKey: 'search.sort_new' },
+  { value: 'flux_desc', labelKey: 'search.sort_flux_desc' },
+  { value: 'flux_asc', labelKey: 'search.sort_flux_asc' },
+  { value: 'cri_desc', labelKey: 'search.sort_cri' },
 ];
 
 /** Ikki dastali flux (lm) slideri — qo'yib yuborilganda paramga yoziladi. */
@@ -164,7 +164,7 @@ function Search() {
     ? label(category.name)
     : params.get('q')
       ? `«${params.get('q')}»`
-      : 'Все товары';
+      : t('search.all_products');
 
   // Aktiv filtr chiplari
   const activeChips = [
@@ -181,13 +181,13 @@ function Search() {
         .map((v) => ({ key: `${param}-${v}`, label: v, clear: () => toggleMulti(param, v) })),
     ),
     ...(params.get('dim') === '1'
-      ? [{ key: 'dim', label: 'Диммируемый', clear: () => setParam('dim', undefined) }]
+      ? [{ key: 'dim', label: t('search.dimmable'), clear: () => setParam('dim', undefined) }]
       : []),
     ...(params.get('fluxMin') || params.get('fluxMax')
       ? [
           {
             key: 'flux',
-            label: 'Люмены',
+            label: 'lm',
             clear: () => {
               setParam('fluxMin', undefined);
               setParam('fluxMax', undefined);
@@ -202,7 +202,7 @@ function Search() {
   const filterPanel = (
     <>
       <FacetGroup>
-        <div className="facet-label">Цветовая температура</div>
+        <div className="facet-label">{t('search.facet_temp')}</div>
         <TempFacet>
           <div className="swatch-row">
             {CT_ORDER.filter((k) => k in ctFacet || isChecked('ct', k)).map((k) => (
@@ -228,7 +228,7 @@ function Search() {
       {Object.keys(ipFacet).length > 0 && (
         <FacetGroup>
           <div className="facet-label">
-            Защита IP <span className="hint">· не менее</span>
+            {t('search.facet_ip')} <span className="hint">{t('search.facet_ip_hint')}</span>
           </div>
           <div className="options">
             {IP_ORDER.filter((ip) => ip in ipFacet).map((ip) => {
@@ -251,13 +251,13 @@ function Search() {
         </FacetGroup>
       )}
 
-      {CHECK_FACETS.map(({ param, facet, title: groupTitle }) => {
+      {CHECK_FACETS.map(({ param, facet, titleKey }) => {
         const dist = facets[facet] ?? {};
         const keys = Object.keys(dist).sort();
         if (keys.length === 0) return null;
         return (
           <FacetGroup key={param}>
-            <div className="facet-label">{groupTitle}</div>
+            <div className="facet-label">{t(titleKey)}</div>
             <div className="options">
               {keys.map((v) => {
                 const count = dist[v] ?? 0;
@@ -282,7 +282,7 @@ function Search() {
 
       {fluxBounds && fluxBounds.max > fluxBounds.min && (
         <FacetGroup>
-          <div className="facet-label">Световой поток · lm</div>
+          <div className="facet-label">{t('search.facet_flux')}</div>
           <FluxRange
             key={`${params.get('fluxMin') ?? ''}-${params.get('fluxMax') ?? ''}-${fluxBounds.min}-${fluxBounds.max}`}
             bounds={fluxBounds}
@@ -303,10 +303,12 @@ function Search() {
 
       <FacetGroup>
         <div className="toggle-row">
-          <span>Диммируемый {dimFacet.true !== undefined && `· ${dimFacet.true}`}</span>
+          <span>
+            {t('search.dimmable')} {dimFacet.true !== undefined && `· ${dimFacet.true}`}
+          </span>
           <Toggle
             on={params.get('dim') === '1'}
-            label="Диммируемый"
+            label={t('search.dimmable')}
             onChange={(on) => setParam('dim', on ? '1' : undefined)}
           />
         </div>
@@ -327,9 +329,9 @@ function Search() {
         <HeadRow>
           <div className="crumbs-row">
             <Crumbs>
-              <Link to="/">Главная</Link>
+              <Link to="/">{t('common.home')}</Link>
               <span>/</span>
-              <Link to="/catalog">Каталог</Link>
+              <Link to="/catalog">{t('nav.catalog')}</Link>
               <span>/</span>
               <span className="current">{title}</span>
             </Crumbs>
@@ -338,25 +340,21 @@ function Search() {
             <div>
               <h1>{title}</h1>
               <div className="count">
-                {isLoading ? t('product.loading') : (
-                  <>
-                    Найдено: <b>{total}</b>
-                  </>
-                )}
+                {isLoading ? t('product.loading') : t('search.found', { count: total })}
               </div>
             </div>
             <div className="sort">
-              Сортировка
+              {t('search.sort')}
               <Select
                 value={params.get('sort') ?? 'relevance'}
                 onChange={(e) =>
                   setParam('sort', e.target.value === 'relevance' ? undefined : e.target.value)
                 }
-                aria-label="Сортировка"
+                aria-label={t('search.sort')}
               >
                 {SORT_OPTIONS.map((o) => (
                   <option key={o.value} value={o.value}>
-                    {o.label}
+                    {t(o.labelKey)}
                   </option>
                 ))}
               </Select>
@@ -368,9 +366,9 @@ function Search() {
         <ContentGrid>
           <Sidebar>
             <FilterHead>
-              <div className="title">Фильтры</div>
+              <div className="title">{t('search.filters')}</div>
               <button type="button" onClick={clearFilters}>
-                Сбросить
+                {t('search.reset')}
               </button>
             </FilterHead>
             {filterPanel}
@@ -385,7 +383,7 @@ function Search() {
                   </FilterChip>
                 ))}
                 <button type="button" className="clear" onClick={clearFilters}>
-                  Очистить всё
+                  {t('search.clear_all')}
                 </button>
               </Chips>
             )}
@@ -405,20 +403,18 @@ function Search() {
                 <div className="icon">
                   <IconSearch size={34} />
                 </div>
-                <div className="title">Ничего не найдено</div>
+                <div className="title">{t('search.empty_title')}</div>
                 <div className="text">
-                  {filterCount > 0
-                    ? 'По этим фильтрам товаров нет. Уберите самый строгий фильтр или сбросьте всё.'
-                    : 'Попробуйте изменить запрос или загляните в каталог.'}
+                  {filterCount > 0 ? t('search.empty_filters') : t('search.empty_query')}
                 </div>
                 <div className="actions">
                   {filterCount > 0 && (
                     <Button type="button" $size="sm" onClick={clearFilters}>
-                      Сбросить всё
+                      {t('search.reset_all')}
                     </Button>
                   )}
                   <Button type="button" $size="sm" $variant="outline" as={Link} to="/catalog">
-                    В каталог
+                    {t('common.to_catalog')}
                   </Button>
                 </div>
               </EmptyWrap>
@@ -480,9 +476,10 @@ function Search() {
       <MobileFilterBar>
         <button type="button" onClick={() => setSheetOpen(true)}>
           <IconFilter size={18} />
-          Фильтр{filterCount > 0 && ` (${filterCount})`}
+          {t('search.filter')}
+          {filterCount > 0 && ` (${filterCount})`}
           <span className="sep" />
-          Показать {total}
+          {t('search.show')} {total}
         </button>
       </MobileFilterBar>
 
@@ -492,18 +489,18 @@ function Search() {
           <span />
         </div>
         <div className="sheet-head">
-          <div className="title">Фильтры</div>
-          <button type="button" aria-label="Закрыть" onClick={() => setSheetOpen(false)}>
+          <div className="title">{t('search.filters')}</div>
+          <button type="button" aria-label="✕" onClick={() => setSheetOpen(false)}>
             <IconClose size={22} />
           </button>
         </div>
         <div className="sheet-body">{filterPanel}</div>
         <div className="sheet-foot">
           <Button type="button" $variant="outline" onClick={clearFilters}>
-            Сброс
+            {t('search.reset')}
           </Button>
           <Button type="button" className="show" onClick={() => setSheetOpen(false)}>
-            Показать {total}
+            {t('search.show')} {total}
           </Button>
         </div>
       </Sheet>

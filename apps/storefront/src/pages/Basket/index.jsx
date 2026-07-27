@@ -120,28 +120,26 @@ function Basket() {
           <div className="icon">
             <IconCheck size={40} />
           </div>
-          <h1>Заказ принят</h1>
-          <div className="lead">Спасибо! Мы позвоним для подтверждения в течение часа.</div>
+          <h1>{t('cart.success_title')}</h1>
+          <div className="lead">{t('cart.success_lead')}</div>
           <div className="muted">
-            {placedOrder.payMethod === 'cash'
-              ? 'Оплата при доставке · курьер свяжется перед выездом'
-              : '✓ Оплата принята (demo). Заказ подтверждён.'}
+            {placedOrder.payMethod === 'cash' ? t('cart.success_cash') : t('cart.success_online')}
           </div>
           <div className="facts">
             <div>
-              <div className="cap">Номер заказа</div>
+              <div className="cap">{t('cart.order_number')}</div>
               <div className="val">{placedOrder.number}</div>
             </div>
             <div className="sep" />
             <div>
-              <div className="cap">Сумма</div>
+              <div className="cap">{t('cart.amount')}</div>
               <div className="val">{formatSom(placedOrder.totalAmount)}</div>
             </div>
             {placedOrder.eta && (
               <>
                 <div className="sep" />
                 <div>
-                  <div className="cap">Доставка</div>
+                  <div className="cap">{t('cart.delivery')}</div>
                   <div className="val">{placedOrder.eta}</div>
                 </div>
               </>
@@ -149,10 +147,10 @@ function Basket() {
           </div>
           <div className="actions">
             <Button type="button" onClick={() => navigate('/orders')}>
-              Мои заказы
+              {t('account.my_orders')}
             </Button>
             <Button type="button" $variant="outline" onClick={() => navigate('/catalog')}>
-              В каталог
+              {t('common.to_catalog')}
             </Button>
           </div>
         </SuccessWrap>
@@ -170,8 +168,8 @@ function Basket() {
           <EmptyState
             icon={<IconCart size={30} />}
             title={t('cart.empty')}
-            text="Загляните в каталог — там свет для каждой комнаты."
-            actionLabel="В каталог"
+            text={t('cart.empty_text')}
+            actionLabel={t('common.to_catalog')}
             onAction={() => navigate('/catalog')}
           />
         </BasketWrap>
@@ -182,7 +180,7 @@ function Basket() {
   return (
     <Container>
       <BasketWrap>
-        <h1>Оформление заказа</h1>
+        <h1>{t('cart.checkout_title')}</h1>
         <div className="bar" />
 
         <CheckoutGrid>
@@ -258,29 +256,29 @@ function Basket() {
             </Panel>
 
             <Panel>
-              <h2>Контакты и адрес</h2>
+              <h2>{t('cart.contacts_address')}</h2>
               <FormGrid>
                 <div>
-                  <FieldLabel htmlFor="co-name">Имя</FieldLabel>
+                  <FieldLabel htmlFor="co-name">{t('cart.name')}</FieldLabel>
                   <Input id="co-name" type="text" autoComplete="name" />
                 </div>
                 <div>
-                  <FieldLabel htmlFor="co-phone">Телефон</FieldLabel>
-                  <Input id="co-phone" type="tel" autoComplete="tel" placeholder="+998" />
+                  <FieldLabel htmlFor="co-phone">{t('cart.phone')}</FieldLabel>
+                  <Input id="co-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+998" />
                 </div>
                 <div className="full">
-                  <FieldLabel htmlFor="co-address">Адрес доставки</FieldLabel>
+                  <FieldLabel htmlFor="co-address">{t('cart.address')}</FieldLabel>
                   <Input id="co-address" type="text" autoComplete="street-address" />
                 </div>
                 <div className="full">
-                  <FieldLabel htmlFor="co-comment">Комментарий</FieldLabel>
-                  <Textarea id="co-comment" rows={2} placeholder="Позвоните за час до доставки…" />
+                  <FieldLabel htmlFor="co-comment">{t('cart.comment')}</FieldLabel>
+                  <Textarea id="co-comment" rows={2} placeholder={t('cart.comment_ph')} />
                 </div>
               </FormGrid>
             </Panel>
 
             <Panel>
-              <h2>Оплата</h2>
+              <h2>{t('cart.payment')}</h2>
               {/* To'lov usuli — naqd ISHLAYDI; onlayn CLICK demo (simulate-webhook);
                   Payme hali ulanmagan (adapter skeleti, docs/08 §2.5) → "скоро". */}
               <PayOptions>
@@ -294,7 +292,7 @@ function Basket() {
                     style={{ accentColor: '#B08D57' }}
                   />
                   <span className="pay-name">{t('cart.pay_cash')}</span>
-                  <span className="pay-note">оплата курьеру</span>
+                  <span className="pay-note">{t('cart.pay_courier')}</span>
                 </label>
                 <label className={payMethod === 'online' ? 'active' : ''}>
                   <input
@@ -318,15 +316,17 @@ function Basket() {
           </div>
 
           <Summary>
-            <h2>Ваш заказ</h2>
+            <h2>{t('cart.your_order')}</h2>
             <div className="rows">
               <div className="row">
-                <span className="k">Товары ({cart?.itemCount ?? 0})</span>
+                <span className="k">
+                  {t('cart.items')} ({cart?.itemCount ?? 0})
+                </span>
                 <span className="v">{formatSom(cart?.subtotal)}</span>
               </div>
               {cart?.discountTotal && cart.discountTotal !== '0' && (
                 <div className="row">
-                  <span className="k">Скидка</span>
+                  <span className="k">{t('cart.discount')}</span>
                   <span className="v green">−{formatSom(cart.discountTotal)}</span>
                 </div>
               )}
@@ -349,8 +349,8 @@ function Basket() {
             </div>
             {quote && (
               <div className="note">
-                Доставка {quote.etaDaysMin}–{quote.etaDaysMax} {t('cart.eta_days')} ·{' '}
-                {payMethod === 'cash' ? 'наличными при получении' : 'онлайн-оплата'}
+                {t('cart.delivery')} {quote.etaDaysMin}–{quote.etaDaysMax} {t('cart.eta_days')} ·{' '}
+                {payMethod === 'cash' ? t('cart.pay_cash_label') : t('cart.pay_online_label')}
               </div>
             )}
 
@@ -367,12 +367,12 @@ function Basket() {
 
             <label className="privacy">
               <input type="checkbox" defaultChecked style={{ accentColor: '#B08D57' }} />
-              <span>Я согласен на обработку моих персональных данных</span>
+              <span>{t('cart.privacy')}</span>
             </label>
 
             <div className="secure">
               <IconShield size={15} />
-              Безопасная оплата · гарантия брендов
+              {t('cart.secure')}
             </div>
           </Summary>
         </CheckoutGrid>

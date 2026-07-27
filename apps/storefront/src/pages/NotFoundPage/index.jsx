@@ -1,5 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import styled from 'styled-components';
 import { Button } from '../../components/ui';
 
@@ -82,6 +83,7 @@ const Wrap = styled.div`
 
 /** 404 — futer-ink fonda "Здесь погас свет". */
 function NotFoundPage() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
@@ -89,14 +91,14 @@ function NotFoundPage() {
       <div className="edge" />
       <div className="code">404</div>
       <div className="bar" />
-      <div className="quote">Здесь погас свет</div>
-      <div className="text">Такой страницы нет или её перенесли. Вернёмся туда, где светло.</div>
+      <div className="quote">{t('nf.quote')}</div>
+      <div className="text">{t('nf.text')}</div>
       <div className="actions">
         <Button type="button" $variant="brass" onClick={() => navigate('/')}>
-          На главную
+          {t('common.to_home')}
         </Button>
         <Button type="button" $variant="outline" className="ghost" onClick={() => navigate('/catalog')}>
-          В каталог
+          {t('common.to_catalog')}
         </Button>
       </div>
     </Wrap>

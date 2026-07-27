@@ -2,168 +2,123 @@ import styled from 'styled-components';
 
 export const KatalogSection = styled.section`
   background: ${(p) => p.theme.color.deep};
-  padding: 72px 0 56px;
+  padding: 64px 0 56px;
 
   @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
-    padding: 36px 0 28px;
+    padding: 32px 0 28px;
   }
 `;
 
 export const CategoriesGrid = styled.div`
   display: grid;
   grid-template-columns: repeat(4, 1fr);
+  grid-auto-rows: 200px;
   gap: 16px;
 
   @media (max-width: ${(p) => p.theme.breakpoint.tablet}) {
     grid-template-columns: repeat(3, 1fr);
+    grid-auto-rows: 170px;
   }
 
   @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
     grid-template-columns: 1fr 1fr;
+    grid-auto-rows: 130px;
     gap: 12px;
   }
 `;
 
-/* Oddiy plitka — rasm tepada, nom pastda */
+/* Plitka — rasm to'liq fon, pastida iliq gradient + nom (bir xil ritm) */
 export const Tile = styled.div`
-  background: ${(p) => p.theme.color.surface};
-  border: 1px solid ${(p) => p.theme.color.border};
+  position: relative;
   border-radius: ${(p) => p.theme.radius.card};
   overflow: hidden;
+  border: 1px solid ${(p) => p.theme.color.border};
+  background: repeating-linear-gradient(
+    135deg,
+    #efe8dc,
+    #efe8dc 12px,
+    #e9e0d2 12px,
+    #e9e0d2 24px
+  );
   transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-  height: 100%;
+  grid-column: span ${(p) => (p.$featured ? 2 : 1)};
 
   &:hover {
     border-color: rgba(176, 141, 87, 0.5);
-    box-shadow: 0 18px 40px -22px rgba(83, 66, 40, 0.35);
+    box-shadow: 0 18px 40px -22px rgba(83, 66, 40, 0.45);
     transform: translateY(-3px);
   }
 
-  .thumb {
-    height: 110px;
-    background: repeating-linear-gradient(
-      135deg,
-      #efe8dc,
-      #efe8dc 11px,
-      #e9e0d2 11px,
-      #e9e0d2 22px
-    );
-    position: relative;
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  &:hover img {
+    transform: scale(1.04);
   }
 
-  .body {
-    padding: 16px 18px;
+  img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.4s ease;
+  }
+
+  /* Matn o'qilishi uchun pastki iliq qoraytirish */
+  .shade {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(33, 28, 22, 0) 42%,
+      rgba(33, 28, 22, 0.16) 62%,
+      rgba(33, 28, 22, 0.62) 100%
+    );
+  }
+
+  .info {
+    position: absolute;
+    left: 18px;
+    right: 18px;
+    bottom: 14px;
+    color: ${(p) => p.theme.color.base};
   }
 
   .name {
     font-family: ${(p) => p.theme.font.serif};
-    font-size: 22px;
-    color: ${(p) => p.theme.color.ink};
+    font-size: ${(p) => (p.$featured ? '32px' : '23px')};
+    line-height: 1.1;
+    text-shadow: 0 1px 12px rgba(33, 28, 22, 0.35);
   }
 
   .more {
-    font-size: 12px;
-    color: ${(p) => p.theme.color.inkMuted};
-    margin-top: 2px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffd3a5;
+    margin-top: 4px;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+  }
+
+  &:hover .more {
+    opacity: 1;
+    transform: translateY(0);
   }
 
   @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
-    .thumb {
-      height: 76px;
-    }
+    grid-column: ${(p) => (p.$featured ? '1 / -1' : 'span 1')};
 
-    .body {
-      padding: 12px 14px;
+    .info {
+      left: 12px;
+      right: 12px;
+      bottom: 10px;
     }
 
     .name {
-      font-size: 19px;
+      font-size: ${(p) => (p.$featured ? '26px' : '18px')};
     }
 
     .more {
       display: none;
-    }
-  }
-`;
-
-/* Katta (featured) plitka — 2 ustun, matn chapda, rasm o'ngda */
-export const FeaturedTile = styled.div`
-  grid-column: span 2;
-  background: ${(p) => p.theme.color.surface};
-  border: 1px solid ${(p) => p.theme.color.border};
-  border-radius: ${(p) => p.theme.radius.card};
-  overflow: hidden;
-  display: flex;
-  min-height: 200px;
-  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
-
-  &:hover {
-    border-color: rgba(176, 141, 87, 0.5);
-    box-shadow: 0 18px 40px -22px rgba(83, 66, 40, 0.35);
-    transform: translateY(-3px);
-  }
-
-  .info {
-    flex: 1;
-    padding: 26px 28px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-  }
-
-  .name {
-    font-family: ${(p) => p.theme.font.serif};
-    font-size: 30px;
-    color: ${(p) => p.theme.color.ink};
-  }
-
-  .sub {
-    font-size: 13px;
-    color: ${(p) => p.theme.color.inkMuted};
-    margin-top: 4px;
-  }
-
-  .more {
-    font-size: 13px;
-    color: ${(p) => p.theme.color.brassDark};
-    font-weight: 600;
-  }
-
-  .thumb {
-    flex: 1;
-    background: repeating-linear-gradient(
-      135deg,
-      #efe8dc,
-      #efe8dc 11px,
-      #e9e0d2 11px,
-      #e9e0d2 22px
-    );
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
-  }
-
-  @media (max-width: ${(p) => p.theme.breakpoint.mobile}) {
-    grid-column: span 2;
-    min-height: 0;
-
-    .info {
-      padding: 16px 18px;
-    }
-
-    .name {
-      font-size: 22px;
     }
   }
 `;

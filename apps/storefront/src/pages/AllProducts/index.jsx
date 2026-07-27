@@ -41,17 +41,17 @@ function Products() {
     <Container>
       <Wrap>
         <Crumbs style={{ marginBottom: 16 }}>
-          <Link to="/">Главная</Link>
+          <Link to="/">{t('common.home')}</Link>
           <span>/</span>
-          <span className="current">Популярные товары</span>
+          <span className="current">{t('home.popular_title')}</span>
         </Crumbs>
 
         <SectionHead
-          kicker="Витрина"
-          title="Популярные товары"
+          kicker={t('home.popular_kicker')}
+          title={t('home.popular_title')}
           action={
             <TextLink as={Link} to="/search">
-              Весь каталог →
+              {t('common.all_catalog')}
             </TextLink>
           }
         />

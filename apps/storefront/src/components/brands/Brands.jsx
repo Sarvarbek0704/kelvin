@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { Container } from '../ui';
 import { BrandsStrip } from './Brands.styled';
 
@@ -6,10 +7,11 @@ import { BrandsStrip } from './Brands.styled';
 const BRANDS = ['Novotech', 'Maytoni', 'Lightstar', 'Denkirs', 'Arte Lamp', 'Odeon'];
 
 function Brands() {
+  const { t } = useTranslation();
   return (
     <BrandsStrip>
       <Container>
-        <div className="kicker">Только проверенные бренды</div>
+        <div className="kicker">{t('home.brands_kicker')}</div>
         <div className="row">
           {BRANDS.map((name) => (
             <div className="brand" key={name}>
