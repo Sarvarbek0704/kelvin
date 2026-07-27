@@ -1,0 +1,17 @@
+# Kelvin storefront (Vite) — static export. Build context = repo root.
+# Build:  docker build -f Dockerfile.web --target export \
+#           -o type=local,dest=./web-out .
+# The storefront calls the API via relative /api/v1, so no build-time URL is
+# needed — nginx routes /api to the API container in production.
+FROM node:20-slim AS build
+WORKDIR /app
+RUN npm i -g pnpm@9
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY tsconfig*.json ./
+COPY packages ./packages
+COPY apps/storefront ./apps/storefront
+RUN pnpm install --frozen-lockfile
+RUN pnpm --filter @kelvin/storefront build
+
+FROM scratch AS export
+COPY --from=build /app/apps/storefront/dist /

@@ -1,0 +1,24 @@
+# Kelvin API (NestJS) — production image. Monorepo (pnpm workspaces).
+# Build context = repo root.
+FROM node:20-slim AS build
+WORKDIR /app
+RUN apt-get update && apt-get install -y --no-install-recommends openssl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+RUN npm i -g pnpm@9
+
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY tsconfig*.json ./
+COPY packages ./packages
+COPY apps/api ./apps/api
+
+RUN pnpm install --frozen-lockfile
+# ⚠️ Deploy VPS CPU lacks the x86-64-v2 microarchitecture that sharp >= 0.33
+#    prebuilt binaries require. Pin the baseline-compatible 0.32.6 prebuilt.
+RUN pnpm --filter @kelvin/api add sharp@0.32.6 -E
+RUN pnpm --filter @kelvin/contracts build || true
+RUN cd apps/api && pnpm exec prisma generate
+RUN pnpm --filter @kelvin/api build
+
+WORKDIR /app/apps/api
+# Migrations run on container start, then the HTTP server boots.
+CMD ["sh", "-c", "pnpm exec prisma migrate deploy && node dist/main"]
