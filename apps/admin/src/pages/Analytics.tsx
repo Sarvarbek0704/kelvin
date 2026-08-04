@@ -34,6 +34,7 @@ export function AnalyticsPage(): ReactNode {
   });
 
   const [segCode, setSegCode] = useState('');
+  const [openSegId, setOpenSegId] = useState<string | null>(null);
   const [segName, setSegName] = useState('');
   const createSeg = useMutation({
     mutationFn: () => api.post('/segments', { code: segCode, name: { 'uz-Latn': segName, ru: segName } }),
@@ -108,9 +109,20 @@ export function AnalyticsPage(): ReactNode {
           </div>
           <ul className="space-y-1 text-sm">
             {(segments ?? []).map((s) => (
-              <li key={s.id} className="flex justify-between border-b border-slate-100 py-2 last:border-0">
-                <span>{s.code} <Badge tone="slate">{s.kind}</Badge></span>
-                <span className="text-slate-500">{s._count.members} a'zo</span>
+              <li key={s.id} className="border-b border-slate-100 py-2 last:border-0">
+                <div className="flex justify-between">
+                  <span>
+                    {s.code} <Badge tone="slate">{s.kind}</Badge>
+                  </span>
+                  <button
+                    type="button"
+                    className="text-slate-500 hover:text-slate-900"
+                    onClick={() => setOpenSegId((v) => (v === s.id ? null : s.id))}
+                  >
+                    {s._count.members} a'zo {openSegId === s.id ? '▴' : '▾'}
+                  </button>
+                </div>
+                {openSegId === s.id && <SegmentMembers segmentId={s.id} />}
               </li>
             ))}
             {(segments ?? []).length === 0 && <li className="py-4 text-center text-slate-400">Segment yo'q — RFM hisoblang</li>}
@@ -124,5 +136,32 @@ export function AnalyticsPage(): ReactNode {
         </Card>
       </div>
     </div>
+  );
+}
+
+interface SegmentMember {
+  customerId: string;
+  contact: { firstName: string | null; phone: string | null; email: string | null } | null;
+}
+
+/** Segment a'zolari — ochilganda yuklanadi (GET /segments/:id/members). */
+function SegmentMembers({ segmentId }: { segmentId: string }): ReactNode {
+  const { data: members, isLoading } = useQuery({
+    queryKey: ['segments', segmentId, 'members'],
+    queryFn: () => api.get<SegmentMember[]>(`/segments/${segmentId}/members`),
+  });
+  if (isLoading) {
+    return <div className="py-2 text-xs text-slate-400">Yuklanmoqda…</div>;
+  }
+  return (
+    <ul className="mt-2 space-y-1 rounded bg-slate-50 p-2 text-xs text-slate-600">
+      {(members ?? []).map((m) => (
+        <li key={m.customerId} className="flex justify-between">
+          <span>{m.contact?.firstName ?? '—'}</span>
+          <span className="text-slate-400">{m.contact?.phone ?? m.contact?.email ?? ''}</span>
+        </li>
+      ))}
+      {(members ?? []).length === 0 && <li className="text-slate-400">A'zo yo'q</li>}
+    </ul>
   );
 }

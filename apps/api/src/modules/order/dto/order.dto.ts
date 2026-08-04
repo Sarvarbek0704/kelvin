@@ -17,6 +17,22 @@ export class CheckoutDto {
   @IsOptional()
   @IsUUID('7')
   deliveryZoneId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid', description: 'Yetkazish manzili (mijozniki)' })
+  @IsOptional()
+  @IsUUID('7')
+  addressId?: string;
+
+  @ApiPropertyOptional({ format: 'uuid', description: 'Afzal yetkazish sloti (bron EMAS)' })
+  @IsOptional()
+  @IsUUID('7')
+  slotId?: string;
+
+  @ApiPropertyOptional({ description: 'Buyurtmaga izoh' })
+  @IsOptional()
+  @IsString()
+  @MaxLength(500)
+  note?: string;
 }
 
 export class TransitionDto {

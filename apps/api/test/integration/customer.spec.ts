@@ -19,12 +19,16 @@ describe('Customer addresses (integration)', () => {
 
   const agent = (): request.Agent => request(h.app.getHttpServer() as Server);
 
-  /** Yangi mijoz ro'yxatdan o'tkazadi va access token qaytaradi. */
+  /** Yangi mijoz: register → kod (Notification'dan) → verify. Token qaytaradi. */
   const registerCustomer = async (): Promise<string> => {
-    const phone = `+9986${String(Date.now() + Math.floor(Math.random() * 1000)).slice(-8)}`;
-    const reg = await agent()
-      .post('/api/v1/auth/register')
-      .send({ phone, password: 'addr-pass-123' });
+    const email = `mijoz-${String(Date.now())}-${String(Math.floor(Math.random() * 1000))}@kelvin.uz`;
+    await agent().post('/api/v1/auth/register').send({ email, password: 'addr-pass-123' });
+    const n = await h.prisma.notification.findFirst({
+      where: { recipient: email, templateKey: 'auth.otp_code' },
+      orderBy: { createdAt: 'desc' },
+    });
+    const code = (n?.payload as { code?: string } | null)?.code ?? '';
+    const reg = await agent().post('/api/v1/auth/register/verify').send({ email, code });
     return reg.body.accessToken as string;
   };
 
@@ -75,6 +79,29 @@ describe('Customer addresses (integration)', () => {
       .set('Authorization', `Bearer ${tokenB}`)
       .send({ street: 'Hack 1' });
     expect(asB.status).toBe(404); // begona → 404 (sizdirmaymiz)
+  });
+
+  it('profil: GET /customers/me → email bor; PATCH ism/telefon yangilanadi', async () => {
+    const token = await registerCustomer();
+    const me = await agent().get('/api/v1/customers/me').set('Authorization', `Bearer ${token}`);
+    expect(me.status).toBe(200);
+    expect(String(me.body.email)).toContain('@kelvin.uz');
+    expect(me.body.phone).toBeNull(); // email+parol ro'yxatida telefon yo'q
+
+    const upd = await agent()
+      .patch('/api/v1/customers/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ firstName: 'Anvar', lastName: 'Aliyev', phone: '+998901112299' });
+    expect(upd.status).toBe(200);
+    expect(upd.body.firstName).toBe('Anvar');
+    expect(upd.body.phone).toBe('+998901112299');
+
+    // Noto'g'ri telefon format → 422 VALIDATION_FAILED (docs/04 §3).
+    const bad = await agent()
+      .patch('/api/v1/customers/me')
+      .set('Authorization', `Bearer ${token}`)
+      .send({ phone: '901112233' });
+    expect(bad.status).toBe(422);
   });
 
   it('xodim (customerId yo‘q) → 403', async () => {

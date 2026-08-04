@@ -2,7 +2,6 @@ import React from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import lyustra from '../../assets/lyustra.png';
 import { api, label } from '../../lib/api';
 import { Button, Container } from '../ui';
 import { Hero, HeroText, HeroVisual, HeroCard } from './Slide.styled';
@@ -20,6 +19,9 @@ function Slide() {
     queryFn: () => api.get('/products?limit=8'),
   });
   const featured = data?.items?.[0];
+  // Hero rasmi — featured mahsulotning asosiy media'si; bo'lmasa banner.
+  const heroMedia = featured?.media?.find((m) => m.isPrimary) ?? featured?.media?.[0];
+  const heroImage = heroMedia?.url || '/media/banners/home-hero-1.jpg';
 
   return (
     <Container>
@@ -45,7 +47,7 @@ function Slide() {
 
         <HeroVisual>
           <div className="glow" />
-          <img src={lyustra} alt="Kelvin" />
+          <img src={heroImage} alt="Kelvin" />
           {featured && (
             <HeroCard as={Link} to={`/product/${featured.slug}`}>
               {featured.brand && <div className="brand">{featured.brand}</div>}

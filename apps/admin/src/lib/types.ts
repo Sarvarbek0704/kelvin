@@ -113,8 +113,12 @@ export interface OrderTimelineEntry {
 }
 
 export interface AdminOrderDetail extends AdminOrder {
-  customer: { phone: string; firstName: string | null } | null;
+  customer: { phone: string | null; email: string | null; firstName: string | null } | null;
   timeline: OrderTimelineEntry[];
+  /** Mijoz checkout'da tanlaganlari — jo'natma uchun default qiymatlar. */
+  deliveryAddress: { id: string; region: string; city: string; street: string } | null;
+  deliverySlotId: string | null;
+  customerNote: string | null;
 }
 
 export type PaymentStatus =
@@ -304,6 +308,45 @@ export interface VariantLookup {
   variantId: string;
   sku: string;
   productName: LocalizedText;
+}
+
+// --- Narx (pricing) --------------------------------------------------------
+export interface VariantPrice {
+  id: string;
+  variantId: string;
+  amount: string; // TIYIN (string)
+  currency: string;
+  minQuantity: number;
+}
+
+// --- Yetkazish (delivery) --------------------------------------------------
+export interface DeliveryZone {
+  id: string;
+  name: LocalizedText;
+  districts: string[];
+  priceAmount: string; // TIYIN
+  freeThresholdAmount: string | null; // TIYIN
+  etaDaysMin: number;
+  etaDaysMax: number;
+  isActive: boolean;
+}
+
+/** ⚠️ GET /delivery/slots raw SQL'dan keladi — kalitlar snake_case. */
+export interface DeliverySlotRaw {
+  id: string;
+  start_time: string;
+  end_time: string;
+  capacity: number;
+  booked: number;
+  is_active: boolean;
+}
+
+// --- Segment a'zolari (CRM) ------------------------------------------------
+export interface SegmentMember {
+  customerId: string;
+  rfmScore: string | null;
+  createdAt: string;
+  contact: { firstName: string | null; phone: string | null; email: string | null } | null;
 }
 
 // --- Ombor (inventory) -----------------------------------------------------

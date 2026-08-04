@@ -3,6 +3,7 @@ import { Module } from '@nestjs/common';
 import { NotificationService } from './notification.service';
 import { NotificationRepository } from './notification.repository';
 import { LogNotificationAdapter } from './notification.adapter';
+import { SmtpEmailAdapter } from './smtp-email.adapter';
 import { NOTIFICATION_PORT } from './notification.port';
 
 /**
@@ -15,6 +16,7 @@ import { NOTIFICATION_PORT } from './notification.port';
   providers: [
     NotificationRepository,
     LogNotificationAdapter,
+    SmtpEmailAdapter,
     NotificationService,
     { provide: NOTIFICATION_PORT, useExisting: NotificationService },
   ],

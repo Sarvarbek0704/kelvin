@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 
 import { PriceRepository } from './price.repository';
+import { PricingController } from './pricing.controller';
 import { PricingService } from './pricing.service';
 import { PRICING_PORT } from './pricing.port';
 
@@ -12,6 +13,7 @@ import { PRICING_PORT } from './pricing.port';
  *    `PRICING_PORT` orqali murojaat qiladi (arch:check — service.ts import emas).
  */
 @Module({
+  controllers: [PricingController],
   providers: [PriceRepository, PricingService, { provide: PRICING_PORT, useExisting: PricingService }],
   exports: [PRICING_PORT],
 })

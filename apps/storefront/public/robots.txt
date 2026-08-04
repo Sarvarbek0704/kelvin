@@ -5,4 +5,4 @@ Disallow: /basket
 Disallow: /orders
 Disallow: /*?
 
-Sitemap: https://kelvin.uz/sitemap.xml
+Sitemap: https://kelvin.uz/api/v1/seo/sitemap.xml

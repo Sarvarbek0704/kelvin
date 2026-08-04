@@ -680,8 +680,8 @@ model Customer {
 
   firstName String? @map("first_name")
   lastName  String? @map("last_name")
-  /// Mehmon buyurtmasi telefon bo'yicha bog'lanadi
-  phone     String
+  /// Mehmon buyurtmasi telefon bo'yicha bog'lanadi; email+OTP mijozda bo'lmasligi mumkin
+  phone     String?
   email     String?
 
   /// B2B: dizayner, qurilish brigadasi
@@ -841,6 +841,12 @@ model Order {
 
   customerNote String? @map("customer_note")
   internalNote String? @map("internal_note")
+
+  /// Mijoz checkout'da tanlagan manzil/slot — jo'natma yaratishda ishlatiladi.
+  /// ⚠️ Slot bu bosqichda BRON QILINMAYDI (afzal ko'rilgan vaqt) — atomik bron
+  ///    jo'natma yaratilganda bo'ladi (docs/07 §8).
+  deliveryAddressId String? @map("delivery_address_id") @db.Uuid
+  deliverySlotId    String? @map("delivery_slot_id") @db.Uuid
 
   placedAt    DateTime? @map("placed_at") @db.Timestamptz(3)
   completedAt DateTime? @map("completed_at") @db.Timestamptz(3)

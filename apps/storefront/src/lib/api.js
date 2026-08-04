@@ -2,7 +2,7 @@
  * Storefront API client — ommaviy katalog/qidiruv.
  *
  * ⚠️ Commit qilingan hardcode ma'lumot O'RNIGA. Narx/qoldiq har doim serverdan.
- * Vite dev'da `/api` → :3000 proxy (vite.config.js).
+ * Vite dev'da `/api` → :3001 proxy (vite.config.js).
  */
 const BASE = '/api/v1';
 

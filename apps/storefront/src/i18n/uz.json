@@ -27,7 +27,8 @@
     "more": "Batafsil →",
     "collapse": "Yig'ish",
     "send": "Yuborish",
-    "sending": "Yuborilmoqda…"
+    "sending": "Yuborilmoqda…",
+    "all_products": "Barcha mahsulotlar"
   },
   "home": {
     "kicker": "Yorug'lik saloni · Toshkent",
@@ -147,14 +148,23 @@
     "phone": "Telefon",
     "address": "Yetkazish manzili",
     "comment": "Izoh",
-    "comment_ph": "Yetkazishdan bir soat oldin qo'ng'iroq qiling…"
+    "comment_ph": "Yetkazishdan bir soat oldin qo'ng'iroq qiling…",
+    "delivery_time": "Yetkazish vaqti (ixtiyoriy)",
+    "any_time": "Farqi yo'q",
+    "no_slots": "Bu kunga bo'sh slot yo'q",
+    "saved_address": "Saqlangan manzillar",
+    "new_address": "Yangi manzil",
+    "city": "Shahar",
+    "street_ph": "Ko'cha, uy, xonadon",
+    "privacy_required": "Davom etish uchun maxfiylik siyosatiga rozilik kerak",
+    "phone_invalid": "Telefon +998XXXXXXXXX formatida bo'lsin",
+    "address_required": "Yetkazish manzilini kiriting"
   },
   "account": {
     "title": "Kabinet",
     "login": "Kirish",
     "register": "Ro'yxatdan o'tish",
     "logout": "Chiqish",
-    "identifier": "Telefon yoki email",
     "password": "Parol",
     "first_name": "Ism",
     "name_ph": "Ismingiz",
@@ -174,7 +184,23 @@
     "terms": "Shartlar va siyosatga roziman",
     "show_password": "Parolni ko'rsatish",
     "hide_password": "Parolni yashirish",
-    "forgot": "Parolni unutdingizmi?"
+    "forgot": "Parolni unutdingizmi?",
+    "email": "Email",
+    "email_ph": "siz@misol.uz",
+    "code": "Tasdiqlash kodi",
+    "code_sent": "Kod {{email}} manziliga yuborildi",
+    "resend": "Kodni qayta yuborish",
+    "otp_invalid": "Kod noto'g'ri yoki eskirgan",
+    "otp_rate_limited": "Kod allaqachon yuborilgan — biroz kuting",
+    "confirm": "Tasdiqlash",
+    "bad_credentials": "Email yoki parol noto'g'ri",
+    "email_taken": "Bu email allaqachon ro'yxatdan o'tgan",
+    "last_name": "Familiya",
+    "save": "Saqlash",
+    "saved": "Saqlandi",
+    "reset_title": "Parolni tiklash",
+    "forgot_hint": "Email'ingizni kiriting — tiklash kodi yuboramiz.",
+    "new_password": "Yangi parol"
   },
   "fav": {
     "kicker": "Sizning tanlovingiz",
@@ -212,7 +238,8 @@
     "tl_placed": "Rasmiylashtirildi",
     "tl_confirmed": "Tasdiqlandi",
     "tl_shipping": "Yetkazilmoqda",
-    "tl_delivered": "Yetkazildi"
+    "tl_delivered": "Yetkazildi",
+    "cancel": "Buyurtmani bekor qilish"
   },
   "search": {
     "found": "Topildi: {{count}}",

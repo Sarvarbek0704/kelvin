@@ -12,7 +12,9 @@ export interface AddressRef {
 }
 
 export interface ContactInfo {
-  readonly phone: string;
+  /** Email+OTP mijozida telefon bo'lmasligi mumkin. */
+  readonly phone: string | null;
+  readonly email: string | null;
   readonly firstName: string | null;
 }
 

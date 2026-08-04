@@ -44,6 +44,52 @@ export class PriceRepository {
     );
   }
 
+  /** Admin: variantning berilgan ro'yxatdagi (masalan RETAIL) narxlari. */
+  findPricesByListCode(variantId: string, listCode: string): Promise<PriceRow[]> {
+    return this.prisma.price.findMany({
+      where: { variantId, priceList: { code: listCode } },
+      include: { priceList: true },
+      orderBy: { minQuantity: 'asc' },
+    });
+  }
+
+  /** Ro'yxat kodi bo'yicha PriceList (upsert uchun id kerak). */
+  findPriceListByCode(code: string): Promise<{ id: string } | null> {
+    return this.prisma.priceList.findUnique({ where: { code }, select: { id: true } });
+  }
+
+  /** Variant mavjudligini tekshirish (FK xatosi o'rniga aniq 404 uchun). */
+  async variantExists(variantId: string): Promise<boolean> {
+    const row = await this.prisma.productVariant.findUnique({
+      where: { id: variantId },
+      select: { id: true },
+    });
+    return row !== null;
+  }
+
+  /**
+   * Narxni upsert: (priceListId, variantId, minQuantity) unikal kaliti bo'yicha.
+   * Bor bo'lsa amount yangilanadi, yo'q bo'lsa yaratiladi. ⚠️ amount — TIYIN.
+   */
+  upsertPrice(data: {
+    priceListId: string;
+    variantId: string;
+    amount: bigint;
+    minQuantity: number;
+  }): Promise<PriceRow> {
+    const key = {
+      priceListId: data.priceListId,
+      variantId: data.variantId,
+      minQuantity: data.minQuantity,
+    };
+    return this.prisma.price.upsert({
+      where: { priceListId_variantId_minQuantity: key },
+      create: { ...key, amount: data.amount },
+      update: { amount: data.amount },
+      include: { priceList: true },
+    });
+  }
+
   /** Faol + validity oynasidagi chegirmalar, priority bo'yicha. */
   findActiveDiscounts(at: Date): Promise<DiscountRow[]> {
     return this.prisma.discount.findMany({

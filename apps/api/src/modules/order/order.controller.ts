@@ -32,6 +32,9 @@ export class OrderController {
       cartId: dto.cartId,
       ...(dto.warehouseId !== undefined && { warehouseId: dto.warehouseId }),
       ...(dto.deliveryZoneId !== undefined && { deliveryZoneId: dto.deliveryZoneId }),
+      ...(dto.addressId !== undefined && { addressId: dto.addressId }),
+      ...(dto.slotId !== undefined && { slotId: dto.slotId }),
+      ...(dto.note !== undefined && { note: dto.note }),
     });
     return toOrderView(order);
   }

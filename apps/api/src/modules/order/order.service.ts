@@ -22,6 +22,12 @@ export interface CheckoutInput {
   readonly warehouseId?: string;
   /** Yetkazish zonasi — berilsa narx snapshot buyurtmaga qo'shiladi. */
   readonly deliveryZoneId?: string;
+  /** Mijoz manzili — EGALIK tekshiriladi (begona manzil → 404). */
+  readonly addressId?: string;
+  /** Afzal slot — bron QILINMAYDI (jo'natma yaratishda bron bo'ladi). */
+  readonly slotId?: string;
+  /** Mijoz izohi. */
+  readonly note?: string;
 }
 
 /** JSON javob — pul TIYINDA, string (BigInt JSON'ga sig'maydi). */
@@ -84,13 +90,26 @@ export function toAdminOrderView(order: OrderWithItems): AdminOrderView {
 
 /** Admin buyurtma DETALI — mijoz kontakti + holat tarixi (timeline) bilan. */
 export interface AdminOrderDetailView extends AdminOrderView {
-  readonly customer: { readonly phone: string; readonly firstName: string | null } | null;
+  readonly customer: {
+    readonly phone: string | null;
+    readonly email: string | null;
+    readonly firstName: string | null;
+  } | null;
   readonly timeline: readonly {
     readonly fromStatus: string | null;
     readonly toStatus: string;
     readonly reason: string | null;
     readonly createdAt: string;
   }[];
+  /** Mijoz checkout'da tanlaganlari — jo'natma yaratishda default qiymatlar. */
+  readonly deliveryAddress: {
+    readonly id: string;
+    readonly region: string;
+    readonly city: string;
+    readonly street: string;
+  } | null;
+  readonly deliverySlotId: string | null;
+  readonly customerNote: string | null;
 }
 
 /**
@@ -134,6 +153,10 @@ export class OrderService implements OrderPort {
       return null;
     }
     const contact = await this.customers.getContactInfo(order.customerId);
+    const address =
+      order.deliveryAddressId !== null
+        ? await this.customers.getAddress(order.deliveryAddressId)
+        : null;
     return {
       ...toAdminOrderView(order),
       customer: contact,
@@ -143,6 +166,12 @@ export class OrderService implements OrderPort {
         reason: h.reason,
         createdAt: h.createdAt.toISOString(),
       })),
+      deliveryAddress:
+        address !== null
+          ? { id: address.id, region: address.region, city: address.city, street: address.street }
+          : null,
+      deliverySlotId: order.deliverySlotId,
+      customerNote: order.customerNote,
     };
   }
 
@@ -214,10 +243,17 @@ export class OrderService implements OrderPort {
       const confirmed = await this.transitionTo(orderId, 'CONFIRMED', undefined, 'reservations confirmed');
       // ⚠️ Saga oxirgi qadami (docs/07 §3.3): mijozga xabar (best-effort, oqimni buzmaydi).
       const contact = await this.customers.getContactInfo(confirmed.customerId);
-      if (contact !== null) {
+      // Telefon bo'lsa SMS, bo'lmasa email (email+OTP mijozida telefon yo'q).
+      const recipient =
+        contact?.phone !== null && contact?.phone !== undefined
+          ? { channel: 'SMS', to: contact.phone }
+          : contact?.email !== null && contact?.email !== undefined
+            ? { channel: 'EMAIL', to: contact.email }
+            : null;
+      if (recipient !== null) {
         await this.notifications.send({
-          channel: 'SMS',
-          recipient: contact.phone,
+          channel: recipient.channel,
+          recipient: recipient.to,
           templateKey: 'order_confirmed',
           payload: { orderNumber: confirmed.number, total: confirmed.totalAmount.toString() },
         });
@@ -280,6 +316,14 @@ export class OrderService implements OrderPort {
     const cart = await this.cart.getCartForCheckout(input.cartId);
     if (cart === null || cart.items.length === 0) {
       throw new BusinessRuleError('CART_EMPTY', 'Savat bo‘sh — checkout mumkin emas');
+    }
+
+    // Manzil EGALIGI — begona addressId bilan buyurtma berish mumkin emas (404).
+    if (input.addressId !== undefined) {
+      const address = await this.customers.getAddress(input.addressId);
+      if (address?.customerId !== input.customerId) {
+        throw new NotFoundError('Manzil', input.addressId);
+      }
     }
 
     const [priced, snapshots] = await Promise.all([
@@ -360,6 +404,9 @@ export class OrderService implements OrderPort {
               .filter((t) => t.delta < 0n)
               .map((t) => ({ ruleId: t.ruleId, stage: t.stage, delta: t.delta.toString() })),
           ),
+          ...(input.addressId !== undefined && { deliveryAddressId: input.addressId }),
+          ...(input.slotId !== undefined && { deliverySlotId: input.slotId }),
+          ...(input.note !== undefined && { customerNote: input.note }),
           items,
         },
         new Date().getUTCFullYear(),

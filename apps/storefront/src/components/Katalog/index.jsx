@@ -6,32 +6,9 @@ import { api, label } from '../../lib/api';
 import { Container, SectionHead, TextLink } from '../ui';
 import { KatalogSection, CategoriesGrid, Tile } from './Katalog.styled';
 
-import katalog1 from '../../assets/katalog1.png';
-import katalog2 from '../../assets/katalog2.png';
-import katalog3 from '../../assets/katalog3.png';
-import katalog4 from '../../assets/katalog4.png';
-import katalog5 from '../../assets/katalog5.png';
-import katalog6 from '../../assets/katalog6.png';
-import katalog7 from '../../assets/katalog7.png';
-import katalog8 from '../../assets/katalog8.png';
-import katalog9 from '../../assets/katalog9.png';
-import katalog10 from '../../assets/katalog10.png';
-import katalog11 from '../../assets/katalog11.png';
-
-// Kategoriya rasmlari indeks bo'yicha (bezak) — nom/slug serverdan.
-const IMAGES = [
-  katalog1,
-  katalog2,
-  katalog3,
-  katalog4,
-  katalog5,
-  katalog6,
-  katalog7,
-  katalog8,
-  katalog9,
-  katalog10,
-  katalog11,
-];
+// Kategoriya rasmi — serverdagi Category.imageUrl (seed /media/categories/<slug>.jpg
+// konvensiyasi; fayllar `pnpm media:generate` bilan yaratiladi).
+const imageOf = (cat) => cat.imageUrl || `/media/categories/${cat.slug}.jpg`;
 
 /**
  * Bosh sahifa kategoriya mozaikasi — rasm to'liq fon + overlay nom.
@@ -65,7 +42,7 @@ function Katalog() {
               to={`/search?category=${encodeURIComponent(cat.slug)}`}
               $featured={i === 0}
             >
-              <img src={IMAGES[i % IMAGES.length]} alt="" loading="lazy" />
+              <img src={imageOf(cat)} alt="" loading="lazy" />
               <div className="shade" />
               <div className="info">
                 <div className="name">{label(cat.name)}</div>

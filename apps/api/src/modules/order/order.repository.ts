@@ -29,6 +29,10 @@ export interface CreateOrderInput {
   readonly currency: string;
   readonly appliedDiscounts: JsonInput;
   readonly items: readonly CreateOrderItemInput[];
+  /** Mijoz tanlagan yetkazish parametrlari (checkout, ixtiyoriy). */
+  readonly deliveryAddressId?: string;
+  readonly deliverySlotId?: string;
+  readonly customerNote?: string;
 }
 
 /** Buyurtma — Prisma qatlami (docs/07). Raqam: `KLV-YYYY-NNNNNN` (sequence). */
@@ -153,6 +157,9 @@ export class OrderRepository {
           totalAmount: input.totalAmount,
           currency: input.currency,
           appliedDiscounts: input.appliedDiscounts,
+          ...(input.deliveryAddressId !== undefined && { deliveryAddressId: input.deliveryAddressId }),
+          ...(input.deliverySlotId !== undefined && { deliverySlotId: input.deliverySlotId }),
+          ...(input.customerNote !== undefined && { customerNote: input.customerNote }),
           items: {
             create: input.items.map((it) => ({
               variantId: it.variantId,

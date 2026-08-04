@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 
-import { NotFoundError } from '../../core/errors/domain.error';
+import { BusinessRuleError, NotFoundError } from '../../core/errors/domain.error';
 import { type Currency } from '../../core/money/money';
 import {
   DiscountStage,
@@ -12,13 +12,16 @@ import {
   percentageDiscountRule,
   type PricingRule,
 } from '../../core/pricing';
-import { PriceRepository, type DiscountRow } from './price.repository';
+import { PriceRepository, type DiscountRow, type PriceRow } from './price.repository';
 import { type PriceCartInput, type PricingPort } from './pricing.port';
 
 interface DiscountConditions {
   readonly minSubtotal?: number;
   readonly categoryIds?: readonly string[];
 }
+
+/** Chakana narxlar ro'yxati kodi (seed'da yaratiladi). */
+const RETAIL_LIST_CODE = 'RETAIL';
 
 /**
  * pricing — narx dvigateli (docs/07 §7). Bazaviy narxni PriceList'dan yechadi,
@@ -28,6 +31,29 @@ interface DiscountConditions {
 @Injectable()
 export class PricingService implements PricingPort {
   constructor(private readonly repo: PriceRepository) {}
+
+  /** Admin: variantning RETAIL ro'yxatidagi joriy narxlari (tierlar bilan). */
+  listRetailPrices(variantId: string): Promise<PriceRow[]> {
+    return this.repo.findPricesByListCode(variantId, RETAIL_LIST_CODE);
+  }
+
+  /**
+   * Admin: RETAIL narxni o'rnatish (upsert, minQuantity=1). ⚠️ amount — TIYIN
+   * (BigInt); musbat bo'lishi shart. Variant yo'q bo'lsa aniq 404.
+   */
+  async setRetailPrice(variantId: string, amount: bigint): Promise<PriceRow> {
+    if (amount <= 0n) {
+      throw new BusinessRuleError('INVALID_PRICE', 'Narx musbat bo‘lishi kerak (tiyin)');
+    }
+    if (!(await this.repo.variantExists(variantId))) {
+      throw new NotFoundError('Variant', variantId);
+    }
+    const list = await this.repo.findPriceListByCode(RETAIL_LIST_CODE);
+    if (list === null) {
+      throw new NotFoundError('Narxlar ro‘yxati', RETAIL_LIST_CODE);
+    }
+    return await this.repo.upsertPrice({ priceListId: list.id, variantId, amount, minQuantity: 1 });
+  }
 
   async priceCart(input: PriceCartInput): Promise<PricedCart> {
     const at = input.at ?? new Date();

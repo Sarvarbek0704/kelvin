@@ -175,6 +175,7 @@ export function ContentPage(): ReactNode {
       )}
 
       <PagesSection />
+      <BannersSection />
     </div>
   );
 }
@@ -224,4 +225,185 @@ function PagesSection(): ReactNode {
 
 function createDisabled(form: typeof EMPTY): boolean {
   return !form.bodyUz && !form.bodyRu;
+}
+
+interface BannerRow {
+  id: string;
+  title: LocalizedText;
+  imageUrl: string;
+  linkUrl: string | null;
+  position: string;
+  sortOrder: number;
+  isActive: boolean;
+}
+
+const BANNER_EMPTY = { titleUz: '', titleRu: '', imageUrl: '', linkUrl: '', position: 'HOME_HERO', sortOrder: '0' };
+
+/** Bannerlar — storefront bosh sahifa promo bloklari (HOME_HERO karusel, HOME_STRIP chiziq). */
+function BannersSection(): ReactNode {
+  const qc = useQueryClient();
+  const [f, setF] = useState({ ...BANNER_EMPTY });
+  const [editId, setEditId] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const set = (k: keyof typeof BANNER_EMPTY, v: string): void => setF((p) => ({ ...p, [k]: v }));
+
+  const { data: banners } = useQuery({
+    queryKey: ['banners', 'admin'],
+    queryFn: () => api.get<BannerRow[]>('/banners/admin'),
+  });
+
+  const invalidate = (): void => void qc.invalidateQueries({ queryKey: ['banners'] });
+  const onErr = (e: unknown): void => setErr(e instanceof ApiError ? e.problem.detail : 'Xatolik');
+  const reset = (): void => {
+    setF({ ...BANNER_EMPTY });
+    setEditId(null);
+    setErr(null);
+  };
+
+  const save = useMutation({
+    mutationFn: () => {
+      const payload = {
+        title: { 'uz-Latn': f.titleUz, ru: f.titleRu || f.titleUz },
+        imageUrl: f.imageUrl,
+        ...(f.linkUrl ? { linkUrl: f.linkUrl } : {}),
+        position: f.position,
+        sortOrder: Number(f.sortOrder) || 0,
+      };
+      return editId ? api.patch(`/banners/${editId}`, payload) : api.post('/banners', payload);
+    },
+    onSuccess: () => {
+      reset();
+      invalidate();
+    },
+    onError: onErr,
+  });
+
+  const toggle = useMutation({
+    mutationFn: (b: BannerRow) => api.patch(`/banners/${b.id}`, { isActive: !b.isActive }),
+    onSuccess: invalidate,
+    onError: onErr,
+  });
+
+  const remove = useMutation({
+    mutationFn: (id: string) => api.del(`/banners/${id}`),
+    onSuccess: invalidate,
+    onError: onErr,
+  });
+
+  const startEdit = (b: BannerRow): void => {
+    setEditId(b.id);
+    setF({
+      titleUz: b.title['uz-Latn'] ?? '',
+      titleRu: b.title.ru ?? '',
+      imageUrl: b.imageUrl,
+      linkUrl: b.linkUrl ?? '',
+      position: b.position,
+      sortOrder: String(b.sortOrder),
+    });
+  };
+
+  return (
+    <div className="mt-10">
+      <h2 className="mb-3 text-lg font-semibold text-slate-800">Bannerlar (bosh sahifa)</h2>
+      {err && <div className="mb-4 rounded-md bg-red-50 px-4 py-2 text-sm text-red-700">{err}</div>}
+
+      <Card className="mb-4 space-y-3 p-5">
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>Sarlavha (uz)</Label>
+            <Input value={f.titleUz} onChange={(e) => set('titleUz', e.target.value)} />
+          </div>
+          <div>
+            <Label>Sarlavha (ru)</Label>
+            <Input value={f.titleRu} onChange={(e) => set('titleRu', e.target.value)} />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>Rasm URL</Label>
+            <Input value={f.imageUrl} onChange={(e) => set('imageUrl', e.target.value)} placeholder="/media/banners/home-hero-1.jpg" />
+          </div>
+          <div>
+            <Label>Havola (ixtiyoriy)</Label>
+            <Input value={f.linkUrl} onChange={(e) => set('linkUrl', e.target.value)} placeholder="/catalog/lyustry" />
+          </div>
+        </div>
+        <div className="grid grid-cols-2 gap-3">
+          <div>
+            <Label>Pozitsiya</Label>
+            <select
+              className="w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:border-slate-900"
+              value={f.position}
+              onChange={(e) => set('position', e.target.value)}
+            >
+              <option value="HOME_HERO">HOME_HERO — katta karusel</option>
+              <option value="HOME_STRIP">HOME_STRIP — ingichka chiziq</option>
+            </select>
+          </div>
+          <div>
+            <Label>Tartib</Label>
+            <Input type="number" value={f.sortOrder} onChange={(e) => set('sortOrder', e.target.value)} />
+          </div>
+        </div>
+        <div className="flex gap-2">
+          <Button disabled={!f.titleUz || !f.imageUrl || save.isPending} onClick={() => save.mutate()}>
+            {editId ? 'Saqlash (tahrir)' : "Banner qo'shish"}
+          </Button>
+          {editId && (
+            <Button variant="ghost" onClick={reset}>
+              Bekor qilish
+            </Button>
+          )}
+        </div>
+      </Card>
+
+      <Card className="overflow-hidden">
+        <table className="w-full text-sm">
+          <thead className="border-b border-slate-200 bg-slate-50 text-left text-slate-500">
+            <tr>
+              <th className="px-4 py-3 font-medium">Rasm</th>
+              <th className="px-4 py-3 font-medium">Sarlavha</th>
+              <th className="px-4 py-3 font-medium">Pozitsiya</th>
+              <th className="px-4 py-3 font-medium">Holat</th>
+              <th className="px-4 py-3"></th>
+            </tr>
+          </thead>
+          <tbody>
+            {(banners ?? []).map((b) => (
+              <tr key={b.id} className="border-b border-slate-100 last:border-0">
+                <td className="px-4 py-2">
+                  <img src={b.imageUrl} alt="" className="h-10 w-24 rounded object-cover" />
+                </td>
+                <td className="px-4 py-3 text-slate-800">{label(b.title)}</td>
+                <td className="px-4 py-3 font-mono text-xs text-slate-500">
+                  {b.position} #{b.sortOrder}
+                </td>
+                <td className="px-4 py-3">
+                  <Badge tone={b.isActive ? 'green' : 'amber'}>{b.isActive ? 'Faol' : "O'chiq"}</Badge>
+                </td>
+                <td className="px-4 py-3 text-right">
+                  <Button size="sm" variant="ghost" onClick={() => startEdit(b)}>
+                    Tahrirlash
+                  </Button>
+                  <Button size="sm" variant="ghost" disabled={toggle.isPending} onClick={() => toggle.mutate(b)}>
+                    {b.isActive ? "O'chirish (ko'rinmas)" : 'Yoqish'}
+                  </Button>
+                  <Button size="sm" variant="ghost" disabled={remove.isPending} onClick={() => remove.mutate(b.id)}>
+                    Butunlay o'chirish
+                  </Button>
+                </td>
+              </tr>
+            ))}
+            {(banners ?? []).length === 0 && (
+              <tr>
+                <td colSpan={5} className="px-4 py-8 text-center text-slate-400">
+                  Banner yo'q
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
+      </Card>
+    </div>
+  );
 }

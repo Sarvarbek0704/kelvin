@@ -12,6 +12,8 @@ export default defineConfig({
     port: 5174,
     proxy: {
       '/api': { target: 'http://localhost:3001', changeOrigin: true },
+      // Media rasmlari storefront public'ida (dev). Prod'da bitta domen/nginx.
+      '/media': { target: 'http://localhost:5173', changeOrigin: true },
     },
   },
 });

@@ -3,8 +3,14 @@ import { type LocalizedText } from '@kelvin/contracts';
 
 import { computeRfm } from '../../core/crm/rfm';
 import { toJson } from '../../shared/json';
+import { CUSTOMER_PORT, type ContactInfo, type CustomerPort } from '../customer/customer.port';
 import { ORDER_PORT, type OrderPort } from '../order/order.port';
 import { SegmentRepository, type MemberRow, type SegmentRow } from './segment.repository';
+
+/** Segment a'zosi + mijoz aloqa ma'lumoti (admin ro'yxati uchun). */
+export interface MemberView extends MemberRow {
+  readonly contact: ContactInfo | null;
+}
 
 const RFM_SEGMENT_CODE = 'rfm-auto';
 const DAY_MS = 86_400_000;
@@ -18,6 +24,7 @@ export class SegmentService {
   constructor(
     private readonly repo: SegmentRepository,
     @Inject(ORDER_PORT) private readonly orders: OrderPort,
+    @Inject(CUSTOMER_PORT) private readonly customers: CustomerPort,
   ) {}
 
   createSegment(input: { code: string; name: LocalizedText; description?: string }): Promise<SegmentRow> {
@@ -33,8 +40,18 @@ export class SegmentService {
     return this.repo.listSegments();
   }
 
-  listMembers(segmentId: string): Promise<MemberRow[]> {
-    return this.repo.listMembers(segmentId);
+  /**
+   * A'zolar + aloqa ma'lumoti (ism/telefon/email). Mijoz CUSTOMER_PORT orqali
+   * o'qiladi (jadvalga to'g'ridan-to'g'ri kirilmaydi — modul chegarasi).
+   */
+  async listMembers(segmentId: string): Promise<MemberView[]> {
+    const members = await this.repo.listMembers(segmentId);
+    return await Promise.all(
+      members.map(async (m) => ({
+        ...m,
+        contact: await this.customers.getContactInfo(m.customerId),
+      })),
+    );
   }
 
   addMember(segmentId: string, customerId: string): Promise<MemberRow> {

@@ -68,3 +68,14 @@ docker-compose.override.yml
 # --- Dizayn referens (lokal — public repo'ga kirmaydi) -------------------
 design-handoff/
 *.zip
+
+# --- Seed media rasmlari (egasi joylaydi — repo shishmasin) ---------------
+apps/storefront/public/media/**/*.jpg
+apps/storefront/public/media/**/*.jpeg
+apps/storefront/public/media/**/*.png
+apps/storefront/public/media/**/*.webp
+apps/storefront/public/media/**/*.avif
+
+# Internal build/seed promptlari
+*-prompt.md
+*-PROMPT.md

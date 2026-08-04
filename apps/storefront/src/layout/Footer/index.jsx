@@ -52,6 +52,7 @@ function Footer() {
                 </Link>
               ))}
               <Link to="/catalog">{t('common.all_categories')}</Link>
+              <Link to="/all-products">{t('common.all_products')}</Link>
             </div>
           </FooterCol>
 

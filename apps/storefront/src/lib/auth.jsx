@@ -36,10 +36,23 @@ export function AuthProvider({ children }) {
     return res.user;
   };
 
-  const login = async (identifier, password) =>
-    afterAuth(await api.post('/auth/login', { identifier, password }));
+  // Kirish — email+parol.
+  const login = async (email, password) => afterAuth(await api.post('/auth/login', { email, password }));
 
-  const register = async (data) => afterAuth(await api.post('/auth/register', data));
+  // Ro'yxatdan o'tish: 1-qadam (email+parol → kod email'ga), 2-qadam (kodni
+  // tasdiqlash → token). Kod hech qachon javobda kelmaydi — faqat email'da.
+  const register = async (data) => api.post('/auth/register', data);
+
+  const verifyRegister = async (email, code) =>
+    afterAuth(await api.post('/auth/register/verify', { email, code }));
+
+  const resendOtp = async (email) => api.post('/auth/otp/resend', { email });
+
+  // Parol tiklash: kod so'rash → kod+yangi parol (muvaffaqiyatda darhol kiradi).
+  const forgotPassword = async (email) => api.post('/auth/password/forgot', { email });
+
+  const resetPassword = async (email, code, password) =>
+    afterAuth(await api.post('/auth/password/reset', { email, code, password }));
 
   const logout = async () => {
     await api.post('/auth/logout').catch(() => {});
@@ -49,7 +62,9 @@ export function AuthProvider({ children }) {
   };
 
   return (
-    <AuthContext.Provider value={{ user, ready, login, register, logout }}>
+    <AuthContext.Provider
+      value={{ user, ready, login, register, verifyRegister, resendOtp, forgotPassword, resetPassword, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

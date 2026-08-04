@@ -5,8 +5,9 @@ import { Rocket, Wand2 } from 'lucide-react';
 
 import { api, ApiError } from '@/lib/api';
 import { label } from '@/lib/i18n';
-import { Badge, Button, Card, PageHeader } from '@/components/ui';
-import type { Attribute, Product } from '@/lib/types';
+import { formatSom } from '@/lib/money';
+import { Badge, Button, Card, Input, PageHeader } from '@/components/ui';
+import type { Attribute, Product, VariantPrice } from '@/lib/types';
 
 export function ProductDetailPage(): ReactNode {
   const { id = '' } = useParams();
@@ -153,6 +154,7 @@ export function ProductDetailPage(): ReactNode {
               <th className="p-4 font-medium">O‘q qiymatlari</th>
               <th className="p-4 font-medium">IP</th>
               <th className="p-4 font-medium">Tsokol</th>
+              <th className="p-4 font-medium">Narx (RETAIL)</th>
             </tr>
           </thead>
           <tbody>
@@ -166,11 +168,14 @@ export function ProductDetailPage(): ReactNode {
                 </td>
                 <td className="p-4">{v.ipRating ?? '—'}</td>
                 <td className="p-4">{v.socketType ?? '—'}</td>
+                <td className="p-4">
+                  <VariantPriceCell variantId={v.id} />
+                </td>
               </tr>
             ))}
             {variants.length === 0 && (
               <tr>
-                <td colSpan={4} className="p-8 text-center text-slate-400">
+                <td colSpan={5} className="p-8 text-center text-slate-400">
                   Hali variant yo‘q. Yuqorida o‘qlarni tanlab generatsiya qiling.
                 </td>
               </tr>
@@ -178,6 +183,82 @@ export function ProductDetailPage(): ReactNode {
           </tbody>
         </table>
       </Card>
+    </div>
+  );
+}
+
+/**
+ * Variant narxi (RETAIL, minQuantity=1) — inline tahrirlash.
+ * ⚠️ Ko'rsatish so'mda (tiyin/100), saqlashda so'm → tiyin (×100, string).
+ */
+function VariantPriceCell({ variantId }: { variantId: string }): ReactNode {
+  const qc = useQueryClient();
+  const [editing, setEditing] = useState(false);
+  const [som, setSom] = useState('');
+  const [err, setErr] = useState<string | null>(null);
+
+  const { data: prices } = useQuery({
+    queryKey: ['variant-prices', variantId],
+    queryFn: () => api.get<VariantPrice[]>(`/pricing/variants/${variantId}/prices`),
+  });
+  const base = prices?.find((p) => p.minQuantity === 1);
+
+  const save = useMutation({
+    mutationFn: () =>
+      api.put<VariantPrice>(`/pricing/variants/${variantId}/price`, {
+        amount: String(Math.round(Number(som) * 100)),
+      }),
+    onSuccess: () => {
+      setEditing(false);
+      setErr(null);
+      void qc.invalidateQueries({ queryKey: ['variant-prices', variantId] });
+    },
+    onError: (e) => setErr(e instanceof ApiError ? e.problem.detail : 'Xatolik'),
+  });
+
+  if (!editing) {
+    return (
+      <div className="flex items-center gap-2">
+        <span className={base ? 'font-medium' : 'text-slate-400'}>
+          {base ? formatSom(base.amount) : 'Narx yo‘q'}
+        </span>
+        <Button
+          size="sm"
+          variant="ghost"
+          onClick={() => {
+            setSom(base ? String(Number(base.amount) / 100) : '');
+            setEditing(true);
+          }}
+        >
+          Tahrirlash
+        </Button>
+      </div>
+    );
+  }
+
+  const somNum = Number(som);
+  return (
+    <div>
+      <div className="flex items-center gap-2">
+        <Input
+          type="number"
+          className="h-8 w-32 text-sm"
+          value={som}
+          onChange={(e) => setSom(e.target.value)}
+          placeholder="so'm"
+        />
+        <Button
+          size="sm"
+          disabled={!som || !Number.isFinite(somNum) || somNum <= 0 || save.isPending}
+          onClick={() => save.mutate()}
+        >
+          Saqlash
+        </Button>
+        <Button size="sm" variant="ghost" onClick={() => { setEditing(false); setErr(null); }}>
+          Bekor
+        </Button>
+      </div>
+      {err !== null && <p className="mt-1 text-xs text-red-600">{err}</p>}
     </div>
   );
 }

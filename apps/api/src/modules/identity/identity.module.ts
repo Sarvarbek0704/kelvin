@@ -2,10 +2,12 @@ import { Module } from '@nestjs/common';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtModule } from '@nestjs/jwt';
 
+import { NotificationModule } from '../notification/notification.module';
 import { AuthController } from './auth.controller';
 import { UserController } from './user.controller';
 import { AuthService } from './auth.service';
 import { IdentityRepository } from './identity.repository';
+import { OtpService } from './otp/otp.service';
 import { PasswordService } from './password/password.service';
 import { AccessTokenService } from './token/access-token.service';
 import { RefreshTokenRepository } from './token/refresh-token.repository';
@@ -19,10 +21,11 @@ import { PermissionGuard } from './guards/permission.guard';
  * Ular shu modulda ro'yxatdan o'tadi, chunki AccessTokenService shu yerda.
  */
 @Module({
-  imports: [JwtModule.register({})],
+  imports: [JwtModule.register({}), NotificationModule],
   controllers: [AuthController, UserController],
   providers: [
     IdentityRepository,
+    OtpService,
     PasswordService,
     AccessTokenService,
     RefreshTokenRepository,

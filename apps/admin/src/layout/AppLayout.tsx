@@ -29,6 +29,7 @@ const NAV = [
   { to: '/products', label: 'Mahsulotlar', icon: Package },
   { to: '/inventory', label: 'Ombor', icon: Boxes },
   { to: '/procurement', label: 'Ta\'minot', icon: Truck },
+  { to: '/delivery', label: 'Yetkazish', icon: Truck },
   { to: '/installments', label: 'Rassrochka', icon: CalendarClock },
   { to: '/pos', label: 'Kassa', icon: ScanBarcode },
   { to: '/categories', label: 'Kategoriyalar', icon: FolderTree },

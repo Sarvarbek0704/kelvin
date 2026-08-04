@@ -9,7 +9,7 @@ export function LoginPage(): ReactNode {
   const token = useAuth((s) => s.accessToken);
   const setSession = useAuth((s) => s.setSession);
   const navigate = useNavigate();
-  const [identifier, setIdentifier] = useState('owner@kelvin.uz');
+  const [email, setEmail] = useState('owner@kelvin.uz');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -23,13 +23,13 @@ export function LoginPage(): ReactNode {
     setBusy(true);
     setError(null);
     try {
-      const res = await login(identifier, password);
+      const res = await login(email.trim(), password);
       setSession(res.accessToken, res.user);
       navigate('/');
     } catch (err) {
       setError(
         err instanceof ApiError && err.status === 401
-          ? "Login yoki parol noto'g'ri"
+          ? "Email yoki parol noto'g'ri"
           : 'Kirishda xatolik',
       );
     } finally {
@@ -46,12 +46,23 @@ export function LoginPage(): ReactNode {
         </div>
         <form onSubmit={(e) => void onSubmit(e)} className="space-y-4">
           <div>
-            <Label>Email yoki telefon</Label>
-            <Input value={identifier} onChange={(e) => setIdentifier(e.target.value)} autoFocus />
+            <Label>Email</Label>
+            <Input
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              autoFocus
+              required
+            />
           </div>
           <div>
             <Label>Parol</Label>
-            <Input type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
+            <Input
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
           </div>
           {error !== null && <p className="text-sm text-red-600">{error}</p>}
           <Button type="submit" className="w-full" disabled={busy}>

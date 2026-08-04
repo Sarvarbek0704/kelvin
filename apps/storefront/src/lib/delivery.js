@@ -26,3 +26,21 @@ export function useDeliveryQuote(zoneId, subtotalTiyin) {
     enabled: Boolean(zoneId) && subtotalTiyin !== undefined && subtotalTiyin !== null,
   });
 }
+
+/** Zona + sana uchun bo'sh yetkazish slotlari (date: 'YYYY-MM-DD'). */
+export function useDeliverySlots(zoneId, date) {
+  return useQuery({
+    queryKey: ['delivery-slots', zoneId, date],
+    queryFn: () => api.get(`/delivery/slots?zoneId=${zoneId}&date=${date}`),
+    enabled: Boolean(zoneId) && Boolean(date),
+  });
+}
+
+/** Mijoz manzillari (kabinet/checkout). */
+export function useAddresses(enabled) {
+  return useQuery({
+    queryKey: ['addresses'],
+    queryFn: () => api.get('/addresses'),
+    enabled: Boolean(enabled),
+  });
+}

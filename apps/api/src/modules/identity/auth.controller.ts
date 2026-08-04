@@ -12,13 +12,21 @@ import {
 import { ConfigService } from '@nestjs/config';
 import { ApiTags, ApiOperation, ApiCookieAuth } from '@nestjs/swagger';
 import { type Request, type Response } from 'express';
-import { type Actor, type AuthTokensResponse, type AuthUserView } from '@kelvin/contracts';
+import {
+  type Actor,
+  type AuthTokensResponse,
+  type AuthUserView,
+  type OtpRequestResponse,
+} from '@kelvin/contracts';
 
 import { type AppConfig, NodeEnv } from '../../config/configuration';
 import { parseTtlSeconds } from './token/access-token.service';
 import { AuthService, type AuthResult } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { ResendOtpDto } from './dto/resend-otp.dto';
+import { ResetPasswordDto } from './dto/reset-password.dto';
+import { VerifyOtpDto } from './dto/verify-otp.dto';
 import { Authenticated, CurrentActor, Public } from '../../shared/auth/auth.decorators';
 
 const REFRESH_COOKIE = 'kelvin_rt';
@@ -48,35 +56,69 @@ export class AuthController {
 
   @Post('register')
   @Public()
-  @ApiOperation({ summary: 'Mijoz ro‘yxatdan o‘tishi (darhol kirgiziladi)' })
-  async register(
-    @Body() dto: RegisterDto,
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Ro‘yxatdan o‘tish (1-qadam) — kod email’ga yuboriladi' })
+  async register(@Body() dto: RegisterDto): Promise<OtpRequestResponse> {
+    return await this.auth.register({
+      email: dto.email,
+      password: dto.password,
+      ...(dto.firstName !== undefined && { firstName: dto.firstName }),
+      ...(dto.lastName !== undefined && { lastName: dto.lastName }),
+    });
+  }
+
+  @Post('register/verify')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Ro‘yxatdan o‘tishni tasdiqlash — kod tekshiriladi, kirgiziladi' })
+  async verifyRegistration(
+    @Body() dto: VerifyOtpDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthTokensResponse> {
-    const result = await this.auth.register(
-      {
-        phone: dto.phone,
-        password: dto.password,
-        ...(dto.firstName !== undefined && { firstName: dto.firstName }),
-        ...(dto.lastName !== undefined && { lastName: dto.lastName }),
-        ...(dto.email !== undefined && { email: dto.email }),
-      },
-      this.ctx(req),
-    );
+    const result = await this.auth.verifyRegistration(dto.email, dto.code, this.ctx(req));
+    return this.respondWithTokens(result, res);
+  }
+
+  @Post('otp/resend')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Tasdiqlash kodini qayta yuborish' })
+  async resendOtp(@Body() dto: ResendOtpDto): Promise<OtpRequestResponse> {
+    return await this.auth.resendOtp(dto.email);
+  }
+
+  @Post('password/forgot')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Parol tiklash — kod email’ga yuboriladi' })
+  async forgotPassword(@Body() dto: ResendOtpDto): Promise<OtpRequestResponse> {
+    return await this.auth.requestPasswordReset(dto.email);
+  }
+
+  @Post('password/reset')
+  @Public()
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({ summary: 'Parol tiklash — kod + yangi parol, darhol kirgiziladi' })
+  async resetPassword(
+    @Body() dto: ResetPasswordDto,
+    @Req() req: Request,
+    @Res({ passthrough: true }) res: Response,
+  ): Promise<AuthTokensResponse> {
+    const result = await this.auth.resetPassword(dto.email, dto.code, dto.password, this.ctx(req));
     return this.respondWithTokens(result, res);
   }
 
   @Post('login')
   @Public()
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Parol bilan kirish' })
+  @ApiOperation({ summary: 'Email va parol bilan kirish' })
   async login(
     @Body() dto: LoginDto,
     @Req() req: Request,
     @Res({ passthrough: true }) res: Response,
   ): Promise<AuthTokensResponse> {
-    const result = await this.auth.login(dto.identifier, dto.password, this.ctx(req));
+    const result = await this.auth.login(dto.email, dto.password, this.ctx(req));
     return this.respondWithTokens(result, res);
   }
 

@@ -5,6 +5,13 @@ import { PrismaService } from '../../shared/prisma/prisma.service';
 
 export type AddressRow = Prisma.AddressGetPayload<Record<string, never>>;
 
+export interface CustomerProfile {
+  readonly firstName: string | null;
+  readonly lastName: string | null;
+  readonly phone: string | null;
+  readonly email: string | null;
+}
+
 export interface AddressData {
   readonly region: string;
   readonly city: string;
@@ -63,11 +70,32 @@ export class AddressRepository {
     return this.prisma.address.findFirst({ where: { customerId } });
   }
 
-  /** Mijoz aloqa ma'lumoti (bildirishnoma uchun). */
-  findCustomerContact(customerId: string): Promise<{ phone: string; firstName: string | null } | null> {
+  /** Mijoz profili — kabinet sahifasi uchun. */
+  findProfile(customerId: string): Promise<CustomerProfile | null> {
     return this.prisma.customer.findUnique({
       where: { id: customerId },
-      select: { phone: true, firstName: true },
+      select: { firstName: true, lastName: true, phone: true, email: true },
+    });
+  }
+
+  updateProfile(
+    customerId: string,
+    data: { firstName?: string; lastName?: string; phone?: string },
+  ): Promise<CustomerProfile> {
+    return this.prisma.customer.update({
+      where: { id: customerId },
+      data,
+      select: { firstName: true, lastName: true, phone: true, email: true },
+    });
+  }
+
+  /** Mijoz aloqa ma'lumoti (bildirishnoma uchun). */
+  findCustomerContact(
+    customerId: string,
+  ): Promise<{ phone: string | null; email: string | null; firstName: string | null } | null> {
+    return this.prisma.customer.findUnique({
+      where: { id: customerId },
+      select: { phone: true, email: true, firstName: true },
     });
   }
 

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { api } from '../../lib/api';
 import { formatSom } from '../../lib/money';
 import { useAuth } from '../../lib/auth-context';
 import {
   Container,
+  Button,
   StatusChip,
   EmptyState,
   IconCheck,
@@ -91,12 +92,29 @@ function OrderTimeline({ status, t }) {
 function Orders() {
   const { t } = useTranslation();
   const { user, ready } = useAuth();
+  const qc = useQueryClient();
   const [openId, setOpenId] = useState(null);
+  const [cancelling, setCancelling] = useState(false);
+  const [cancelErr, setCancelErr] = useState(null);
   const { data: orders, isLoading } = useQuery({
     queryKey: ['orders'],
     queryFn: () => api.get('/orders'),
     enabled: Boolean(user),
   });
+
+  const cancelOrder = async (id) => {
+    if (cancelling) return;
+    setCancelErr(null);
+    setCancelling(true);
+    try {
+      await api.post(`/orders/${id}/cancel`, { reason: 'Mijoz bekor qildi' });
+      void qc.invalidateQueries({ queryKey: ['orders'] });
+    } catch (e) {
+      setCancelErr(e?.problem?.detail || e?.message || 'Xatolik');
+    } finally {
+      setCancelling(false);
+    }
+  };
 
   const list = orders ?? [];
   const open = list.find((o) => o.id === openId) ?? null;
@@ -228,6 +246,23 @@ function Orders() {
                     <span className="k">{t('cart.total')}</span>
                     <span className="v">{formatSom(open.totalAmount)}</span>
                   </div>
+
+                  {/* Bekor qilish — faqat erta bosqichlarda (server holatni tekshiradi). */}
+                  {['DRAFT', 'PENDING_PAYMENT', 'PAID', 'CONFIRMED'].includes(open.status) && (
+                    <Button
+                      type="button"
+                      $variant="outline"
+                      $full
+                      disabled={cancelling}
+                      style={{ marginTop: 14 }}
+                      onClick={() => cancelOrder(open.id)}
+                    >
+                      {t('orders.cancel')}
+                    </Button>
+                  )}
+                  {cancelErr && (
+                    <div style={{ color: '#A6483B', fontSize: 13, marginTop: 8 }}>{cancelErr}</div>
+                  )}
                 </TotalsPanel>
               </DetailGrid>
             </>

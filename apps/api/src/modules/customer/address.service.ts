@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 
 import { NotFoundError } from '../../core/errors/domain.error';
 import { type AddressRef, type ContactInfo, type CustomerPort } from './customer.port';
-import { AddressRepository, type AddressData, type AddressRow } from './address.repository';
+import {
+  AddressRepository,
+  type AddressData,
+  type AddressRow,
+  type CustomerProfile,
+} from './address.repository';
 
 /**
  * customer — mijoz manzillari (docs/07). Har amal EGALIK bilan: begona manzil →
@@ -24,6 +29,22 @@ export class AddressService implements CustomerPort {
   /** CustomerPort — bildirishnoma uchun aloqa ma'lumoti. */
   getContactInfo(customerId: string): Promise<ContactInfo | null> {
     return this.repo.findCustomerContact(customerId);
+  }
+
+  /** Kabinet profili. Mijoz topilmasa 404 (nazariy holat — token buzilgan). */
+  async getProfile(customerId: string): Promise<CustomerProfile> {
+    const profile = await this.repo.findProfile(customerId);
+    if (profile === null) {
+      throw new NotFoundError('Mijoz', customerId);
+    }
+    return profile;
+  }
+
+  updateProfile(
+    customerId: string,
+    data: { firstName?: string; lastName?: string; phone?: string },
+  ): Promise<CustomerProfile> {
+    return this.repo.updateProfile(customerId, data);
   }
 
   list(customerId: string): Promise<AddressRow[]> {

@@ -1,10 +1,10 @@
 import { Fragment, type ReactNode, useState } from 'react';
-import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { api, ApiError } from '@/lib/api';
 import { label } from '@/lib/i18n';
-import { Badge, Button, Card, Input, Label, PageHeader } from '@/components/ui';
-import type { CursorPage, StockRow } from '@/lib/types';
+import { Badge, Button, Card, Input, Label, PageHeader, Select } from '@/components/ui';
+import type { CursorPage, StockRow, VariantLookup, Warehouse } from '@/lib/types';
 
 export function InventoryPage(): ReactNode {
   const qc = useQueryClient();
@@ -50,6 +50,8 @@ export function InventoryPage(): ReactNode {
       {error && (
         <div className="mb-4 rounded-md bg-red-50 px-4 py-2 text-sm text-red-700">{error}</div>
       )}
+
+      <ReceiptForm onError={setError} />
 
       <Card className="overflow-hidden">
         <table className="w-full text-sm">
@@ -148,5 +150,91 @@ export function InventoryPage(): ReactNode {
         </div>
       )}
     </div>
+  );
+}
+
+/**
+ * Kirim (receipt) — omborga tovar qabul qilish. SKU bo'yicha variant topiladi
+ * (Procurement naqshi), so'ng POST /inventory/receipts (on_hand += qty + ledger).
+ */
+function ReceiptForm({ onError }: { onError: (msg: string | null) => void }): ReactNode {
+  const qc = useQueryClient();
+  const [sku, setSku] = useState('');
+  const [warehouseId, setWarehouseId] = useState('');
+  const [qty, setQty] = useState('1');
+  const [note, setNote] = useState('');
+  const [ok, setOk] = useState<string | null>(null);
+
+  const { data: warehouses } = useQuery({
+    queryKey: ['warehouses'],
+    queryFn: () => api.get<Warehouse[]>('/inventory/warehouses'),
+  });
+
+  const receive = useMutation({
+    mutationFn: async () => {
+      const v = await api.get<VariantLookup>(
+        `/products/lookup?code=${encodeURIComponent(sku.trim())}`,
+      );
+      await api.post('/inventory/receipts', {
+        variantId: v.variantId,
+        warehouseId,
+        quantity: Number(qty),
+        ...(note.trim() && { note: note.trim() }),
+      });
+      return v;
+    },
+    onSuccess: (v) => {
+      onError(null);
+      setOk(`Kirim qabul qilindi: ${v.sku} × ${qty}`);
+      setSku('');
+      setQty('1');
+      setNote('');
+      void qc.invalidateQueries({ queryKey: ['inventory'] });
+    },
+    onError: (e) => {
+      setOk(null);
+      onError(e instanceof ApiError ? e.problem.detail : 'Xatolik');
+    },
+  });
+
+  const qtyNum = Number(qty);
+  return (
+    <Card className="mb-6 p-5">
+      <div className="mb-3 font-medium">Kirim (receipt)</div>
+      {ok !== null && (
+        <div className="mb-3 rounded-md bg-green-50 px-4 py-2 text-sm text-green-700">{ok}</div>
+      )}
+      <div className="flex flex-wrap items-end gap-3">
+        <div className="w-44">
+          <Label>SKU</Label>
+          <Input value={sku} onChange={(e) => setSku(e.target.value)} placeholder="AUR-8L-GOLD" />
+        </div>
+        <div className="w-56">
+          <Label>Ombor</Label>
+          <Select value={warehouseId} onChange={(e) => setWarehouseId(e.target.value)}>
+            <option value="">Tanlang…</option>
+            {(warehouses ?? []).map((w) => (
+              <option key={w.id} value={w.id}>
+                {w.code} — {label(w.name)}
+              </option>
+            ))}
+          </Select>
+        </div>
+        <div className="w-24">
+          <Label>Soni</Label>
+          <Input type="number" min={1} value={qty} onChange={(e) => setQty(e.target.value)} />
+        </div>
+        <div className="w-64">
+          <Label>Izoh (ixtiyoriy)</Label>
+          <Input value={note} onChange={(e) => setNote(e.target.value)} placeholder="hujjat №…" />
+        </div>
+        <Button
+          disabled={!sku.trim() || !warehouseId || !Number.isInteger(qtyNum) || qtyNum < 1 || receive.isPending}
+          onClick={() => receive.mutate()}
+        >
+          Qabul qilish
+        </Button>
+      </div>
+    </Card>
   );
 }

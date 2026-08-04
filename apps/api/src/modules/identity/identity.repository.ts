@@ -17,13 +17,10 @@ export type UserWithAuth = Prisma.UserGetPayload<{
 export class IdentityRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  /** Email yoki telefon bo'yicha — rollar va bog'langan mijoz bilan. */
-  findByIdentifier(identifier: string): Promise<UserWithAuth | null> {
+  /** Email bo'yicha — rollar va bog'langan mijoz bilan. */
+  findByEmail(email: string): Promise<UserWithAuth | null> {
     return this.prisma.user.findFirst({
-      where: {
-        deletedAt: null,
-        OR: [{ email: identifier }, { phone: identifier }],
-      },
+      where: { deletedAt: null, email },
       include: { roles: true, customer: { select: { id: true } } },
     });
   }
@@ -59,32 +56,62 @@ export class IdentityRepository {
     await this.prisma.user.update({ where: { id: userId }, data: { passwordHash } });
   }
 
+  /** Kod tasdiqlangach: hisob faol + email tasdiqlangan. */
+  async activateUser(userId: string): Promise<void> {
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { status: 'ACTIVE', emailVerified: true },
+    });
+  }
+
   /**
-   * Mijoz ro'yxatdan o'tishi — User (ACTIVE) + CUSTOMER roli + Customer profil,
-   * bitta tranzaksiya. Telefon/email band → ConflictError (P2002).
+   * Ro'yxatdan o'tish (1-qadam) — User (PENDING_VERIFICATION) + CUSTOMER roli +
+   * Customer profil. Tasdiqlangan email band → 409. TasdiqlanMAGAN email qayta
+   * ro'yxatdan o'tsa — parol/ism yangilanadi (kod yana yuboriladi).
    */
-  async createCustomerUser(input: {
-    phone: string;
+  async upsertPendingCustomer(input: {
+    email: string;
     passwordHash: string;
     firstName?: string;
     lastName?: string;
-    email?: string;
   }): Promise<UserWithAuth> {
+    const existing = await this.prisma.user.findFirst({
+      where: { email: input.email, deletedAt: null },
+      include: { roles: true, customer: { select: { id: true } } },
+    });
+
+    if (existing !== null) {
+      if (existing.status !== 'PENDING_VERIFICATION') {
+        throw new ConflictError('Bu email allaqachon ro‘yxatdan o‘tgan');
+      }
+      return await this.prisma.user.update({
+        where: { id: existing.id },
+        data: {
+          passwordHash: input.passwordHash,
+          customer: {
+            update: {
+              ...(input.firstName !== undefined && { firstName: input.firstName }),
+              ...(input.lastName !== undefined && { lastName: input.lastName }),
+            },
+          },
+        },
+        include: { roles: true, customer: { select: { id: true } } },
+      });
+    }
+
     try {
       return await this.prisma.user.create({
         data: {
-          phone: input.phone,
+          email: input.email,
           passwordHash: input.passwordHash,
-          status: 'ACTIVE',
-          phoneVerified: false,
-          ...(input.email !== undefined && { email: input.email }),
+          status: 'PENDING_VERIFICATION',
+          emailVerified: false,
           roles: { create: { role: 'CUSTOMER' } },
           customer: {
             create: {
-              phone: input.phone,
+              email: input.email,
               ...(input.firstName !== undefined && { firstName: input.firstName }),
               ...(input.lastName !== undefined && { lastName: input.lastName }),
-              ...(input.email !== undefined && { email: input.email }),
             },
           },
         },
@@ -92,7 +119,7 @@ export class IdentityRepository {
       });
     } catch (err) {
       if (err instanceof Prisma.PrismaClientKnownRequestError && err.code === 'P2002') {
-        throw new ConflictError('Bu telefon yoki email allaqachon ro‘yxatdan o‘tgan');
+        throw new ConflictError('Bu email allaqachon ro‘yxatdan o‘tgan');
       }
       throw err;
     }

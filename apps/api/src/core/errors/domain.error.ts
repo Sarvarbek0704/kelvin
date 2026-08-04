@@ -103,6 +103,19 @@ export class ForbiddenError extends DomainError {
 }
 
 /**
+ * Juda tez-tez so'rov — kutish kerak (masalan OTP qayta yuborish oynasi).
+ * ⚠️ Bu KUTILGAN holat: `meta.retryAfter` (soniya) bilan qaytadi. 429.
+ */
+export class RateLimitError extends DomainError {
+  readonly code = 'RATE_LIMIT_EXCEEDED';
+  readonly httpStatus = 429;
+
+  constructor(message: string, retryAfter: number) {
+    super(message, { retryAfter });
+  }
+}
+
+/**
  * Webhook hodisasi replay oynasidan tashqarida (docs/08 §11.4).
  * ⚠️ Juda eski YOKI kelajakdan — takroriy hujum (replay) signali. 400.
  */

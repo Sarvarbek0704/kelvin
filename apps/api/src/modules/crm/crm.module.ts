@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 
+import { CustomerModule } from '../customer/customer.module';
 import { OrderModule } from '../order/order.module';
 import { LeadController } from './lead.controller';
 import { LeadService } from './lead.service';
@@ -13,7 +14,7 @@ import { SegmentRepository } from './segment.repository';
  * agregatidan (sikl yo'q).
  */
 @Module({
-  imports: [OrderModule],
+  imports: [OrderModule, CustomerModule],
   controllers: [LeadController, SegmentController],
   providers: [LeadRepository, LeadService, SegmentRepository, SegmentService],
   exports: [LeadService, SegmentService],

@@ -20,6 +20,7 @@ import { ReviewsPage } from '@/pages/Reviews';
 import { InstallmentsPage } from '@/pages/Installments';
 import { PosPage } from '@/pages/Pos';
 import { AnalyticsPage } from '@/pages/Analytics';
+import { DeliveryPage } from '@/pages/Delivery';
 
 function RequireAuth({ children }: { children: ReactNode }): ReactNode {
   const token = useAuth((s) => s.accessToken);
@@ -69,6 +70,7 @@ export function App(): ReactNode {
         <Route path="products/:id" element={<ProductDetailPage />} />
         <Route path="categories" element={<CategoriesPage />} />
         <Route path="attributes" element={<AttributesPage />} />
+        <Route path="delivery" element={<DeliveryPage />} />
       </Route>
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>

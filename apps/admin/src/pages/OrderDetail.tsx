@@ -190,14 +190,50 @@ export function OrderDetailPage(): ReactNode {
                 <div className="font-medium text-slate-900">
                   {order.customer.firstName ?? 'Ism ko’rsatilmagan'}
                 </div>
-                <a href={`tel:${order.customer.phone}`} className="text-slate-600 hover:text-slate-900">
-                  {order.customer.phone}
-                </a>
+                {order.customer.phone !== null ? (
+                  <a
+                    href={`tel:${order.customer.phone}`}
+                    className="text-slate-600 hover:text-slate-900"
+                  >
+                    {order.customer.phone}
+                  </a>
+                ) : order.customer.email !== null ? (
+                  <a
+                    href={`mailto:${order.customer.email}`}
+                    className="text-slate-600 hover:text-slate-900"
+                  >
+                    {order.customer.email}
+                  </a>
+                ) : (
+                  <span className="text-slate-400">Kontakt yo'q</span>
+                )}
               </div>
             ) : (
               <p className="text-sm text-slate-400">Kontakt yo'q</p>
             )}
           </Card>
+
+          {/* Mijoz checkout'da tanlaganlari — jo'natma yaratishda foydali */}
+          {(order.deliveryAddress !== null || order.customerNote !== null) && (
+            <Card className="p-5">
+              <div className="mb-3 font-medium">Yetkazish (mijoz tanlovi)</div>
+              <div className="space-y-1 text-sm text-slate-600">
+                {order.deliveryAddress !== null && (
+                  <div>
+                    {order.deliveryAddress.city}, {order.deliveryAddress.street}
+                  </div>
+                )}
+                {order.deliverySlotId !== null && (
+                  <div className="text-xs text-slate-400">Afzal slot tanlangan (bron emas)</div>
+                )}
+                {order.customerNote !== null && (
+                  <div className="rounded bg-amber-50 px-2 py-1 text-amber-800">
+                    “{order.customerNote}”
+                  </div>
+                )}
+              </div>
+            </Card>
+          )}
 
           <Card className="p-5">
             <div className="mb-3 font-medium">Holatni o'zgartirish</div>

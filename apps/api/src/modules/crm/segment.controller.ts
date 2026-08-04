@@ -4,7 +4,7 @@ import { IsObject, IsOptional, IsString, IsUUID, Matches, MaxLength } from 'clas
 
 import { IsLocalizedText, LocalizedTextDto } from '../../shared/dto/localized-text.dto';
 import { RequirePermission } from '../../shared/auth/auth.decorators';
-import { SegmentService } from './segment.service';
+import { SegmentService, type MemberView } from './segment.service';
 import { type MemberRow, type SegmentRow } from './segment.repository';
 
 class CreateSegmentDto {
@@ -46,8 +46,8 @@ export class SegmentController {
 
   @Get(':id/members')
   @RequirePermission('segment:write')
-  @ApiOperation({ summary: 'Segment a‘zolari (RFM skori bilan)' })
-  members(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string): Promise<MemberRow[]> {
+  @ApiOperation({ summary: 'Segment a‘zolari (RFM skori + aloqa ma‘lumoti bilan)' })
+  members(@Param('id', new ParseUUIDPipe({ version: '7' })) id: string): Promise<MemberView[]> {
     return this.segments.listMembers(id);
   }
 

@@ -1,15 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import blog1 from '../../assets/blog1.png';
-import blog2 from '../../assets/blog2.png';
-import blog3 from '../../assets/blog3.png';
 import { useBlogPosts } from '../../lib/content';
 import { label } from '../../lib/api';
 import { Container, Kicker } from '../../components/ui';
 import { JournalHead, Featured, ArticlesGrid, ArticleCard } from './Blog.styled';
 
-const FALLBACK = [blog1, blog2, blog3];
+// Muqova yo'q maqolalarga — seed kategoriya rasmlari (media:generate yaratadi).
+const FALLBACK = [
+  '/media/categories/lyustry.jpg',
+  '/media/categories/bra.jpg',
+  '/media/categories/torshery.jpg',
+];
 const formatDate = (iso) => (iso ? new Date(iso).toLocaleDateString('ru-RU') : '');
 
 /** Jurnal indeksi — featured split maqola + 3 ustunli to'r (jonli /blog). */

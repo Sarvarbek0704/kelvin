@@ -1,8 +1,14 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
-import { type AuthUserView, type Role, permissionsFor } from '@kelvin/contracts';
+import {
+  type AuthUserView,
+  type OtpRequestResponse,
+  type Role,
+  permissionsFor,
+} from '@kelvin/contracts';
 
 import { AuditService } from '../../shared/audit/audit.service';
 import { RedisService } from '../../shared/redis/redis.service';
+import { OtpService } from './otp/otp.service';
 import { PasswordService } from './password/password.service';
 import { AccessTokenService } from './token/access-token.service';
 import { RefreshTokenRepository, type RefreshContext } from './token/refresh-token.repository';
@@ -16,11 +22,18 @@ export interface AuthResult {
   readonly user: AuthUserView;
 }
 
+/**
+ * Auth oqimi:
+ *  - register (email+parol) → PENDING_VERIFICATION + kod email'ga;
+ *  - register/verify (kod) → ACTIVE + darhol kirgizadi;
+ *  - login — email+parol (faqat tasdiqlangan ACTIVE hisoblar).
+ */
 @Injectable()
 export class AuthService {
   constructor(
     private readonly identity: IdentityRepository,
     private readonly password: PasswordService,
+    private readonly otp: OtpService,
     private readonly access: AccessTokenService,
     private readonly refresh: RefreshTokenRepository,
     private readonly audit: AuditService,
@@ -49,10 +62,11 @@ export class AuthService {
    * Parol bilan kirish.
    *
    * ⚠️ Enumeration himoyasi: "foydalanuvchi yo'q" va "parol xato" — bir xil
-   *    javob (401 UNAUTHENTICATED). docs/11-security.md §2.7
+   *    javob (401 UNAUTHENTICATED). Tasdiqlanmagan (PENDING) hisob ham 401 —
+   *    holatni oshkor qilmaymiz. docs/11-security.md §2.7
    */
-  async login(identifier: string, plainPassword: string, ctx: RefreshContext): Promise<AuthResult> {
-    const user = await this.identity.findByIdentifier(identifier);
+  async login(email: string, plainPassword: string, ctx: RefreshContext): Promise<AuthResult> {
+    const user = await this.identity.findByEmail(normalizeEmail(email));
 
     // Vaqt bo'yicha sizishni kamaytirish uchun: user bo'lmasa ham xesh tekshiramiz.
     const hash = user?.passwordHash ?? DUMMY_HASH;
@@ -74,49 +88,100 @@ export class AuthService {
       await this.identity.updatePasswordHash(user.id, rehashed);
     }
 
-    const roles = this.rolesOf(user);
-    const rotation = await this.refresh.issueForLogin(user.id, roles, user.customer?.id, ctx);
-
-    const accessToken = await this.access.sign({
-      sub: user.id,
-      roles,
-      fid: rotation.familyId,
-      ...(user.customer?.id !== undefined && { cid: user.customer.id }),
-    });
-
     await this.identity.touchLogin(user.id, ctx.ip);
-    await this.audit.record({
-      action: 'AUTH_LOGIN',
-      resourceType: 'User',
-      resourceId: user.id,
-      actorUserId: user.id,
-    });
-
-    return {
-      accessToken,
-      expiresIn: this.access.expiresInSeconds,
-      rawRefreshToken: rotation.rawRefreshToken,
-      user: this.userView(user.id, roles),
-    };
+    return await this.issueTokens(user, 'AUTH_LOGIN', ctx);
   }
 
   /**
-   * Mijoz ro'yxatdan o'tishi (self-service) — User(ACTIVE)+CUSTOMER+Customer
-   * yaratadi va DARHOL kirgizadi (token qaytaradi). Telefon band → 409.
+   * Ro'yxatdan o'tish (1-qadam) — User (PENDING_VERIFICATION) + parol xeshi
+   * yaratiladi va email'ga tasdiqlash kodi yuboriladi. Hisob KOD TASDIQLANGACH
+   * faollashadi. Tasdiqlangan email band → 409; tasdiqlanmagani qayta
+   * ro'yxatdan o'tsa — parol yangilanadi, kod qayta yuboriladi.
    */
-  async register(
-    input: { phone: string; password: string; firstName?: string; lastName?: string; email?: string },
-    ctx: RefreshContext,
-  ): Promise<AuthResult> {
+  async register(input: {
+    email: string;
+    password: string;
+    firstName?: string;
+    lastName?: string;
+  }): Promise<OtpRequestResponse> {
+    const email = normalizeEmail(input.email);
     const passwordHash = await this.password.hash(input.password);
-    const user = await this.identity.createCustomerUser({
-      phone: input.phone,
+    await this.identity.upsertPendingCustomer({
+      email,
       passwordHash,
       ...(input.firstName !== undefined && { firstName: input.firstName }),
       ...(input.lastName !== undefined && { lastName: input.lastName }),
-      ...(input.email !== undefined && { email: input.email }),
     });
+    return await this.otp.request(email);
+  }
 
+  /**
+   * Ro'yxatdan o'tish (2-qadam) — email'dagi kod tekshiriladi, hisob ACTIVE
+   * bo'ladi va foydalanuvchi DARHOL kirgiziladi.
+   */
+  async verifyRegistration(email: string, code: string, ctx: RefreshContext): Promise<AuthResult> {
+    const normalized = normalizeEmail(email);
+    await this.otp.verify(normalized, code);
+
+    const user = await this.identity.findByEmail(normalized);
+    if (user === null) {
+      throw new UnauthorizedException({ code: 'OTP_INVALID' });
+    }
+    if (user.status === 'PENDING_VERIFICATION') {
+      await this.identity.activateUser(user.id);
+    } else if (user.status !== 'ACTIVE') {
+      throw new UnauthorizedException({ code: 'UNAUTHENTICATED' });
+    }
+
+    return await this.issueTokens(user, 'AUTH_REGISTER', ctx);
+  }
+
+  /** Kodni qayta yuborish (60s oynadan keyin). Email holatini OSHKOR QILMAYDI. */
+  async resendOtp(email: string): Promise<OtpRequestResponse> {
+    return await this.otp.request(normalizeEmail(email));
+  }
+
+  /**
+   * Parol tiklash (1-qadam) — kod email'ga. Email ro'yxatda bormi-yo'qmi,
+   * javob BIR XIL (enumeration himoyasi) — kod baribir yuboriladi, lekin
+   * reset faqat mavjud ACTIVE hisob uchun o'tadi.
+   */
+  async requestPasswordReset(email: string): Promise<OtpRequestResponse> {
+    return await this.otp.request(normalizeEmail(email));
+  }
+
+  /**
+   * Parol tiklash (2-qadam) — kod email egaligini isbotlaydi: yangi parol
+   * o'rnatiladi, BARCHA eski sessiyalar bekor bo'ladi va yangi sessiya ochiladi.
+   */
+  async resetPassword(
+    email: string,
+    code: string,
+    newPassword: string,
+    ctx: RefreshContext,
+  ): Promise<AuthResult> {
+    const normalized = normalizeEmail(email);
+    await this.otp.verify(normalized, code);
+
+    const user = await this.identity.findByEmail(normalized);
+    if (user?.status !== 'ACTIVE') {
+      // Hisob yo'q/faol emas — kod to'g'ri bo'lsa ham generik 401 (sizdirmaymiz).
+      throw new UnauthorizedException({ code: 'OTP_INVALID' });
+    }
+
+    const passwordHash = await this.password.hash(newPassword);
+    await this.identity.updatePasswordHash(user.id, passwordHash);
+    // Xavfsizlik: parol o'zgardi → barcha eski refresh sessiyalar bekor.
+    await this.refresh.revokeAllForUser(user.id);
+
+    return await this.issueTokens(user, 'AUTH_PASSWORD_RESET', ctx);
+  }
+
+  private async issueTokens(
+    user: UserWithAuth,
+    action: 'AUTH_LOGIN' | 'AUTH_REGISTER' | 'AUTH_PASSWORD_RESET',
+    ctx: RefreshContext,
+  ): Promise<AuthResult> {
     const roles = this.rolesOf(user);
     const rotation = await this.refresh.issueForLogin(user.id, roles, user.customer?.id, ctx);
     const accessToken = await this.access.sign({
@@ -127,7 +192,7 @@ export class AuthService {
     });
 
     await this.audit.record({
-      action: 'AUTH_REGISTER',
+      action,
       resourceType: 'User',
       resourceId: user.id,
       actorUserId: user.id,
@@ -183,6 +248,11 @@ export class AuthService {
     }
     return this.userView(user.id, this.rolesOf(user));
   }
+}
+
+/** Email — case-insensitive identifikator: kichik harf + trim. */
+function normalizeEmail(email: string): string {
+  return email.trim().toLowerCase();
 }
 
 /**

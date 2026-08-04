@@ -39,3 +39,15 @@ export interface AuthTokensResponse {
   readonly expiresIn: number;
   readonly user: AuthUserView;
 }
+
+/**
+ * Kod yuborilgandagi javob (`/auth/register`, `/auth/otp/resend`). Email
+ * mavjudligidan QAT'I NAZAR bir xil — enumeration himoyasi (docs/11 §2.7).
+ * ⚠️ Kod javobda HECH QACHON qaytmaydi — faqat email orqali.
+ */
+export interface OtpRequestResponse {
+  /** Kod amal qilish muddati (soniya). */
+  readonly expiresIn: number;
+  /** Qayta yuborishgacha kutish (soniya). */
+  readonly resendAfter: number;
+}

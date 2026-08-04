@@ -24,7 +24,8 @@
     "db:seed": "prisma db seed",
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force",
-    "clean": "rm -rf dist .turbo node_modules"
+    "clean": "rm -rf dist .turbo node_modules",
+    "media:generate": "tsx prisma/generate-media.ts"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
@@ -58,6 +59,7 @@
     "meilisearch": "^0.47.0",
     "nestjs-cls": "^5.0.0",
     "nestjs-pino": "^4.1.0",
+    "nodemailer": "^9.0.3",
     "otplib": "^12.0.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
@@ -79,6 +81,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.0",
+    "@types/nodemailer": "^8.0.1",
     "@types/passport-jwt": "^4.0.1",
     "@types/supertest": "^6.0.2",
     "dependency-cruiser": "^16.8.0",

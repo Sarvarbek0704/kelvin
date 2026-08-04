@@ -224,6 +224,14 @@ ochiq savol sifatida turadi.
 
 ## 2. Autentifikatsiya
 
+> **YANGILANISH (2026-07):** Auth **faqat email+OTP** ga o'tkazildi — parolli
+> login/register olib tashlandi (`POST /auth/otp/request` → 6 xonali kod
+> email'ga, `POST /auth/otp/verify` → token; yangi email avtomatik CUSTOMER
+> sifatida ro'yxatdan o'tadi). OTP: SHA-256 xesh Redis'da (TTL 5 daq),
+> 60s qayta yuborish oynasi, ≤5 urinish, timing-safe taqqoslash, bir martalik.
+> Quyidagi 2.1–2.2 parol bo'limlari tarixiy asos sifatida saqlangan; token
+> rotatsiya (§2.4) va enumeration himoyasi (§2.7) o'z kuchida.
+
 ### 2.1. Parol xeshlash — Argon2id
 
 Kanon §6 Argon2id ni belgilaydi. Bu yerda **nega** bcrypt emasligini yozamiz,

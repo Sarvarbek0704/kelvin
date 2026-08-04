@@ -170,6 +170,37 @@ class EnvironmentVariables {
 
   @IsInt()
   THROTTLE_LIMIT = 300;
+
+  // --- SMTP (email — OTP kodlari, buyurtma xabarlari) -----------------------
+  /**
+   * SMTP_HOST + SMTP_USER + SMTP_PASSWORD uchalasi ham berilsa — real jo'natish.
+   * Aks holda EMAIL kanal LogAdapter'ga tushadi (dev qulayligi).
+   * Gmail: smtp.gmail.com + App Password (oddiy parol ISHLAMAYDI).
+   */
+  @IsString()
+  @IsOptional()
+  SMTP_HOST?: string;
+
+  @IsInt()
+  SMTP_PORT = 587;
+
+  /** true → 465 (implicit TLS); false → 587 STARTTLS. */
+  @IsBoolean()
+  @IsOptional()
+  SMTP_SECURE = false;
+
+  @IsString()
+  @IsOptional()
+  SMTP_USER?: string;
+
+  @IsString()
+  @IsOptional()
+  SMTP_PASSWORD?: string;
+
+  /** "From" manzili; berilmasa SMTP_USER ishlatiladi. */
+  @IsString()
+  @IsOptional()
+  SMTP_FROM?: string;
 }
 
 export interface AppConfig {
@@ -199,6 +230,15 @@ export interface AppConfig {
   inventory: { reservationTtlSeconds: number };
   observability: { logLevel: string; otelEnabled: boolean; sentryDsn?: string };
   throttle: { ttl: number; limit: number };
+  /** SMTP to'liq sozlanganda mavjud; aks holda undefined → LogAdapter. */
+  smtp?: {
+    host: string;
+    port: number;
+    secure: boolean;
+    user: string;
+    pass: string;
+    from: string;
+  };
 }
 
 /**
@@ -219,9 +259,10 @@ const NUMERIC_ENV_KEYS = [
   'RESERVATION_TTL_SECONDS',
   'THROTTLE_TTL',
   'THROTTLE_LIMIT',
+  'SMTP_PORT',
 ] as const;
 
-const BOOLEAN_ENV_KEYS = ['OTEL_ENABLED', 'S3_FORCE_PATH_STYLE'] as const;
+const BOOLEAN_ENV_KEYS = ['OTEL_ENABLED', 'S3_FORCE_PATH_STYLE', 'SMTP_SECURE'] as const;
 
 function coerceEnv(raw: Record<string, unknown>): Record<string, unknown> {
   const out: Record<string, unknown> = { ...raw };
@@ -328,5 +369,22 @@ export function loadConfig(): AppConfig {
       ...(env.SENTRY_DSN !== undefined && { sentryDsn: env.SENTRY_DSN }),
     },
     throttle: { ttl: env.THROTTLE_TTL, limit: env.THROTTLE_LIMIT },
+    // Bo'sh string ("SMTP_PASS=") sozlangan hisoblanMAYDI — .env odati shunaqa.
+    ...(isNonEmpty(env.SMTP_HOST) &&
+      isNonEmpty(env.SMTP_USER) &&
+      isNonEmpty(env.SMTP_PASSWORD) && {
+        smtp: {
+          host: env.SMTP_HOST,
+          port: env.SMTP_PORT,
+          secure: env.SMTP_SECURE,
+          user: env.SMTP_USER,
+          pass: env.SMTP_PASSWORD,
+          from: isNonEmpty(env.SMTP_FROM) ? env.SMTP_FROM : env.SMTP_USER,
+        },
+      }),
   };
+}
+
+function isNonEmpty(value: string | undefined): value is string {
+  return value !== undefined && value.trim() !== '';
 }

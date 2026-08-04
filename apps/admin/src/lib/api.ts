@@ -89,17 +89,18 @@ export const api = {
     request<T>(path, { method: 'POST', body, ...opts }),
   patch: <T>(path: string, body?: unknown): Promise<T> =>
     request<T>(path, { method: 'PATCH', body }),
+  put: <T>(path: string, body?: unknown): Promise<T> => request<T>(path, { method: 'PUT', body }),
   del: <T>(path: string): Promise<T> => request<T>(path, { method: 'DELETE' }),
   refresh: doRefresh,
 };
 
 /** Login — access token + user. Refresh cookie serverdan keladi. */
-export async function login(identifier: string, password: string): Promise<AuthTokensResponse> {
+export async function login(email: string, password: string): Promise<AuthTokensResponse> {
   const res = await fetch(`${BASE}/auth/login`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ identifier, password }),
+    body: JSON.stringify({ email, password }),
   });
   const data: unknown = await res.json().catch(() => ({}));
   if (!res.ok) {

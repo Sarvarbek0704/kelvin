@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { api, label } from '../../lib/api';
 import { formatSom } from '../../lib/money';
 import { useCart, useCartMutations } from '../../lib/cart';
-import { useDeliveryZones, useDeliveryQuote } from '../../lib/delivery';
+import { useDeliveryZones, useDeliveryQuote, useDeliverySlots, useAddresses } from '../../lib/delivery';
 import { useAuth } from '../../lib/auth-context';
 import {
   Container,
@@ -54,6 +55,36 @@ function Basket() {
   const [pickedZoneId, setPickedZoneId] = useState('');
   const [payMethod, setPayMethod] = useState('cash');
 
+  // --- Kontakt + manzil + slot + rozilik ------------------------------------
+  // contact faqat TAHRIRLARNI saqlaydi — ko'rsatishda profil bilan birlashadi.
+  const [contact, setContact] = useState({});
+  const [addressChoice, setAddressChoice] = useState(''); // addressId | 'new'
+  const [newAddr, setNewAddr] = useState({ city: 'Toshkent', street: '' });
+  const [slotDate, setSlotDate] = useState('');
+  const [slotId, setSlotId] = useState('');
+  const [privacyOk, setPrivacyOk] = useState(true);
+
+  const { data: profile } = useQuery({
+    queryKey: ['profile'],
+    queryFn: () => api.get('/customers/me'),
+    enabled: Boolean(user),
+  });
+  const contactVal = (k, fallback) => contact[k] ?? fallback ?? '';
+  const contactName = contactVal('name', profile?.firstName);
+  const contactPhone = contactVal('phone', profile?.phone);
+  const contactComment = contactVal('comment', '');
+
+  const { data: savedAddresses } = useAddresses(user);
+  const defaultAddressId = (savedAddresses ?? []).find((a) => a.isDefault)?.id || savedAddresses?.[0]?.id || '';
+  const selectedAddress = addressChoice || defaultAddressId || 'new';
+
+  // Kelasi 7 kun — slot tanlash uchun sanalar (sahifa ochilganda bir marta).
+  const [slotDates] = useState(() =>
+    Array.from({ length: 7 }, (_, i) =>
+      new Date(Date.now() + (i + 1) * 86_400_000).toISOString().slice(0, 10),
+    ),
+  );
+
   // --- Yetkazish zonasi + narx (server hisoblaydi) --------------------------
   const { data: zones } = useDeliveryZones();
   const zoneId = pickedZoneId || zones?.[0]?.id || '';
@@ -66,14 +97,55 @@ function Basket() {
   // shu qiymatni snapshot qiladi (checkout javobidagi totalAmount haqiqiy).
   const grandTotal = Number(cart?.totalAmount ?? 0) + Number(deliveryFee);
 
+  const { data: slots } = useDeliverySlots(zoneId, slotDate);
+
   const checkout = async () => {
     if (!cart?.cartId) return;
-    setPlacing(true);
     setCheckoutErr(null);
+
+    // --- Mijoz tomonidagi tekshiruvlar --------------------------------------
+    if (!privacyOk) {
+      setCheckoutErr(t('cart.privacy_required'));
+      return;
+    }
+    const phone = String(contactPhone).trim();
+    if (phone && !/^\+998\d{9}$/.test(phone)) {
+      setCheckoutErr(t('cart.phone_invalid'));
+      return;
+    }
+    if (selectedAddress === 'new' && !newAddr.street.trim()) {
+      setCheckoutErr(t('cart.address_required'));
+      return;
+    }
+
+    setPlacing(true);
     try {
+      // Ism/telefon o'zgargan bo'lsa profilga saqlaymiz (kuryer aloqasi uchun).
+      const name = String(contactName).trim();
+      if ((name && name !== (profile?.firstName || '')) || (phone && phone !== (profile?.phone || ''))) {
+        await api.patch('/customers/me', {
+          ...(name && { firstName: name }),
+          ...(phone && { phone }),
+        });
+      }
+
+      // Manzil: mavjudini tanlagan yoki yangisini yaratamiz.
+      let addressId = selectedAddress !== 'new' ? selectedAddress : '';
+      if (!addressId) {
+        const created = await api.post('/addresses', {
+          region: 'Toshkent',
+          city: newAddr.city.trim() || 'Toshkent',
+          street: newAddr.street.trim(),
+        });
+        addressId = created.id;
+      }
+
       const order = await api.post('/orders/checkout', {
         cartId: cart.cartId,
         ...(zoneId && { deliveryZoneId: zoneId }),
+        addressId,
+        ...(slotId && { slotId }),
+        ...(String(contactComment).trim() && { note: String(contactComment).trim() }),
       });
       // Naqd (yetkazishda to'lov): to'lov niyatini yaratamiz — order PENDING_PAYMENT'ga
       // o'tadi, kuryer pulni olganда xodim tasdiqlaydi (capture). Karta provayderlari
@@ -253,6 +325,51 @@ function Basket() {
                   · {quote.etaDaysMin}–{quote.etaDaysMax} {t('cart.eta_days')}
                 </QuoteNote>
               )}
+
+              {/* Yetkazish vaqti (ixtiyoriy) — sana → bo'sh slotlar */}
+              <div className="sub-label" style={{ marginTop: 18 }}>
+                {t('cart.delivery_time')}
+              </div>
+              <ZoneChips>
+                <button
+                  type="button"
+                  className={slotDate === '' ? 'active' : ''}
+                  onClick={() => {
+                    setSlotDate('');
+                    setSlotId('');
+                  }}
+                >
+                  {t('cart.any_time')}
+                </button>
+                {slotDates.map((d) => (
+                  <button
+                    key={d}
+                    type="button"
+                    className={d === slotDate ? 'active' : ''}
+                    onClick={() => {
+                      setSlotDate(d);
+                      setSlotId('');
+                    }}
+                  >
+                    {d.slice(8)}.{d.slice(5, 7)}
+                  </button>
+                ))}
+              </ZoneChips>
+              {slotDate && (
+                <ZoneChips>
+                  {(slots ?? []).map((s) => (
+                    <button
+                      key={s.id}
+                      type="button"
+                      className={s.id === slotId ? 'active' : ''}
+                      onClick={() => setSlotId(s.id === slotId ? '' : s.id)}
+                    >
+                      {s.startTime}–{s.endTime}
+                    </button>
+                  ))}
+                  {slots && slots.length === 0 && <QuoteNote>{t('cart.no_slots')}</QuoteNote>}
+                </ZoneChips>
+              )}
             </Panel>
 
             <Panel>
@@ -260,19 +377,86 @@ function Basket() {
               <FormGrid>
                 <div>
                   <FieldLabel htmlFor="co-name">{t('cart.name')}</FieldLabel>
-                  <Input id="co-name" type="text" autoComplete="name" />
+                  <Input
+                    id="co-name"
+                    type="text"
+                    autoComplete="name"
+                    value={contactName}
+                    onChange={(e) => setContact((c) => ({ ...c, name: e.target.value }))}
+                  />
                 </div>
                 <div>
                   <FieldLabel htmlFor="co-phone">{t('cart.phone')}</FieldLabel>
-                  <Input id="co-phone" type="tel" inputMode="tel" autoComplete="tel" placeholder="+998" />
+                  <Input
+                    id="co-phone"
+                    type="tel"
+                    inputMode="tel"
+                    autoComplete="tel"
+                    placeholder="+998901234567"
+                    value={contactPhone}
+                    onChange={(e) => setContact((c) => ({ ...c, phone: e.target.value }))}
+                  />
                 </div>
-                <div className="full">
-                  <FieldLabel htmlFor="co-address">{t('cart.address')}</FieldLabel>
-                  <Input id="co-address" type="text" autoComplete="street-address" />
-                </div>
+
+                {/* Manzil: saqlanganlardan tanlash yoki yangisini kiritish */}
+                {(savedAddresses ?? []).length > 0 && (
+                  <div className="full">
+                    <FieldLabel>{t('cart.saved_address')}</FieldLabel>
+                    <ZoneChips>
+                      {(savedAddresses ?? []).map((a) => (
+                        <button
+                          key={a.id}
+                          type="button"
+                          className={selectedAddress === a.id ? 'active' : ''}
+                          onClick={() => setAddressChoice(a.id)}
+                        >
+                          {a.city}, {a.street}
+                        </button>
+                      ))}
+                      <button
+                        type="button"
+                        className={selectedAddress === 'new' ? 'active' : ''}
+                        onClick={() => setAddressChoice('new')}
+                      >
+                        + {t('cart.new_address')}
+                      </button>
+                    </ZoneChips>
+                  </div>
+                )}
+                {selectedAddress === 'new' && (
+                  <>
+                    <div>
+                      <FieldLabel htmlFor="co-city">{t('cart.city')}</FieldLabel>
+                      <Input
+                        id="co-city"
+                        type="text"
+                        value={newAddr.city}
+                        onChange={(e) => setNewAddr((a) => ({ ...a, city: e.target.value }))}
+                      />
+                    </div>
+                    <div>
+                      <FieldLabel htmlFor="co-address">{t('cart.address')}</FieldLabel>
+                      <Input
+                        id="co-address"
+                        type="text"
+                        autoComplete="street-address"
+                        placeholder={t('cart.street_ph')}
+                        value={newAddr.street}
+                        onChange={(e) => setNewAddr((a) => ({ ...a, street: e.target.value }))}
+                      />
+                    </div>
+                  </>
+                )}
+
                 <div className="full">
                   <FieldLabel htmlFor="co-comment">{t('cart.comment')}</FieldLabel>
-                  <Textarea id="co-comment" rows={2} placeholder={t('cart.comment_ph')} />
+                  <Textarea
+                    id="co-comment"
+                    rows={2}
+                    placeholder={t('cart.comment_ph')}
+                    value={contactComment}
+                    onChange={(e) => setContact((c) => ({ ...c, comment: e.target.value }))}
+                  />
                 </div>
               </FormGrid>
             </Panel>
@@ -366,7 +550,12 @@ function Basket() {
             {checkoutErr && <ErrorText>{checkoutErr}</ErrorText>}
 
             <label className="privacy">
-              <input type="checkbox" defaultChecked style={{ accentColor: '#B08D57' }} />
+              <input
+                type="checkbox"
+                checked={privacyOk}
+                onChange={(e) => setPrivacyOk(e.target.checked)}
+                style={{ accentColor: '#B08D57' }}
+              />
               <span>{t('cart.privacy')}</span>
             </label>
 
